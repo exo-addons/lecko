@@ -34,13 +34,13 @@
   <description>Lecko Analytics (http://analytics.lecko.fr) integration for eXo Platform</description>
   <modules>
     <module>war</module>
-    <module>addon</module>
+    <module>packaging</module>
   </modules>
   <scm>
-    <connection>scm:git:git://github.com/exodev/lecko.git</connection>
-    <developerConnection>scm:git:git@github.com:exodev/lecko.git</developerConnection>
+    <connection>scm:git:git://github.com/exo-addons/lecko.git</connection>
+    <developerConnection>scm:git:git@github.com:exo-addons/lecko.git</developerConnection>
     <tag>HEAD</tag>
-    <url>https://github.com/exodev/lecko</url>
+    <url>https://github.com/exo-addons/lecko</url>
   </scm>
   <properties>
     <platform.version>4.3.0</platform.version>
