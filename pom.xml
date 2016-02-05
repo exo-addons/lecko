@@ -33,8 +33,9 @@
   <name>Lecko Analytics Add-on</name>
   <description>Lecko Analytics (http://analytics.lecko.fr) integration for eXo Platform</description>
   <modules>
-    <module>war</module>
-    <module>packaging</module>
+     <module>war</module>
+     <module>packaging</module>
+     <module>service</module>
   </modules>
   <scm>
     <connection>scm:git:git://github.com/exo-addons/lecko.git</connection>
