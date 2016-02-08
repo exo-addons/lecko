@@ -9,6 +9,11 @@
   <artifactId>lecko-service</artifactId>
   <name>Lecko Analytics Add-on - Service</name>
   <dependencies>
+    <dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+	  <version>2.3.1</version>
+		</dependency>
     <!-- PLF dependencies -->
 
   </dependencies>
