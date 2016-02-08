@@ -43,6 +43,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.exoplatform.addons.lecko.social.rest.api.EntityBuilder;
+import org.exoplatform.addons.lecko.social.rest.api.Utils;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.services.security.ConversationState;
@@ -108,7 +109,7 @@ public class SpaceRestResourcesV1 implements SpaceRestResources {
       spaceFilter.setSpaceNameSearchCondition(q);
     }
     String authenticatedUser = ConversationState.getCurrent().getIdentity().getUserId();
-    if (RestUtils.isMemberOfAdminGroup()) {
+    if (RestUtils.isMemberOfAdminGroup()||Utils.isMemberOfAPIAccessGroup()) {
       listAccess = spaceService.getAllSpacesByFilter(spaceFilter);
     } else {
       listAccess = spaceService.getAccessibleSpacesByFilter(authenticatedUser, spaceFilter);
@@ -186,7 +187,7 @@ public class SpaceRestResourcesV1 implements SpaceRestResources {
   @ApiOperation(value = "Gets a specific space by id",
                 httpMethod = "GET",
                 response = Response.class,
-                notes = "This returns the space in the following cases: <br/><ul><li>the authenticated user is a member of the space</li><li>the space is \"public\"</li><li>the authenticated user is the super user</li></ul>")
+                notes = "This returns the space in the following cases: <br/><ul><li>the authenticated user is a member of the space</li><li>the space is \"public\"</li><li>the authenticated user is the super user</li><li>the authenticated user is member of the group api-access</li></ul>")
   @ApiResponses(value = { 
     @ApiResponse (code = 200, message = "Request fulfilled"),
     @ApiResponse (code = 500, message = "Internal server error"),
@@ -198,7 +199,7 @@ public class SpaceRestResourcesV1 implements SpaceRestResources {
     String authenticatedUser = ConversationState.getCurrent().getIdentity().getUserId();
     SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
     Space space = spaceService.getSpaceById(id);
-    if (space == null || (Space.HIDDEN.equals(space.getVisibility()) && ! spaceService.isMember(space, authenticatedUser) && ! RestUtils.isMemberOfAdminGroup())) {
+    if (space == null || (Space.HIDDEN.equals(space.getVisibility()) && ! spaceService.isMember(space, authenticatedUser) && ! RestUtils.isMemberOfAdminGroup())&& !Utils.isMemberOfAPIAccessGroup()) {
       throw new WebApplicationException(Response.Status.UNAUTHORIZED);
     }
     return EntityBuilder.getResponse(EntityBuilder.buildEntityFromSpace(space, authenticatedUser, uriInfo.getPath(), expand), uriInfo, RestUtils.getJsonMediaType(), Response.Status.OK);
@@ -331,7 +332,7 @@ public class SpaceRestResourcesV1 implements SpaceRestResources {
   @ApiOperation(value = "Gets space activities by space id",
                 httpMethod = "GET",
                 response = Response.class,
-                notes = "This returns the space's activities if the authenticated user is a member of the space.")
+                notes = "This returns the space's activities if the authenticated user is a member of the space or member of group api-access.")
   @ApiResponses(value = { 
     @ApiResponse (code = 200, message = "Request fulfilled"),
     @ApiResponse (code = 500, message = "Internal server error"),
@@ -352,7 +353,7 @@ public class SpaceRestResourcesV1 implements SpaceRestResources {
     //
     SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
     Space space = spaceService.getSpaceById(id);
-    if (space == null || ! spaceService.isMember(space, authenticatedUser)) {
+    if (space == null || ! (spaceService.isMember(space, authenticatedUser) || Utils.isMemberOfAPIAccessGroup())) {
       throw new WebApplicationException(Response.Status.UNAUTHORIZED);
     }
     

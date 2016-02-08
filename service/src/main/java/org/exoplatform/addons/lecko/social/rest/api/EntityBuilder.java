@@ -28,8 +28,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.exoplatform.commons.utils.CommonsUtils;
@@ -48,6 +48,8 @@ import org.exoplatform.social.core.relationship.model.Relationship;
 import org.exoplatform.social.core.service.LinkProvider;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
+import org.exoplatform.social.rest.api.RestProperties;
+import org.exoplatform.social.rest.api.RestUtils;
 import org.exoplatform.social.rest.entity.ActivityEntity;
 import org.exoplatform.social.rest.entity.BaseEntity;
 import org.exoplatform.social.rest.entity.CollectionEntity;
@@ -59,10 +61,7 @@ import org.exoplatform.social.rest.entity.ProfileEntity;
 import org.exoplatform.social.rest.entity.RelationshipEntity;
 import org.exoplatform.social.rest.entity.SpaceEntity;
 import org.exoplatform.social.rest.entity.SpaceMembershipEntity;
-import org.exoplatform.social.rest.entity.UserEntity;
 import org.exoplatform.social.service.rest.api.VersionResources;
-import org.exoplatform.social.rest.api.RestProperties;
-import org.exoplatform.social.rest.api.RestUtils;
 
 public class EntityBuilder {
   public static final String USERS_TYPE              = "users";
@@ -193,7 +192,7 @@ public class EntityBuilder {
   public static SpaceEntity buildEntityFromSpace(Space space, String userId, String restPath, String expand) {
     SpaceEntity spaceEntity = new SpaceEntity(space.getId());
     IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
-    if (ArrayUtils.contains(space.getMembers(), userId) || RestUtils.isMemberOfAdminGroup()) {
+    if (ArrayUtils.contains(space.getMembers(), userId) || RestUtils.isMemberOfAdminGroup() ||Utils.isMemberOfAPIAccessGroup()) {
       spaceEntity.setHref(RestUtils.getRestUrl(SPACES_TYPE, space.getId(), restPath));
       Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(), true);
       LinkEntity identity;
@@ -423,7 +422,8 @@ public class EntityBuilder {
       if (! authentiatedUsed.getId().equals(activity.getPosterId()) //the viewer is not the poster
           && ! authentiatedUsed.getRemoteId().equals(activity.getStreamOwner()) //the viewer is not the owner
           && (relationship == null || ! relationship.getStatus().equals(Relationship.Type.CONFIRMED)) //the viewer has no relationship with the given user
-          && ! RestUtils.isMemberOfAdminGroup()) { //current user is not an administrator  
+          && ! RestUtils.isMemberOfAdminGroup()//current user is not an administrator
+          && ! Utils.isMemberOfAPIAccessGroup()) { //current user is not member of space group api-access
         return null;
       }
       as.put(RestProperties.TYPE, USER_ACTIVITY_TYPE);
@@ -431,7 +431,8 @@ public class EntityBuilder {
       SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
       owner = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME, activity.getStreamOwner(), true);
       Space space = spaceService.getSpaceByPrettyName(owner.getRemoteId());
-      if (space == null || !spaceService.isMember(space, authentiatedUsed.getRemoteId())) { //the viewer is not member of space
+      if (space == null || !(spaceService.isMember(space, authentiatedUsed.getRemoteId()) //the viewer is not member of space
+    		  ||Utils.isMemberOfAPIAccessGroup())) { //the viewer is not member of space group api-access
         return null;
       }
       as.put(RestProperties.TYPE, SPACE_ACTIVITY_TYPE);
