@@ -14,25 +14,25 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.exoplatform.addons.social.client.model;
+package org.exoplatform.addons.lecko.social.client.model;
 
 /**
  * Created by The eXo Platform SAS
  * Author : eXoPlatform
  *          exo@exoplatform.com
- * Sep 30, 2015  
+ * Oct 2, 2015  
  */
-public class SpaceCollection {
+public class UserRelationshipCollection {
   
-  public Space[] spaces;
+  public UserRelationship[] usersRelationships;
   public int offset;
   public int limit;
   public int size;
-  public Space[] getSpaces() {
-    return spaces;
+  public UserRelationship[] getUsersRelationships() {
+    return usersRelationships;
   }
-  public void setSpaces(Space[] spaces) {
-    this.spaces = spaces;
+  public void setUsersRelationships(UserRelationship[] usersRelationships) {
+    this.usersRelationships = usersRelationships;
   }
   public int getOffset() {
     return offset;

@@ -14,50 +14,43 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.exoplatform.addons.social.client.model;
+package org.exoplatform.addons.lecko.social.client.model;
 
 /**
  * Created by The eXo Platform SAS
  * Author : eXoPlatform
  *          exo@exoplatform.com
- * Oct 2, 2015  
+ * Oct 6, 2015  
  */
-public class UserRelationship {
+public class LikeCollection {
   
-  public String id;
-  public String href;
-  public String sender;
-  public String receiver;
-  public String status;
-  public String getId() {
-    return id;
+  public User[] likes;
+  public int offset;
+  public int limit;
+  public int size;
+  public User[] getLikes() {
+    return likes;
   }
-  public void setId(String id) {
-    this.id = id;
+  public void setLikes(User[] likes) {
+    this.likes = likes;
   }
-  public String getHref() {
-    return href;
+  public int getOffset() {
+    return offset;
   }
-  public void setHref(String href) {
-    this.href = href;
+  public void setOffset(int offset) {
+    this.offset = offset;
   }
-  public String getSender() {
-    return sender;
+  public int getLimit() {
+    return limit;
   }
-  public void setSender(String sender) {
-    this.sender = sender;
+  public void setLimit(int limit) {
+    this.limit = limit;
   }
-  public String getReceiver() {
-    return receiver;
+  public int getSize() {
+    return size;
   }
-  public void setReceiver(String receiver) {
-    this.receiver = receiver;
-  }
-  public String getStatus() {
-    return status;
-  }
-  public void setStatus(String status) {
-    this.status = status;
+  public void setSize(int size) {
+    this.size = size;
   }
 
 }

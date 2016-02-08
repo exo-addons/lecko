@@ -14,43 +14,50 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.exoplatform.addons.social.client.model;
+package org.exoplatform.addons.lecko.social.client.model;
 
 /**
  * Created by The eXo Platform SAS
  * Author : eXoPlatform
  *          exo@exoplatform.com
- * Oct 6, 2015  
+ * Oct 2, 2015  
  */
-public class CommentCollection {
+public class UserRelationship {
   
-  public Comment[] comments;
-  public int offset;
-  public int limit;
-  public int size;
-  public Comment[] getComments() {
-    return comments;
+  public String id;
+  public String href;
+  public String sender;
+  public String receiver;
+  public String status;
+  public String getId() {
+    return id;
   }
-  public void setComments(Comment[] comments) {
-    this.comments = comments;
+  public void setId(String id) {
+    this.id = id;
   }
-  public int getOffset() {
-    return offset;
+  public String getHref() {
+    return href;
   }
-  public void setOffset(int offset) {
-    this.offset = offset;
+  public void setHref(String href) {
+    this.href = href;
   }
-  public int getLimit() {
-    return limit;
+  public String getSender() {
+    return sender;
   }
-  public void setLimit(int limit) {
-    this.limit = limit;
+  public void setSender(String sender) {
+    this.sender = sender;
   }
-  public int getSize() {
-    return size;
+  public String getReceiver() {
+    return receiver;
   }
-  public void setSize(int size) {
-    this.size = size;
+  public void setReceiver(String receiver) {
+    this.receiver = receiver;
+  }
+  public String getStatus() {
+    return status;
+  }
+  public void setStatus(String status) {
+    this.status = status;
   }
 
 }

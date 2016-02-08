@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.exoplatform.addons.social.client.model;
+package org.exoplatform.addons.lecko.social.client.model;
 
 /**
  * Created by The eXo Platform SAS
@@ -22,17 +22,17 @@ package org.exoplatform.addons.social.client.model;
  *          exo@exoplatform.com
  * Oct 6, 2015  
  */
-public class IdentityCollection {
+public class CommentCollection {
   
-  public Identity[] identities;
+  public Comment[] comments;
   public int offset;
   public int limit;
   public int size;
-  public Identity[] getIdentities() {
-    return identities;
+  public Comment[] getComments() {
+    return comments;
   }
-  public void setIdentities(Identity[] identities) {
-    this.identities = identities;
+  public void setComments(Comment[] comments) {
+    this.comments = comments;
   }
   public int getOffset() {
     return offset;

@@ -14,25 +14,25 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.exoplatform.addons.social.client.model;
+package org.exoplatform.addons.lecko.social.client.model;
 
 /**
  * Created by The eXo Platform SAS
  * Author : eXoPlatform
  *          exo@exoplatform.com
- * Oct 1, 2015  
+ * Oct 6, 2015  
  */
-public class ActivityCollection {
+public class IdentityCollection {
   
-  public Activity[] activities;
+  public Identity[] identities;
   public int offset;
   public int limit;
   public int size;
-  public Activity[] getActivities() {
-    return activities;
+  public Identity[] getIdentities() {
+    return identities;
   }
-  public void setActivities(Activity[] activities) {
-    this.activities = activities;
+  public void setIdentities(Identity[] identities) {
+    this.identities = identities;
   }
   public int getOffset() {
     return offset;

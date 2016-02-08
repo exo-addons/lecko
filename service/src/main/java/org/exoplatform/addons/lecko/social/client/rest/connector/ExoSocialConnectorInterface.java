@@ -14,9 +14,9 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.exoplatform.addons.social.client.rest.connector;
+package org.exoplatform.addons.lecko.social.client.rest.connector;
 
-import org.exoplatform.addons.social.client.model.*;
+import org.exoplatform.addons.lecko.social.client.model.*;
 
 /**
  * Created by The eXo Platform SAS
