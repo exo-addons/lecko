@@ -25,5 +25,29 @@
     xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd"
     xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
 
+ <component>
+      <key>org.exoplatform.addons.lecko.DataBuilder</key>
+  <type>org.exoplatform.addons.lecko.SimpleDataBuilder</type>
+  </component>
+  <external-component-plugins>
+     <target-component>org.exoplatform.services.scheduler.JobSchedulerService</target-component>
+     <component-plugin profiles="all">
+     <name>AddCronJob</name>
+     <set-method>addCronJob</set-method>
+     <type>org.exoplatform.services.scheduler.CronJob</type>
+      <description>add a send weekly notification job to the JobSchedulerService</description>
+      <init-params>
+        <properties-param>
+          <name>cronjob.info</name>
+          <description>Configuration for weekly send notification</description>
+          <property name="jobName" value="LeckoJob"/>
+          <property name="groupName" value="LeckoJob"/>
+          <property name="job" value="org.exoplatform.addons.lecko.job.LeckoJob"/>
+          <property name="expression" value="${exo.LeckoJob.expression:0 0/1 * * * ?}"/>
+        </properties-param>
+      </init-params>
+    </component-plugin>
+  </external-component-plugins>
+
 
 </configuration>

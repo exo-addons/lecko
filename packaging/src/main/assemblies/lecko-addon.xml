@@ -23,6 +23,7 @@
       <outputDirectory></outputDirectory>
       <includes>
         <include>${project.groupId}:lecko-*:jar</include>
+        <include>com.jcraft:jsch:jar</include>
       </includes>
       <scope>provided</scope>
       <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}

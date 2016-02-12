@@ -24,6 +24,12 @@
       <type>jar</type>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+	   <groupId>com.jcraft</groupId>
+	   <artifactId>jsch</artifactId>
+	   <version>0.1.53</version>
+      <scope>provided</scope>
+   </dependency>
   </dependencies>
   <build>
     <finalName>lecko-addon</finalName>
