@@ -43,7 +43,7 @@
           <property name="jobName" value="LeckoJob"/>
           <property name="groupName" value="LeckoJob"/>
           <property name="job" value="org.exoplatform.addons.lecko.job.LeckoJob"/>
-          <property name="expression" value="${exo.LeckoJob.expression:0 0/1 * * * ?}"/>
+          <property name="expression" value="${exo.LeckoJob.expression:0 0 14 ? * SUN}"/>
         </properties-param>
       </init-params>
     </component-plugin>

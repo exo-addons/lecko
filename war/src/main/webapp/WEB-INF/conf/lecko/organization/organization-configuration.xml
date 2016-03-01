@@ -50,7 +50,7 @@
                                 <value>
                                     <object type="org.exoplatform.services.organization.OrganizationConfig$Group">
                                         <field  name="name">
-                                            <string>api-access</string>
+                                            <string>${exo.api-access.group}</string>
                                         </field>
                              		<field name="parentId">
                            		 <string>/platform</string>
@@ -71,10 +71,10 @@
                         <value>
                             <object type="org.exoplatform.services.organization.OrganizationConfig$User">
                                 <field name="userName">
-                                    <string>lecko</string>
+                                    <string>${exo.api-access.user}</string>
                                 </field>
                                 <field name="password">
-                                    <string>fp2TCsLD{L</string>
+                                    <string>${exo.api-access.password}</string>
                                 </field>
                                 <field name="firstName">
                                     <string>lecko</string>
@@ -89,7 +89,7 @@
                                     <string>lecko</string>
                                 </field>
                                 <field name="groups">
-                                    <string>*:/platform/users,*:/platform/api-access</string>
+                                    <string>*:/platform/users,*:/platform/${exo.api-access.group}</string>
                                 </field>
                             </object>
                         </value>
