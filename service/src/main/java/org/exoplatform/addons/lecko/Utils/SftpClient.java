@@ -40,13 +40,14 @@ public class SftpClient
 
    private static final int DEFAULT_PORT = 20;
 
-   private static final String LECKO_HOST = "SftpHost";
-   private static final String LECKO_USER = "SftpUser";
-   private static final String LECKO_PASSWORD = "SftpPassword";
-   private static final String LECKO_PORT = "SftPortNumber";
-   private static final String LECKO_ACTIVE_PROXY = "SftpActiveProxy";
-   private static final String LECKO_PROXY_ADDRESS = "SftpProxyAddress";
-   private static final String LECKO_PROXY_PORT = "SftpProxyPort";
+
+   private static final String LECKO_HOST = "exo.addons.lecko.SftpHost";
+   private static final String LECKO_USER = "exo.addons.leckoSftpUser";
+   private static final String LECKO_PASSWORD = "exo.addons.leckoSftpPassword";
+   private static final String LECKO_PORT = "exo.addons.leckoSftPortNumber";
+   private static final String LECKO_ACTIVE_PROXY = "exo.addons.leckoSftpActiveProxy";
+   private static final String LECKO_PROXY_ADDRESS = "exo.addons.leckoSftpProxyAddress";
+   private static final String LECKO_PROXY_PORT = "exo.addons.leckoSftpProxyPort";
 
 
    private static String host;
