@@ -27,7 +27,25 @@
 
  <component>
       <key>org.exoplatform.addons.lecko.DataBuilder</key>
-  <type>org.exoplatform.addons.lecko.SimpleDataBuilder</type>
+      <type>org.exoplatform.addons.lecko.SimpleDataBuilder</type>
+  </component>
+  <component>
+		<key>org.exoplatform.addons.lecko.social.client.rest.connector.ExoSocialConnector</key>
+		<type>org.exoplatform.addons.lecko.social.client.rest.connector.ExoSocialConnectorImpl</type>
+		<init-params>
+			<value-param>
+				<name>username</name>
+				<value>${exo.api-access.user}</value>
+			</value-param>
+			<value-param>
+				<name>password</name>
+				<value>${exo.api-access.password}</value>
+			</value-param>
+         <value-param>
+				<name>baseUrl</name>
+				<value>http://localhost:8080</value>
+			</value-param>
+		</init-params>
   </component>
   <external-component-plugins>
      <target-component>org.exoplatform.services.scheduler.JobSchedulerService</target-component>
@@ -43,7 +61,7 @@
           <property name="jobName" value="LeckoJob"/>
           <property name="groupName" value="LeckoJob"/>
           <property name="job" value="org.exoplatform.addons.lecko.job.LeckoJob"/>
-          <property name="expression" value="${exo.LeckoJob.expression:0 0 14 ? * SUN}"/>
+          <property name="expression" value="${exo.LeckoJob.expression:0 0/2 * * * ?}"/>
         </properties-param>
       </init-params>
     </component-plugin>

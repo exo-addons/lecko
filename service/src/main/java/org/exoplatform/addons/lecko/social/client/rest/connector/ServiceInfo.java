@@ -51,7 +51,7 @@ public class ServiceInfo {
     return REST_URL + "/usersRelationships/" + id; 
   }
   
-  //Space
+  //Get Spaces
   public static String getSpacesUri() {
     return REST_URL + "/spaces";
   }
@@ -67,6 +67,10 @@ public class ServiceInfo {
   }
   public static String getCommentsUri(String activity_id) {
     return REST_URL + "/activities/" + activity_id + "/comments";
+  }
+
+  public static String getSpaceActivities(String id) {
+    return REST_URL + "/spaces/" + id + "/activities";
   }
 
 }
