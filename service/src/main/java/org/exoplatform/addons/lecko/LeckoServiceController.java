@@ -44,8 +44,8 @@ import java.io.File;
 public class LeckoServiceController implements Startable
 {
    private static final Log LOG = ExoLogger.getLogger("org.exoplatform.addons.lecko.LeckoServiceController");
-   private static final String rootPath = PropertyManager.getProperty("java.io.tmpdir");
-   private static final String path= rootPath+"/lecko/exo-community.txt";
+   private static final String rootPath = PropertyManager.getProperty("java.io.tmpdir")+"/lecko";
+   private static final String path= rootPath+"/exo-community.txt";
    private static final String LECKO_ENABLED = "exo.addons.lecko.job.enabled";
 
    public LeckoServiceController()
@@ -60,8 +60,8 @@ public class LeckoServiceController implements Startable
     * Build dump data.
     */
    @Managed
-   @ManagedDescription("Build dump data.")
-   public String buildDump()
+   @ManagedDescription("Build lecko data.")
+   public String buildLeckoData()
    {
       DataBuilder builder = getService(SimpleDataBuilder.class);
       try
@@ -80,8 +80,8 @@ public class LeckoServiceController implements Startable
     * Upload dump to lecko server.
     */
    @Managed
-   @ManagedDescription("Upload dump to lecko server.")
-   public String UploadDump()
+   @ManagedDescription("Upload data to lecko server.")
+   public String UploadLeckoData()
    {
       File file = new File(path);
       try
