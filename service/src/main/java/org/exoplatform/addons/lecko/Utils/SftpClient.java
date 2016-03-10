@@ -48,6 +48,7 @@ public class SftpClient
    private static final String LECKO_ACTIVE_PROXY = "exo.addons.leckoSftpActiveProxy";
    private static final String LECKO_PROXY_ADDRESS = "exo.addons.leckoSftpProxyAddress";
    private static final String LECKO_PROXY_PORT = "exo.addons.leckoSftpProxyPort";
+   private static final String LECKO_REMOTE_PATH = "exo.addons.leckoSftpRemotePath";
 
 
    private static String host;
@@ -55,6 +56,7 @@ public class SftpClient
    private static String pwd;
    private static int port = DEFAULT_PORT;
    private static boolean active;
+   private static String remotePpath;
    private static String proxyAdress;
    private static String proxyPort;
 
@@ -65,6 +67,7 @@ public class SftpClient
       host = PropertyManager.getProperty(LECKO_HOST);
       user = PropertyManager.getProperty(LECKO_USER);
       pwd = PropertyManager.getProperty(LECKO_PASSWORD);
+      remotePpath= PropertyManager.getProperty(LECKO_REMOTE_PATH);
 
       String value = PropertyManager.getProperty(LECKO_PORT);
       if (value != null)
@@ -104,11 +107,16 @@ public class SftpClient
          session.setPassword(pwd);
 
          Properties config = new Properties();
+         config.put("StrictHostKeyChecking", "no");
          session.setConfig(config);
          session.connect();
          channel = session.openChannel("sftp");
          channel.connect();
          channelSftp = (ChannelSftp)channel;
+         if(remotePpath != null)
+         {
+            channelSftp.cd(remotePpath);
+         }
 
          File f = new File(fileName);
          channelSftp.put(new FileInputStream(f), f.getName());

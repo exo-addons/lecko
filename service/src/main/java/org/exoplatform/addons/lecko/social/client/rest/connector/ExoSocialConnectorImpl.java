@@ -78,20 +78,35 @@ public class ExoSocialConnectorImpl implements ExoSocialConnector
    }
 
    @Override
-   public String getSpaces() throws Exception
+   public String getSpaces(int offset, int limit) throws Exception
    {
-      String url = baseUrl + ServiceInfo.getSpacesUri();
+      String url = baseUrl + ServiceInfo.getSpacesUri(offset, limit);
       String json = HttpUtils.get(url);
       return json;
    }
 
    @Override
-   public String getActivitiesBySpaceID(String id) throws Exception
+   public String getActivitiesBySpaceID(String id, int offset, int limit) throws Exception
    {
-      String url = baseUrl + ServiceInfo.getSpaceActivities(id);
+      String url = baseUrl + ServiceInfo.getSpaceActivities(id, offset, limit);
       String json = HttpUtils.get(url);
       return json;
    }
 
+   @Override
+   public String getActivityComments(String url, int offset, int limit) throws Exception
+   {
+      String newUrl = ServiceInfo.getActivityData(url, offset, limit);
+      String json = HttpUtils.get(newUrl);
+      return json;
+   }
+
+   @Override
+   public String getActivityLikes(String url, int offset, int limit) throws Exception
+   {
+      String newUrl = ServiceInfo.getActivityData(url, offset, limit);
+      String json = HttpUtils.get(newUrl);
+      return json;
+   }
 
 }

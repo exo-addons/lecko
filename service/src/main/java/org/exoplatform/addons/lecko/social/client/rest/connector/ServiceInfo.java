@@ -52,8 +52,8 @@ public class ServiceInfo {
   }
   
   //Get Spaces
-  public static String getSpacesUri() {
-    return REST_URL + "/spaces";
+  public static String getSpacesUri(int offset, int limit) {
+    return REST_URL + "/spaces?offset="+offset+"&limit="+limit;
   }
   
   //SpaceMembership
@@ -69,8 +69,12 @@ public class ServiceInfo {
     return REST_URL + "/activities/" + activity_id + "/comments";
   }
 
-  public static String getSpaceActivities(String id) {
-    return REST_URL + "/spaces/" + id + "/activities";
+  public static String getSpaceActivities(String id, int offset, int limit) {
+    return REST_URL + "/spaces/" + id + "/activities?offset="+offset+"&limit="+limit;
+  }
+
+  public static String getActivityData(String url, int offset, int limit){
+    return url.replace("rest","rest/private")+"?offset="+offset+"&limit="+limit;
   }
 
 }

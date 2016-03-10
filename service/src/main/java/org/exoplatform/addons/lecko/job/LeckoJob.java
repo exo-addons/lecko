@@ -21,12 +21,11 @@ package org.exoplatform.addons.lecko.job;
 import org.exoplatform.addons.lecko.DataBuilder;
 import org.exoplatform.addons.lecko.SimpleDataBuilder;
 import org.exoplatform.addons.lecko.Utils.SftpClient;
+import org.exoplatform.commons.utils.PropertyManager;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.RootContainer;
-import org.exoplatform.services.jcr.impl.util.io.FileCleaner;
-import org.exoplatform.services.jcr.impl.util.io.FileCleanerHolder;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.quartz.Job;
@@ -36,46 +35,59 @@ import java.io.File;
 
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com
-
  */
 public class LeckoJob implements Job
 {
    private static Log LOG = ExoLogger.getLogger(LeckoJob.class);
+   private static final String LECKO_ENABLED = "exo.addons.lecko.job.enabled";
+   private static final String path = PropertyManager.getProperty("java.io.tmpdir") + "/lecko/exo-community.txt";
+
    @Override
    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException
    {
-      LOG.info("Execution Send Lecko DATA JOB");
-      FileCleaner cleaner = null;
-      FileCleanerHolder holder = getService(FileCleanerHolder.class);
-      if (holder != null)
+      String value = PropertyManager.getProperty(LECKO_ENABLED);
+      boolean enable = Boolean.valueOf(value);
+      if(enable)
       {
-         cleaner = holder.getFileCleaner();
-      }
-      DataBuilder builder = getService(SimpleDataBuilder.class);
-      File file = null ;
-      try
-      {
-         boolean success = false;
-         if (builder != null)
-         {
-            success = builder.build();
-         }
-         if(success && file != null && file.exists())
-         {
-            SftpClient client =  new SftpClient() ;
-            client.send(file.getAbsolutePath());
-         }
-         else
-         {
-            return;
-         }
+         LOG.info("Execution Send Lecko DATA JOB");
 
-      }
-      finally
-      {
-         if (file != null && file.exists())
+         DataBuilder builder = getService(SimpleDataBuilder.class);
+         File file = new File(path);
+         try
          {
-            cleaner.addFile(file);
+            boolean success = false;
+            if (builder != null)
+            {
+               success = builder.build();
+            }
+            if (success && file != null && file.exists())
+            {
+               SftpClient client = new SftpClient();
+               client.send(file.getAbsolutePath());
+            }
+            else
+            {
+               return;
+            }
+
+         }
+         catch (Exception ex)
+         {
+            LOG.error(ex.getMessage());
+         }
+         finally
+         {
+            if (file != null && file.exists())
+            {
+               file.delete();
+            }
+         }
+      }
+      else
+      {
+         if (LOG.isDebugEnabled())
+         {
+            LOG.debug("Lecko extraction disabled");
          }
       }
    }

@@ -30,6 +30,10 @@
       <type>org.exoplatform.addons.lecko.SimpleDataBuilder</type>
   </component>
   <component>
+      <key>org.exoplatform.addons.lecko.LeckoServiceController</key>
+      <type>org.exoplatform.addons.lecko.LeckoServiceController</type>
+  </component>
+  <component>
 		<key>org.exoplatform.addons.lecko.social.client.rest.connector.ExoSocialConnector</key>
 		<type>org.exoplatform.addons.lecko.social.client.rest.connector.ExoSocialConnectorImpl</type>
 		<init-params>

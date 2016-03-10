@@ -30,9 +30,13 @@ public interface ExoSocialConnector
   public String getUserById(String username) throws Exception;
 
 
-  public String getSpaces() throws Exception;
+  public String getSpaces(int offset, int limit) throws Exception;
 
-  public String getActivitiesBySpaceID(String ID) throws Exception;
+  public String getActivitiesBySpaceID(String ID, int offset, int limit) throws Exception;
+
+  public String getActivityComments(String url , int offset, int limit) throws Exception;
+
+  public String getActivityLikes(String url , int offset, int limit) throws Exception;
 
 
 }
