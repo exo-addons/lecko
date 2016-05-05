@@ -120,9 +120,9 @@ public class LeckoServiceController implements Startable
 
    @Managed
    @ManagedDescription("Enable/Disable lecko job. ")
-   public String getEnableLeckoJob()
+   public boolean getEnableLeckoJob()
    {
-     return PropertyManager.getProperty(LECKO_ENABLED);
+     return Boolean.parseBoolean(PropertyManager.getProperty(LECKO_ENABLED));
    }
 
    private  <T> T getService(Class<T> clazz) {
