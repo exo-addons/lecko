@@ -72,7 +72,8 @@ public class SimpleDataBuilder implements DataBuilder
    public boolean build()
    {
       PrintWriter out = null;
-      File file;
+      File file = null;
+      boolean state = true;
       try
       {
          String extractOutputPath = leckoTempDirectory +"/" +leckoOutputName;
@@ -129,8 +130,54 @@ public class SimpleDataBuilder implements DataBuilder
                {
                   LOG.debug("Extract Data space :" + jsonObject.get("groupId"));
                }
-               SocialActivity sc = new SpaceActivity(spaceId, exoSocialConnector);
-               sc.loadActivityStream(out);
+               SocialActivity sa = new SpaceActivity(spaceId, exoSocialConnector);
+               sa.loadActivityStream(out);
+            }
+            offset += size;
+            out.flush();
+         }
+         /** Load User activity*/
+         offset = 0;
+         size = 20;
+         boolean hasNextUser = true;
+
+         while (hasNextUser)
+         {
+            //Extract all users by limit
+            String json = exoSocialConnector.getUsers(offset, size);
+            JSONArray userList = null;
+
+            if (json == null)
+            {
+               break;
+            }
+            else
+            {
+               userList = SocialActivity.parseJSONArray(json, "users");
+            }
+
+            if (userList == null || userList.size() == 0)
+            {
+               break;
+            }
+            else if (userList.size() < size)
+            {
+               hasNextUser = false;
+            }
+
+            //Extract all activities by user ID
+            for (Object obj : userList)
+            {
+               JSONObject jsonObject = (JSONObject)obj;
+               //user ID
+               String userId = (String)jsonObject.get("username");
+
+               if (LOG.isDebugEnabled())
+               {
+                  LOG.debug("Extract Data space :" + jsonObject.get("username"));
+               }
+               SocialActivity ua = new UserActivity(userId, exoSocialConnector);
+               ua.loadActivityStream(out);
             }
             offset += size;
             out.flush();
@@ -143,7 +190,7 @@ public class SimpleDataBuilder implements DataBuilder
       catch (Exception ex)
       {
          LOG.error(ex.getMessage());
-         return false;
+         state = false;
       }
       finally
       {
@@ -152,8 +199,13 @@ public class SimpleDataBuilder implements DataBuilder
             out.flush();
             out.close();
          }
+
+         if (!state && file != null && PrivilegedFileHelper.exists(file))
+         {
+            PrivilegedFileHelper.delete(file);
+         }
       }
-      return true;
+      return state;
    }
 
 

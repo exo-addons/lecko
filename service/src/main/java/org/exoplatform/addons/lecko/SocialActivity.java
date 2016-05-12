@@ -20,6 +20,8 @@ package org.exoplatform.addons.lecko;
 
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import org.exoplatform.addons.lecko.social.client.rest.connector.ExoSocialConnector;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -37,7 +39,7 @@ abstract class SocialActivity
    protected static Log LOG = ExoLogger.getLogger(SimpleDataBuilder.class);
 
    //anonymization MAP
-   protected HashMap<String, String> user_map = new HashMap<String, String>();
+   protected static Map<String, String> user_map = new ConcurrentHashMap<String, String>();
 
    ExoSocialConnector exoSocialConnector;
 
@@ -58,7 +60,7 @@ abstract class SocialActivity
 
    }
 
-   protected void getExoComments(String url, String placeName, PrintWriter out, HashMap<String, String> user_map)
+   protected void getExoComments(String url, String placeName, PrintWriter out) throws Exception
    {
 
       if (LOG.isDebugEnabled())
@@ -73,68 +75,62 @@ abstract class SocialActivity
       int limit = 20;
       boolean hasNextComments = true;
 
-      try
+      while (hasNextComments)
       {
-         while (hasNextComments)
+         result = exoSocialConnector.getActivityComments(url, offset, limit);
+         JSONArray jsonComments;
+         if (result == null)
          {
-            result = exoSocialConnector.getActivityComments(url, offset, limit);
-            JSONArray jsonComments;
-            if (result == null)
+            break;
+         }
+         else
+         {
+            jsonComments = parseJSONArray(result, "comments");
+         }
+
+         if (jsonComments == null || jsonComments.size() == 0)
+         {
+            break;
+         }
+         else if (jsonComments.size() < limit)
+         {
+            hasNextComments = false;
+         }
+
+         for (Object obj : jsonComments)
+         {
+            JSONObject js = (JSONObject)obj;
+            idactor = ((String)js.get("identity")).split("/")[7];
+            if (!user_map.containsKey(idactor))
             {
-               break;
+               user_map.put(idactor, Integer.toString(user_map.size() + 1));
+               idactor = user_map.get(idactor);
             }
             else
             {
-               jsonComments = parseJSONArray(result, "comments");
+               idactor = user_map.get(idactor);
             }
+            out.print(idactor + ";");
 
-            if (jsonComments == null || jsonComments.size() == 0)
-            {
-               break;
-            }
-            else if (jsonComments.size() < limit)
-            {
-               hasNextComments = false;
-            }
-
-            for (Object obj : jsonComments)
-            {
-               JSONObject js = (JSONObject)obj;
-               idactor = ((String)js.get("identity")).split("/")[7];
-               if (!user_map.containsKey(idactor))
-               {
-                  user_map.put(idactor, Integer.toString(user_map.size() + 1));
-                  idactor = user_map.get(idactor);
-               }
-               else
-               {
-                  idactor = user_map.get(idactor);
-               }
-               out.print(idactor + ";");
-
-               idEvent = "comment";
-               out.print(idEvent + ";");
-               date = (String)js.get("createDate");
-               out.print(date + ";");
-               out.print(placeName + ";");
-               out.println();
-            }
-            offset += limit;
-            out.flush();
+            idEvent = "comment";
+            out.print(idEvent + ";");
+            date = (String)js.get("createDate");
+            out.print(date + ";");
+            out.print(placeName + ";");
+            out.println();
          }
-
-         if (LOG.isDebugEnabled())
-         {
-            LOG.debug("End Getting Comments : " + placeName);
-         }
+         offset += limit;
+         out.flush();
       }
-      catch (Exception ex)
+
+      if (LOG.isDebugEnabled())
       {
-         LOG.error(ex.getMessage());
+         LOG.debug("End Getting Comments : " + placeName);
       }
+
    }
 
-   protected void getLikes(String url, String date, String placeName, PrintWriter out, HashMap<String, String> user_map)
+   protected void getLikes(String url, String date, String placeName, PrintWriter out) throws Exception
    {
       if (LOG.isDebugEnabled())
       {
@@ -147,64 +143,56 @@ abstract class SocialActivity
       int limit = 20;
       boolean hasNextLikes = true;
 
-      try
+      while (hasNextLikes)
       {
-         while (hasNextLikes)
+         result = exoSocialConnector.getActivityLikes(url, offset, limit);
+         JSONArray jsonLikes;
+         if (result == null)
          {
-            result = exoSocialConnector.getActivityLikes(url, offset, limit);
-            JSONArray jsonLikes;
-            if (result == null)
+            break;
+         }
+         else
+         {
+            jsonLikes = parseJSONArray(result, "likes");
+         }
+
+         if (jsonLikes == null || jsonLikes.size() == 0)
+         {
+            break;
+         }
+         else if (jsonLikes.size() < limit)
+         {
+            hasNextLikes = false;
+         }
+
+         for (Object obj : jsonLikes)
+         {
+            JSONObject js = (JSONObject)obj;
+            idactor = ((String)js.get("identity")).split("/")[7];
+            if (!user_map.containsKey(idactor))
             {
-               break;
+               user_map.put(idactor, Integer.toString(user_map.size() + 1));
+               idactor = user_map.get(idactor);
             }
             else
             {
-               jsonLikes = parseJSONArray(result, "likes");
+               idactor = user_map.get(idactor);
             }
+            out.print(idactor + ";");
 
-            if (jsonLikes == null || jsonLikes.size() == 0)
-            {
-               break;
-            }
-            else if (jsonLikes.size() < limit)
-            {
-               hasNextLikes = false;
-            }
-
-            for (Object obj : jsonLikes)
-            {
-               JSONObject js = (JSONObject)obj;
-               idactor = ((String)js.get("identity")).split("/")[7];
-               if (!user_map.containsKey(idactor))
-               {
-                  user_map.put(idactor, Integer.toString(user_map.size() + 1));
-                  idactor = user_map.get(idactor);
-               }
-               else
-               {
-                  idactor = user_map.get(idactor);
-               }
-               out.print(idactor + ";");
-
-               idEvent = "like";
-               out.print(idEvent + ";");
-               out.print(date + ";");
-               out.print(placeName + ";");
-               out.println();
-            }
-            offset += limit;
-            out.flush();
+            idEvent = "like";
+            out.print(idEvent + ";");
+            out.print(date + ";");
+            out.print(placeName + ";");
+            out.println();
          }
-
-         if (LOG.isDebugEnabled())
-         {
-            LOG.debug("End Getting Likes : " + placeName);
-         }
-
+         offset += limit;
+         out.flush();
       }
-      catch (Exception ex)
+
+      if (LOG.isDebugEnabled())
       {
-         LOG.error(ex.getMessage());
+         LOG.debug("End Getting Likes : " + placeName);
       }
    }
 }

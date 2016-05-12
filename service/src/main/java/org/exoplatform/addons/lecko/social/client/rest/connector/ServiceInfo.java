@@ -27,8 +27,8 @@ public class ServiceInfo {
   public static final String REST_URL = "/rest/private/v1/social";
   
   //User
-  public static String getUsersUri() {
-    return REST_URL + "/users";
+  public static String getUsersUri(int offset, int limit) {
+    return REST_URL + "/users?offset="+offset+"&limit="+limit;
   }
   public static String getUserUri(String username) {
     return REST_URL + "/users/" + username; 
@@ -72,6 +72,11 @@ public class ServiceInfo {
   public static String getSpaceActivities(String id, int offset, int limit) {
     return REST_URL + "/spaces/" + id + "/activities?offset="+offset+"&limit="+limit;
   }
+
+  public static String getUserActivities(String id, int offset, int limit) {
+    return REST_URL + "/users/" + id + "/activities?type=owner&offset="+offset+"&limit="+limit;
+  }
+
 
   public static String getActivityData(String url, int offset, int limit){
     return url.replace("rest","rest/private")+"?offset="+offset+"&limit="+limit;
