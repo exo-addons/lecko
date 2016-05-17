@@ -19,10 +19,18 @@
 package org.exoplatform.addons.lecko;
 
 import org.exoplatform.addons.lecko.social.client.rest.connector.ExoSocialConnector;
+import org.exoplatform.commons.utils.CommonsUtils;
+import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.commons.utils.PrivilegedFileHelper;
 import org.exoplatform.commons.utils.PropertyManager;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
+import org.exoplatform.social.core.manager.IdentityManager;
+import org.exoplatform.social.core.profile.ProfileFilter;
+import org.exoplatform.social.core.space.model.Space;
+import org.exoplatform.social.core.space.spi.SpaceService;
 import org.json.JSONException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -48,15 +56,18 @@ public class SimpleDataBuilder implements DataBuilder
 
    private ExoSocialConnector exoSocialConnector;
 
+   private SpaceService spaceService;
+
    private final String leckoTempDirectory;
 
    private final String leckoOutputName;
 
    private static final String LECKO_OUTPUT_NAME= "exo.addons.lecko.out.name";
 
-   public SimpleDataBuilder(ExoSocialConnector exoSocialConnector)
+   public SimpleDataBuilder(ExoSocialConnector exoSocialConnector, SpaceService spaceService)
    {
       this.exoSocialConnector = exoSocialConnector;
+      this.spaceService = spaceService;
       this.leckoTempDirectory = PropertyManager.getProperty("java.io.tmpdir") + "/lecko";
       File directory = new File(this.leckoTempDirectory );
       if (!PrivilegedFileHelper.exists(directory))
@@ -84,16 +95,15 @@ public class SimpleDataBuilder implements DataBuilder
          }
 
          out = new PrintWriter(new FileWriter(extractOutputPath));
+         ListAccess<Space> spaceListAccess = spaceService.getAllSpacesWithListAccess();
+         ListAccess<Identity> userListAccess = CommonsUtils.getService(IdentityManager.class).getIdentitiesByProfileFilter(OrganizationIdentityProvider.NAME, new ProfileFilter(), false);
 
+         LOG.info("Lecko-Addons : Begin Extraction...");
          //Get All spaces
-         if (LOG.isDebugEnabled())
-         {
-            LOG.debug("Lecko-Addons : Beginning Extraction");
-         }
-
          int offset = 0;
          int size = 20;
          boolean hasNextSpace = true;
+         int countSpace= 1;
 
          while (hasNextSpace)
          {
@@ -126,12 +136,10 @@ public class SimpleDataBuilder implements DataBuilder
                //space ID
                String spaceId = (String)jsonObject.get("id");
 
-               if (LOG.isDebugEnabled())
-               {
-                  LOG.debug("Extract Data space :" + jsonObject.get("groupId"));
-               }
+               LOG.info("Extract Data from space:" + jsonObject.get("groupId") + " progress ..."+ countSpace +"/"+ (spaceListAccess.getSize()));
                SocialActivity sa = new SpaceActivity(spaceId, exoSocialConnector);
                sa.loadActivityStream(out);
+               countSpace ++;
             }
             offset += size;
             out.flush();
@@ -140,6 +148,7 @@ public class SimpleDataBuilder implements DataBuilder
          offset = 0;
          size = 20;
          boolean hasNextUser = true;
+         int countUsUser=1;
 
          while (hasNextUser)
          {
@@ -171,21 +180,15 @@ public class SimpleDataBuilder implements DataBuilder
                JSONObject jsonObject = (JSONObject)obj;
                //user ID
                String userId = (String)jsonObject.get("username");
-
-               if (LOG.isDebugEnabled())
-               {
-                  LOG.debug("Extract Data space :" + jsonObject.get("username"));
-               }
+               LOG.info("Extract Data from user:" + jsonObject.get("username") + " progress ..."+ countUsUser +"/"+ (userListAccess.getSize()));
                SocialActivity ua = new UserActivity(userId, exoSocialConnector);
                ua.loadActivityStream(out);
+               countUsUser++;
             }
             offset += size;
             out.flush();
          }
-         if (LOG.isDebugEnabled())
-         {
-            LOG.debug("Lecko-Addons : Ending Extraction");
-         }
+         LOG.info("Lecko-Addons : End Extraction");
       }
       catch (Exception ex)
       {
