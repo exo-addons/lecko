@@ -54,9 +54,9 @@ public class LeckoJob implements Job
 
          DataBuilder builder = getService(SimpleDataBuilder.class);
          File file = new File(path);
+         boolean success = false;
          try
          {
-            boolean success = false;
             if (builder != null)
             {
                success = builder.build();
@@ -64,21 +64,24 @@ public class LeckoJob implements Job
             if (success && file != null && file.exists())
             {
                SftpClient client = new SftpClient();
-               client.send(file.getAbsolutePath());
+               LOG.info("Start Send Lecko data to SFTP server");
+               success=client.send(file.getAbsolutePath());
+               LOG.info("end Send Lecko data to SFTP server");
             }
             else
             {
+               LOG.error("Lecko extraction data not exist");
                return;
             }
 
          }
          catch (Exception ex)
          {
-            LOG.error(ex.getMessage());
+            LOG.error("Failed send Data"+ex.getMessage());
          }
          finally
          {
-            if (file != null && file.exists())
+            if (file != null && file.exists() && success)
             {
                file.delete();
             }

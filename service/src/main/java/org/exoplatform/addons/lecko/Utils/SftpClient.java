@@ -42,13 +42,13 @@ public class SftpClient
 
 
    private static final String LECKO_HOST = "exo.addons.lecko.SftpHost";
-   private static final String LECKO_USER = "exo.addons.leckoSftpUser";
-   private static final String LECKO_PASSWORD = "exo.addons.leckoSftpPassword";
-   private static final String LECKO_PORT = "exo.addons.leckoSftPortNumber";
-   private static final String LECKO_ACTIVE_PROXY = "exo.addons.leckoSftpActiveProxy";
-   private static final String LECKO_PROXY_ADDRESS = "exo.addons.leckoSftpProxyAddress";
-   private static final String LECKO_PROXY_PORT = "exo.addons.leckoSftpProxyPort";
-   private static final String LECKO_REMOTE_PATH = "exo.addons.leckoSftpRemotePath";
+   private static final String LECKO_USER = "exo.addons.lecko.SftpUser";
+   private static final String LECKO_PASSWORD = "exo.addons.lecko.SftpPassword";
+   private static final String LECKO_PORT = "exo.addons.lecko.SftPortNumber";
+   private static final String LECKO_ACTIVE_PROXY = "exo.addons.lecko.SftpActiveProxy";
+   private static final String LECKO_PROXY_ADDRESS = "exo.addons.leckoSftp.ProxyAddress";
+   private static final String LECKO_PROXY_PORT = "exo.addons.lecko.SftpProxyPort";
+   private static final String LECKO_REMOTE_PATH = "exo.addons.lecko.SftpRemotePath";
 
 
    private static String host;
@@ -59,15 +59,16 @@ public class SftpClient
    private static String remotePpath;
    private static String proxyAdress;
    private static String proxyPort;
+   private static int DEFAULT_TIMOUT= 3600000;
 
 
    static
    {
 
-      host = PropertyManager.getProperty(LECKO_HOST);
-      user = PropertyManager.getProperty(LECKO_USER);
+      host = PropertyManager.getProperty(LECKO_HOST).trim();
+      user = PropertyManager.getProperty(LECKO_USER).trim();
       pwd = PropertyManager.getProperty(LECKO_PASSWORD);
-      remotePpath= PropertyManager.getProperty(LECKO_REMOTE_PATH);
+      remotePpath= PropertyManager.getProperty(LECKO_REMOTE_PATH).trim();
 
       String value = PropertyManager.getProperty(LECKO_PORT);
       if (value != null)
@@ -93,7 +94,7 @@ public class SftpClient
 
    }
 
-   public void send(String fileName)
+   public boolean send(String fileName)
    {
       Session session = null;
       Channel channel = null;
@@ -104,14 +105,29 @@ public class SftpClient
          JSch jsch = new JSch();
          session = jsch.getSession(user, host, port);
 
-         session.setPassword(pwd);
+         if(session != null)
+         {
+            session.setPassword(pwd);
+            session.setTimeout(DEFAULT_TIMOUT);
+         }
+         else
+         {
+            return false;
+         }
 
          Properties config = new Properties();
          config.put("StrictHostKeyChecking", "no");
          session.setConfig(config);
          session.connect();
          channel = session.openChannel("sftp");
-         channel.connect();
+         if(channel != null)
+         {
+            channel.connect(DEFAULT_TIMOUT);
+         }
+         else
+         {
+            return false;
+         }
          channelSftp = (ChannelSftp)channel;
          if(remotePpath != null)
          {
@@ -120,6 +136,7 @@ public class SftpClient
 
          File f = new File(fileName);
          channelSftp.put(new FileInputStream(f), f.getName());
+         return true;
       }
       catch (Exception ex)
       {
@@ -132,12 +149,22 @@ public class SftpClient
          {
             LOG.error(e.getMessage());
          }
+         return false;
       }
       finally
       {
-         channelSftp.exit();
-         channel.disconnect();
-         session.disconnect();
+         if(channelSftp != null)
+         {
+            channelSftp.exit();
+         }
+         if(channel != null)
+         {
+            channel.disconnect();
+         }
+         if(session != null)
+         {
+            session.disconnect();
+         }
       }
 
    }

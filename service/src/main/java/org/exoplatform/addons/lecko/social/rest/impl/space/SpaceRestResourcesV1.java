@@ -201,7 +201,7 @@ public class SpaceRestResourcesV1 implements SpaceRestResources {
     String authenticatedUser = ConversationState.getCurrent().getIdentity().getUserId();
     SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
     Space space = spaceService.getSpaceById(id);
-    if (space == null || (Space.HIDDEN.equals(space.getVisibility()) && ! spaceService.isMember(space, authenticatedUser) && ! RestUtils.isMemberOfAdminGroup())&& !Utils.isMemberOfAPIAccessGroup()) {
+    if (space == null || (Space.HIDDEN.equals(space.getVisibility()) && ! spaceService.isMember(space, authenticatedUser) && ! RestUtils.isMemberOfAdminGroup()&& !Utils.isMemberOfAPIAccessGroup())) {
       throw new WebApplicationException(Response.Status.UNAUTHORIZED);
     }
     return EntityBuilder.getResponse(EntityBuilder.buildEntityFromSpace(space, authenticatedUser, uriInfo.getPath(), expand), uriInfo, RestUtils.getJsonMediaType(), Response.Status.OK);

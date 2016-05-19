@@ -45,8 +45,9 @@ public class LeckoServiceController implements Startable
 {
    private static final Log LOG = ExoLogger.getLogger("org.exoplatform.addons.lecko.LeckoServiceController");
    private static final String rootPath = PropertyManager.getProperty("java.io.tmpdir")+"/lecko";
-   private static final String path= rootPath+"/exo-community.txt";
    private static final String LECKO_ENABLED = "exo.addons.lecko.job.enabled";
+   private static final String LECKO_OUTPUT_NAME= "exo.addons.lecko.out.name";
+   private static String path;
 
    public LeckoServiceController()
    {
@@ -55,6 +56,8 @@ public class LeckoServiceController implements Startable
       {
          PrivilegedFileHelper.mkdirs(directory);
       }
+      String  name = PropertyManager.getProperty(LECKO_OUTPUT_NAME);
+      path = rootPath+"/"+((name != null && ! name.isEmpty()) ? name : "dump");
    }
    /**
     * Build dump data.
@@ -83,32 +86,43 @@ public class LeckoServiceController implements Startable
    @ManagedDescription("Upload data to lecko server.")
    public String UploadLeckoData()
    {
+      boolean status = false;
       File file = new File(path);
       try
       {
          if(file.exists())
          {
-               SftpClient client = new SftpClient();
-               client.send(file.getAbsolutePath());
+            SftpClient client = new SftpClient();
+            LOG.info("Stat send Data to lecko server");
+            status =client.send(file.getAbsolutePath());
+            if(status)
+            {
+               LOG.info("End  send Data to lecko server");
+            }
+            else
+            {
+               LOG.info("Failed send Data to lecko server");
+            }
          }
          else
          {
+            LOG.info("Failed send Data to lecko server file not exist : " + path);
             return "Failed";
          }
       }
       catch (Exception ex)
       {
-         LOG.error(ex.getMessage());
-
+         LOG.error("Failed send Data to lecko server : " +ex.getMessage());
+         return "Failed";
       }
       finally
       {
-         if (file != null && file.exists())
+         if (file != null && file.exists() && status)
          {
             file.delete();
          }
       }
-      return "Success";
+      return status ?"Success":"Failed";
    }
 
    @Managed
