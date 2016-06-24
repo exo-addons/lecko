@@ -9,7 +9,7 @@ public class Utils {
 	  /**
 	   * Check if the authenticated user is a member of the api access group
 	   * 
-	   * @return
+	   * @return boolean
 	   */
 	  public static boolean isMemberOfAPIAccessGroup() {
 	    return ConversationState.getCurrent().getIdentity().isMemberOf(API_ACCESS_GROUP);

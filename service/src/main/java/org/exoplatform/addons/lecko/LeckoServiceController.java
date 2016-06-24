@@ -61,6 +61,7 @@ public class LeckoServiceController implements Startable
    }
    /**
     * Build dump data.
+    * @return String
     */
    @Managed
    @ManagedDescription("Build lecko data.")
@@ -81,6 +82,7 @@ public class LeckoServiceController implements Startable
 
    /**
     * Upload dump to lecko server.
+    * @return String
     */
    @Managed
    @ManagedDescription("Upload data to lecko server.")

@@ -99,8 +99,10 @@ public class EntityBuilder {
   private static final String LINK                    = "Link";
   /**
    * Get a IdentityEntity from an identity in order to build a json object for the rest service
-   * 
+   *
    * @param identity the provided identity
+   * @param restPath rest Path
+   * @param expand expand
    * @return a hash map
    */
   public static IdentityEntity buildEntityIdentity(Identity identity, String restPath, String expand) {
@@ -118,10 +120,10 @@ public class EntityBuilder {
   }
 
   /**
-   * @param userName
-   * @param restPath
-   * @param expand
-   * @return
+   * @param userName userName
+   * @param restPath rest Path
+   * @param expand expand
+   * @return identity
    */
   public static IdentityEntity buildEntityIdentity(String userName, String restPath, String expand) {
     IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
@@ -154,10 +156,10 @@ public class EntityBuilder {
   }
 
   /**
-   * @param userName
-   * @param restPath
-   * @param expand
-   * @return
+   * @param userName user Name
+   * @param restPath rest Path
+   * @param expand expand
+   * @return profile
    */
   public static ProfileEntity buildEntityProfile(String userName, String restPath, String expand) {
     IdentityManager identityManager = CommonsUtils.getService(IdentityManager.class);
@@ -166,10 +168,10 @@ public class EntityBuilder {
   }
   
   /**
-   * @param userNames
-   * @param restPath
-   * @param expand
-   * @return
+   * @param userNames user names
+   * @param restPath rest Path
+   * @param expand expand
+   * @return list
    */
   public static List<DataEntity> buildEntityProfiles(String[] userNames, String restPath, String expand) {
     if (userNames == null || userNames.length == 0) {
@@ -187,6 +189,8 @@ public class EntityBuilder {
    * 
    * @param space the provided space
    * @param userId the user's remote id
+   * @param restPath rest Path
+   * @param expand expand
    * @return a hash map
    */
   public static SpaceEntity buildEntityFromSpace(Space space, String userId, String restPath, String expand) {
@@ -235,6 +239,8 @@ public class EntityBuilder {
    * @param space the provided space
    * @param userId the user's remote id
    * @param type membership type
+   * @param restPath rest Path
+   * @param expand expand
    * @return a hash map
    */
   public static SpaceMembershipEntity buildEntityFromSpaceMembership(Space space, String userId, String type, String restPath, String expand) {
@@ -265,9 +271,10 @@ public class EntityBuilder {
 
   /**
    * Get a ActivityEntity from an activity in order to build a json object for the rest service
-   * 
+   *
    * @param activity the provided activity
-   * @param expand 
+   * @param expand expand
+   * @param restPath  rest Path
    * @return a hash map
    */
   public static ActivityEntity buildEntityFromActivity(ExoSocialActivity activity, String restPath, String expand) {
@@ -354,6 +361,9 @@ public class EntityBuilder {
    * Get a RelationshipEntity from a relationship in order to build a json object for the rest service
    * 
    * @param relationship the provided relationship
+   * @param restPath rest Path
+   * @param expand expand
+   * @param isSymetric boolean
    * @return a RelationshipEntity
    */
   public static RelationshipEntity buildEntityRelationship(Relationship relationship, String restPath, String expand, boolean isSymetric) {
@@ -409,8 +419,7 @@ public class EntityBuilder {
    * Get the activityStream's information related to the activity.
    * 
    * @param authentiatedUsed the viewer
-   * @param activity
-   * @param target the owner of the stream that we want to display
+   * @param activity activity
    * @return activityStream object, null if the viewer has no permission to view activity
    */
   public static DataEntity getActivityStream(ExoSocialActivity activity, Identity authentiatedUsed) {
@@ -557,6 +566,7 @@ public class EntityBuilder {
    * 
    * @param id the id of space
    * @param returnManager return managers or members
+   * @param restPath rest Path
    * @return rest url to load all members or managers of a space
    */
   public static String getMembersSpaceRestUrl(String id, boolean returnManager, String restPath) {
@@ -571,7 +581,8 @@ public class EntityBuilder {
    * Get the rest url in order to load all comments of an activity
    * 
    * @param activityId activity's id
-   * @return
+   * @param restPath rest Path
+   * @return comment rest url
    */
   public static String getCommentsActivityRestUrl(String activityId, String restPath) {
     return new StringBuffer(RestUtils.getRestUrl(ACTIVITIES_TYPE, activityId, restPath)).append("/").append("comments").toString();
@@ -622,15 +633,17 @@ public class EntityBuilder {
   }
 
   /**
+   * {@code
    * "https://localhost:8080/rest/users?offset=50&limit=25"
-   * 
-   * Link: <https://localhost:8080/rest/users?offset=25&limit=25>; rel="previous", 
+   *
+   * Link: <https://localhost:8080/rest/users?offset=25&limit=25>; rel="previous",
    * <https://localhost:8080/rest/users?offset=75&limit=25>; rel="next"
-   * 
+   * }
+   *
    * @param entity
-   * @param restPath
-   * @return
-   */
+   * @param requestPath
+   * @return Object
+          */
   public static Object buildLinkForHeader(Object entity, String requestPath) {
     CollectionEntity rc = (CollectionEntity)entity;
     int size = rc.getSize();
