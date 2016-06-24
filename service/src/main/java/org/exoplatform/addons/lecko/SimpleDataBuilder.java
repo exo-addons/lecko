@@ -23,6 +23,7 @@ import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.commons.utils.PrivilegedFileHelper;
 import org.exoplatform.commons.utils.PropertyManager;
+import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -62,9 +63,13 @@ public class SimpleDataBuilder implements DataBuilder
 
    private final String leckoOutputName;
 
+   private final int spaceLimit;
+
+   private final int userLimit;
+
    private static final String LECKO_OUTPUT_NAME= "exo.addons.lecko.out.name";
 
-   public SimpleDataBuilder(ExoSocialConnector exoSocialConnector, SpaceService spaceService)
+   public SimpleDataBuilder(ExoSocialConnector exoSocialConnector, SpaceService spaceService, InitParams initParams)
    {
       this.exoSocialConnector = exoSocialConnector;
       this.spaceService = spaceService;
@@ -76,6 +81,10 @@ public class SimpleDataBuilder implements DataBuilder
       }
       String  name = PropertyManager.getProperty(LECKO_OUTPUT_NAME);
       leckoOutputName = (name != null && ! name.isEmpty()) ? name : "dump";
+
+      spaceLimit = Integer.parseInt(initParams.getValueParam("SpaceLimit").getValue());
+
+      userLimit = Integer.parseInt(initParams.getValueParam("UserLimit").getValue());
 
    }
 
@@ -104,8 +113,8 @@ public class SimpleDataBuilder implements DataBuilder
          int size = 20;
          boolean hasNextSpace = true;
          int countSpace= 1;
-
-         while (hasNextSpace)
+         LOG.info("Lecko-Addons : Begin Space Extraction...");
+         while (spaceLimit != 0 && hasNextSpace)
          {
             //Extract all spaces by limit
             String json = exoSocialConnector.getSpaces(offset, size);
@@ -140,17 +149,21 @@ public class SimpleDataBuilder implements DataBuilder
                SocialActivity sa = new SpaceActivity(spaceId, exoSocialConnector);
                sa.loadActivityStream(out);
                countSpace ++;
+               if(spaceLimit != -1 && countSpace > spaceLimit )
+                  break;
             }
             offset += size;
             out.flush();
+            if(spaceLimit != -1 && countSpace > spaceLimit )
+               break;
          }
          /** Load User activity*/
          offset = 0;
          size = 20;
          boolean hasNextUser = true;
          int countUsUser=1;
-
-         while (hasNextUser)
+         LOG.info("Lecko-Addons : Begin User Extraction...");
+         while (userLimit!=0 && hasNextUser)
          {
             //Extract all users by limit
             String json = exoSocialConnector.getUsers(offset, size);
@@ -184,9 +197,13 @@ public class SimpleDataBuilder implements DataBuilder
                SocialActivity ua = new UserActivity(userId, exoSocialConnector);
                ua.loadActivityStream(out);
                countUsUser++;
+               if(userLimit != -1 && countUsUser > userLimit)
+                  break;
             }
             offset += size;
             out.flush();
+            if(userLimit != -1 && countUsUser > userLimit)
+               break;
          }
          LOG.info("Lecko-Addons : End Extraction");
       }
