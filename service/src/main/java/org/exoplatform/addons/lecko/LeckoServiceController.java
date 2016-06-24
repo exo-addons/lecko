@@ -139,7 +139,7 @@ public class LeckoServiceController implements Startable
      return Boolean.parseBoolean(PropertyManager.getProperty(LECKO_ENABLED));
    }
 
-   private  <T> T getService(Class<T> clazz) {
+   public static   <T> T getService(Class<T> clazz) {
       ExoContainer container = ExoContainerContext.getCurrentContainer();
       String containerName;
       if (container.getComponentInstanceOfType(clazz)==null) {

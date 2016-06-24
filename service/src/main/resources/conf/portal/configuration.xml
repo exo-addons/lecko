@@ -29,6 +29,10 @@
       <key>org.exoplatform.addons.lecko.DataBuilder</key>
       <type>org.exoplatform.addons.lecko.SimpleDataBuilder</type>
   </component>
+    <component>
+      <key>org.exoplatform.addons.lecko.rest.LeckoRestService</key>
+       <type>org.exoplatform.addons.lecko.rest.LeckoRestService</type>
+  </component>
   <component>
       <key>org.exoplatform.addons.lecko.LeckoServiceController</key>
       <type>org.exoplatform.addons.lecko.LeckoServiceController</type>
@@ -47,7 +51,7 @@
 			</value-param>
          <value-param>
 				<name>baseUrl</name>
-				<value>http://localhost:8080</value>
+				<value>${exo.api-access.baseUrl}</value>
 			</value-param>
 		</init-params>
   </component>

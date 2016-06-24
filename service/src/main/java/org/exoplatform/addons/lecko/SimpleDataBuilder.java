@@ -192,7 +192,7 @@ public class SimpleDataBuilder implements DataBuilder
       }
       catch (Exception ex)
       {
-         LOG.error(ex.getMessage());
+         LOG.error(ex);
          state = false;
       }
       finally

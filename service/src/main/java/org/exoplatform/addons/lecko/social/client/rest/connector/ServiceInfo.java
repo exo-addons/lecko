@@ -78,8 +78,8 @@ public class ServiceInfo {
   }
 
 
-  public static String getActivityData(String url, int offset, int limit){
-    return url.replace("rest","rest/private")+"?offset="+offset+"&limit="+limit;
+  public static String getActivityData(String url){
+    return url.replace("rest","rest/private");
   }
 
 }

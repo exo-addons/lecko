@@ -18,10 +18,54 @@
  */
 package org.exoplatform.addons.lecko.rest;
 
+import javax.annotation.security.RolesAllowed;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import org.exoplatform.addons.lecko.DataBuilder;
+import org.exoplatform.addons.lecko.LeckoServiceController;
+import org.exoplatform.addons.lecko.SimpleDataBuilder;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
+import org.exoplatform.services.rest.resource.ResourceContainer;
+
 /**
- * @author <a href="mailto:foo@bar.org">Foo Bar</a>
- * @version $Id: Body Header.java 34027 2009-07-15 23:26:43Z aheritier $
+ * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com
  */
-public class LeckoRestService
+@RolesAllowed("users")
+@Path("/lecko")
+public class LeckoRestService implements ResourceContainer
 {
+   private static final Log LOG = ExoLogger.getLogger("org.exoplatform.addons.lecko.rest.LeckoRestService");
+   @Path("create/{dumpName}")
+   @GET
+   public Response createOpp(
+      @Context HttpServletRequest request,
+      @PathParam("dumpName") String dumpName) throws Exception
+   {
+      new Thread(new Runnable()
+      {
+         @Override
+         public void run()
+         {
+            DataBuilder builder = LeckoServiceController.getService(SimpleDataBuilder.class);
+            try
+            {
+               builder.build();
+            }
+            catch (Exception ex)
+            {
+               LOG.error(ex.getMessage());
+            }
+
+         }
+      }, "LeckoDumpService").start();
+      return Response.status(Response.Status.OK).build();
+
+   }
+
+
 }
