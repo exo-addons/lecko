@@ -35,5 +35,4 @@ Some actions are available with MBeans :
 - getEnableLeckoJob : to know if jobs are activated or not
 - getJobStatus : to know where the export is. It can be Running or Stopped, and display the percentage of completion. Exmpl : "Export is stopped. Export is done at 88% for current extraction."
 - resetExtraction : remove dump file (without sending it to lecko), and reset database. This can be used to start a fresh export.
-- 
 
