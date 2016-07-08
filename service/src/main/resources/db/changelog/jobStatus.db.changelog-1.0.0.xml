@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+  <!-- Managing both DB that use sequences and db that use auto increment -->
+  <property name="autoIncrement" value="true" dbms="mysql,mssql,h2,sybase,db2,hsqldb"/>
+  <property name="autoIncrement" value="false" dbms="oracle,postgresql"/>
+
+  <!-- Definition of JOBSTATUS table -->
+  <changeSet author="jobStatus" id="1.0.0-1">
+    <createTable tableName="JOBSTATUS">
+      <column name="JOBSTATUS_ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1">
+        <constraints primaryKey="true" primaryKeyName="PK_JOBSTATUS" nullable="false"/>
+      </column>
+      <column name="IDENTITY_ID" type="NVARCHAR(250)">
+        <constraints nullable="false"/>
+      </column>
+    </createTable>
+
+  </changeSet>
+</databaseChangeLog>

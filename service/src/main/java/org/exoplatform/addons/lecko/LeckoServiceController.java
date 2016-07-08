@@ -19,6 +19,7 @@
 package org.exoplatform.addons.lecko;
 
 import org.exoplatform.addons.lecko.Utils.SftpClient;
+import org.exoplatform.addons.lecko.social.client.rest.connector.ExoSocialConnector;
 import org.exoplatform.commons.utils.PrivilegedFileHelper;
 import org.exoplatform.commons.utils.PropertyManager;
 import org.exoplatform.container.ExoContainer;
@@ -32,6 +33,8 @@ import org.exoplatform.management.jmx.annotations.NameTemplate;
 import org.exoplatform.management.jmx.annotations.Property;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
+import org.exoplatform.social.core.space.model.Space;
+import org.exoplatform.social.core.space.spi.SpaceService;
 import org.picocontainer.Startable;
 import java.io.File;
 
@@ -47,7 +50,10 @@ public class LeckoServiceController implements Startable
    private static final String rootPath = PropertyManager.getProperty("java.io.tmpdir")+"/lecko";
    private static final String LECKO_ENABLED = "exo.addons.lecko.job.enabled";
    private static final String LECKO_OUTPUT_NAME= "exo.addons.lecko.out.name";
+
    private static String path;
+
+   private DataBuilder dataBuilder;
 
    public LeckoServiceController()
    {
@@ -56,6 +62,7 @@ public class LeckoServiceController implements Startable
       {
          PrivilegedFileHelper.mkdirs(directory);
       }
+
       String  name = PropertyManager.getProperty(LECKO_OUTPUT_NAME);
       path = rootPath+"/"+((name != null && ! name.isEmpty()) ? name : "dump");
    }
@@ -66,18 +73,63 @@ public class LeckoServiceController implements Startable
    @ManagedDescription("Build lecko data.")
    public String buildLeckoData()
    {
-      DataBuilder builder = getService(SimpleDataBuilder.class);
+
       try
       {
-         builder.build();
+         if (dataBuilder==null) {initDataBuilder();}
+         if (!dataBuilder.getBuildStatus()) {
+            //export is not already running
+            new Thread(dataBuilder).start();
+            //dataBuilder.build();
+         } else {
+            return "Export is already running";
+         }
       }
       catch (Exception ex)
       {
          LOG.error(ex.getMessage());
          return "Failed";
       }
-      return "Success";
+      return "Job Started";
    }
+
+   /**
+    * get Job Status
+    */
+   @Managed
+   @ManagedDescription("Get Lecko Job Status.")
+   public String getJobStatus()
+   {
+      if (dataBuilder==null) {initDataBuilder();}
+      int percent=dataBuilder.getPercent();
+
+      String result = dataBuilder.getBuildStatus() ? "Export is running." : "Export is stopped.";
+      result += " Export is done at "+percent+"% for current extraction.";
+      return result;
+   }
+
+   /**
+    * Stop dump data.
+    */
+   @Managed
+   @ManagedDescription("Stop lecko export.")
+   public String stopLeckoExport()
+   {
+
+      try
+      {
+         if (dataBuilder==null) {initDataBuilder();}
+
+         dataBuilder.stopBuild();
+      }
+      catch (Exception ex)
+      {
+         LOG.error(ex.getMessage());
+         return "Failed";
+      }
+      return "Stopping job";
+   }
+
 
    /**
     * Upload dump to lecko server.
@@ -90,24 +142,28 @@ public class LeckoServiceController implements Startable
       File file = new File(path);
       try
       {
-         if(file.exists())
-         {
-            SftpClient client = new SftpClient();
-            LOG.info("Stat send Data to lecko server");
-            status =client.send(file.getAbsolutePath());
-            if(status)
-            {
-               LOG.info("End  send Data to lecko server");
+         if (dataBuilder==null) {initDataBuilder();}
+         int percent=dataBuilder.getPercent();
+         if (percent<100) {
+            return "Cannot upload file, data not fully exported. Only "+percent+"% done.";
+         } else if (dataBuilder.getBuildStatus()) {
+            return "Export is running, cannot send data.";
+         } else {
+
+            if (file.exists()) {
+               SftpClient client = new SftpClient();
+               LOG.info("Start send Data to lecko server");
+               status = client.send(file.getAbsolutePath());
+               if (status) {
+                  LOG.info("End  send Data to lecko server");
+                  resetExtraction();
+               } else {
+                  LOG.info("Failed send Data to lecko server");
+               }
+            } else {
+               LOG.info("Failed send Data to lecko server file not exist : " + path);
+               return "Failed";
             }
-            else
-            {
-               LOG.info("Failed send Data to lecko server");
-            }
-         }
-         else
-         {
-            LOG.info("Failed send Data to lecko server file not exist : " + path);
-            return "Failed";
          }
       }
       catch (Exception ex)
@@ -117,10 +173,10 @@ public class LeckoServiceController implements Startable
       }
       finally
       {
-         if (file != null && file.exists() && status)
-         {
-            file.delete();
-         }
+         //if (file != null && file.exists() && status)
+         //{
+         //   file.delete();
+         //}
       }
       return status ?"Success":"Failed";
    }
@@ -139,6 +195,13 @@ public class LeckoServiceController implements Startable
      return Boolean.parseBoolean(PropertyManager.getProperty(LECKO_ENABLED));
    }
 
+   private void initDataBuilder() {
+      ExoSocialConnector exoSocialConnector  = getService(ExoSocialConnector.class);
+      SpaceService spaceService  = getService(SpaceService.class);
+      JobStatusService jobStatusService  = getService(JobStatusService.class);
+      dataBuilder=new SimpleDataBuilder(exoSocialConnector,spaceService,jobStatusService);
+   }
+
    private  <T> T getService(Class<T> clazz) {
       ExoContainer container = ExoContainerContext.getCurrentContainer();
       String containerName;
@@ -147,6 +210,22 @@ public class LeckoServiceController implements Startable
          container = RootContainer.getInstance().getPortalContainer(containerName);
       }
       return clazz.cast(container.getComponentInstanceOfType(clazz));
+   }
+
+   /**
+    * Upload dump to lecko server.
+    */
+   @Managed
+   @ManagedDescription("Reset extraction job")
+   public String resetExtraction()
+   {
+
+      if (dataBuilder==null) {initDataBuilder();}
+
+      dataBuilder.deleteDumpFile();
+
+      JobStatusService jobStatusService = getService(JobStatusService.class);
+      return jobStatusService.resetStatus()? "Success":"Failed";
    }
 
    @Override

@@ -9,6 +9,11 @@
   <artifactId>lecko-service</artifactId>
   <name>Lecko Analytics Add-on - Service</name>
   <dependencies>
+      <dependency>
+          <groupId>org.hibernate</groupId>
+          <artifactId>hibernate-entitymanager</artifactId>
+          <scope>provided</scope>
+      </dependency>
 	<dependency>
 		<groupId>com.google.code.gson</groupId>
 		<artifactId>gson</artifactId>

@@ -25,10 +25,20 @@
     xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd"
     xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
 
- <component>
+
+    <component>
+        <key>org.exoplatform.addons.lecko.JobStatusService</key>
+        <type>org.exoplatform.addons.lecko.JobStatusService</type>
+    </component>
+
+    <component>
+        <type>org.exoplatform.commons.persistence.impl.EntityManagerService</type>
+    </component>
+
+    <!--component>
       <key>org.exoplatform.addons.lecko.DataBuilder</key>
       <type>org.exoplatform.addons.lecko.SimpleDataBuilder</type>
-  </component>
+  </component-->
   <component>
       <key>org.exoplatform.addons.lecko.LeckoServiceController</key>
       <type>org.exoplatform.addons.lecko.LeckoServiceController</type>
@@ -57,19 +67,77 @@
      <name>AddCronJob</name>
      <set-method>addCronJob</set-method>
      <type>org.exoplatform.services.scheduler.CronJob</type>
-      <description>add a send weekly notification job to the JobSchedulerService</description>
+      <description>Start Lecko Export</description>
       <init-params>
         <properties-param>
           <name>cronjob.info</name>
-          <description>Configuration for weekly send notification</description>
-          <property name="jobName" value="LeckoJob"/>
-          <property name="groupName" value="LeckoJob"/>
-          <property name="job" value="org.exoplatform.addons.lecko.job.LeckoJob"/>
-          <property name="expression" value="${exo.LeckoJob.expression:0 0/2 * * * ?}"/>
+          <description>Start Lecko Export</description>
+          <property name="jobName" value="leckoExportJobStart"/>
+          <property name="groupName" value="leckoExportJobStart"/>
+          <property name="job" value="org.exoplatform.addons.lecko.job.StartLeckoExportJob"/>
+          <property name="expression" value="${exo.addons.lecko.job.start.expression:0 0 21 * * ?}"/>
         </properties-param>
       </init-params>
     </component-plugin>
   </external-component-plugins>
+
+    <external-component-plugins>
+        <target-component>org.exoplatform.services.scheduler.JobSchedulerService</target-component>
+        <component-plugin profiles="all">
+            <name>AddCronJob</name>
+            <set-method>addCronJob</set-method>
+            <type>org.exoplatform.services.scheduler.CronJob</type>
+            <description>Stop Lecko Export</description>
+            <init-params>
+                <properties-param>
+                    <name>cronjob.info</name>
+                    <description>Stop Lecko Export</description>
+                    <property name="jobName" value="leckoExportJobStop"/>
+                    <property name="groupName" value="leckoExportJobStop"/>
+                    <property name="job" value="org.exoplatform.addons.lecko.job.StopLeckoExportJob"/>
+                    <property name="expression" value="${exo.addons.lecko.job.stop.expression:0 0 6 * * ?}"/>
+                </properties-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+    <external-component-plugins>
+        <target-component>org.exoplatform.services.scheduler.JobSchedulerService</target-component>
+        <component-plugin profiles="all">
+            <name>AddCronJob</name>
+            <set-method>addCronJob</set-method>
+            <type>org.exoplatform.services.scheduler.CronJob</type>
+            <description>Stop Lecko Export</description>
+            <init-params>
+                <properties-param>
+                    <name>cronjob.info</name>
+                    <description>Stop Lecko Export</description>
+                    <property name="jobName" value="leckoExportJobUpload"/>
+                    <property name="groupName" value="leckoExportJobUpload"/>
+                    <property name="job" value="org.exoplatform.addons.lecko.job.UploadAnResetLeckoDataJob"/>
+                    <property name="expression" value="${exo.addons.lecko.job.upload.expression:0 0 7 1 * ?}"/>
+                </properties-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+
+    <external-component-plugins>
+        <target-component>org.exoplatform.commons.api.persistence.DataInitializer</target-component>
+        <component-plugin>
+            <name>TaskManagementChangeLogsPlugin</name>
+            <set-method>addChangeLogsPlugin</set-method>
+            <type>org.exoplatform.commons.persistence.impl.ChangeLogsPlugin</type>
+            <init-params>
+                <values-param>
+                    <name>changelogs</name>
+                    <description>Change logs of task management</description>
+                    <value>db/changelog/jobStatus.db.changelog-1.0.0.xml</value>
+                </values-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
+
+
+
 
 
 </configuration>

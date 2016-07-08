@@ -22,9 +22,15 @@ package org.exoplatform.addons.lecko;
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com
 
  */
-public interface DataBuilder
-{
+public interface DataBuilder extends Runnable {
 
    boolean build();
 
+   void deleteDumpFile();
+
+   void stopBuild();
+
+   boolean getBuildStatus();
+
+   int getPercent();
 }
