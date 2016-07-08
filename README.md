@@ -9,22 +9,22 @@ Then, once a month we send datas to lecko ftp. This is done by job UploadAnReset
 Theses jobs can be deactivated with property exo.addons.lecko.job.enabled. If set to false, startJob, stopJob and exportJob will have no effect.
 
 Properties :
-  exo.api-access.user=api #username with will make api call
-  exo.api-access.password=password #password for user making api call
-  exo.api-access.group=api-access 
+* exo.api-access.user=api #username with will make api call
+* exo.api-access.password=password #password for user making api call
+* exo.api-access.group=api-access 
 
-  exo.addons.lecko.job.start.expression=0 0 21 * * ? #when export starts. Default value : start export each days at 9:00 PM
-  exo.addons.lecko.job.stop.expression=0 0 6 * * ? #when export stops. Default value : stop export each days at 6:00 AM
-  exo.addons.lecko.job.upload.expression=0 0 7 1 * ? #when update datas to lecko FTP : each first day of the month, at 7:00 AM
-  exo.addons.lecko.job.enabled=true #enable jobs
-  exo.addons.lecko.out.name=mytestDump #file name 
+* exo.addons.lecko.job.start.expression=0 0 21 * * ? #when export starts. Default value : start export each days at 9:00 PM
+* exo.addons.lecko.job.stop.expression=0 0 6 * * ? #when export stops. Default value : stop export each days at 6:00 AM
+* exo.addons.lecko.job.upload.expression=0 0 7 1 * ? #when update datas to lecko FTP : each first day of the month, at 7:00 AM
+* exo.addons.lecko.job.enabled=true #enable jobs
+* exo.addons.lecko.out.name=mytestDump #file name 
 
 
-  exo.addons.lecko.SftpHost=ftphostName
-  exo.addons.lecko.SftpUser=ftpUser
-  exo.addons.lecko.SftpPassword=ftppassword
-  exo.addons.lecko.SftPortNumber=22
-  exo.addons.lecko.SftpRemotePath=ftpremotePath
+* exo.addons.lecko.SftpHost=ftphostName
+* exo.addons.lecko.SftpUser=ftpUser
+* exo.addons.lecko.SftpPassword=ftppassword
+* exo.addons.lecko.SftPortNumber=22
+* exo.addons.lecko.SftpRemotePath=ftpremotePath
 
 
 Some actions are available with MBeans :
