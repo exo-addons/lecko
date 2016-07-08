@@ -38,9 +38,9 @@ public interface ExoSocialConnector
 
   public String getActivitiesByUserID(String ID, int offset, int limit) throws Exception;
 
-  public String getActivityComments(String url , int offset, int limit) throws Exception;
+  public String getActivityComments(String url) throws Exception;
 
-  public String getActivityLikes(String url , int offset, int limit) throws Exception;
+  public String getActivityLikes(String url) throws Exception;
 
 
 }

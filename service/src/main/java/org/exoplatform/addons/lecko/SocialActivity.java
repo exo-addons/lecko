@@ -71,57 +71,46 @@ abstract class SocialActivity
       String idEvent = "";
       String date = "";
       String idactor = "";
-      int offset = 0;
-      int limit = 20;
-      boolean hasNextComments = true;
-
-      while (hasNextComments)
+      result = exoSocialConnector.getActivityComments(url);
+      JSONArray jsonComments;
+      if (result == null)
       {
-         result = exoSocialConnector.getActivityComments(url, offset, limit);
-         JSONArray jsonComments;
-         if (result == null)
+         return;
+      }
+      else
+      {
+         jsonComments = parseJSONArray(result, "comments");
+      }
+
+      if (jsonComments == null || jsonComments.size() == 0)
+      {
+         return;
+      }
+
+      for (Object obj : jsonComments)
+      {
+         JSONObject js = (JSONObject)obj;
+         idactor = ((String)js.get("identity")).split("/")[7];
+         if (!user_map.containsKey(idactor))
          {
-            break;
+            user_map.put(idactor, Integer.toString(user_map.size() + 1));
+            idactor = user_map.get(idactor);
          }
          else
          {
-            jsonComments = parseJSONArray(result, "comments");
+            idactor = user_map.get(idactor);
          }
+         out.print(idactor + ";");
 
-         if (jsonComments == null || jsonComments.size() == 0)
-         {
-            break;
-         }
-         else if (jsonComments.size() < limit)
-         {
-            hasNextComments = false;
-         }
-
-         for (Object obj : jsonComments)
-         {
-            JSONObject js = (JSONObject)obj;
-            idactor = ((String)js.get("identity")).split("/")[7];
-            if (!user_map.containsKey(idactor))
-            {
-               user_map.put(idactor, Integer.toString(user_map.size() + 1));
-               idactor = user_map.get(idactor);
-            }
-            else
-            {
-               idactor = user_map.get(idactor);
-            }
-            out.print(idactor + ";");
-
-            idEvent = "comment";
-            out.print(idEvent + ";");
-            date = (String)js.get("createDate");
-            out.print(date + ";");
-            out.print(placeName + ";");
-            out.println();
-         }
-         offset += limit;
-         out.flush();
+         idEvent = "comment";
+         out.print(idEvent + ";");
+         date = (String)js.get("createDate");
+         out.print(date + ";");
+         out.print(placeName + ";");
+         out.println();
       }
+      out.flush();
+
 
       if (LOG.isDebugEnabled())
       {
@@ -139,56 +128,45 @@ abstract class SocialActivity
       String result;
       String idEvent = "";
       String idactor = "";
-      int offset = 0;
-      int limit = 20;
-      boolean hasNextLikes = true;
 
-      while (hasNextLikes)
+      result = exoSocialConnector.getActivityLikes(url);
+      JSONArray jsonLikes;
+      if (result == null)
       {
-         result = exoSocialConnector.getActivityLikes(url, offset, limit);
-         JSONArray jsonLikes;
-         if (result == null)
+         return;
+      }
+      else
+      {
+         jsonLikes = parseJSONArray(result, "likes");
+      }
+
+      if (jsonLikes == null || jsonLikes.size() == 0)
+      {
+         return;
+      }
+
+      for (Object obj : jsonLikes)
+      {
+         JSONObject js = (JSONObject)obj;
+         idactor = ((String)js.get("identity")).split("/")[7];
+         if (!user_map.containsKey(idactor))
          {
-            break;
+            user_map.put(idactor, Integer.toString(user_map.size() + 1));
+            idactor = user_map.get(idactor);
          }
          else
          {
-            jsonLikes = parseJSONArray(result, "likes");
+            idactor = user_map.get(idactor);
          }
+         out.print(idactor + ";");
 
-         if (jsonLikes == null || jsonLikes.size() == 0)
-         {
-            break;
-         }
-         else if (jsonLikes.size() < limit)
-         {
-            hasNextLikes = false;
-         }
-
-         for (Object obj : jsonLikes)
-         {
-            JSONObject js = (JSONObject)obj;
-            idactor = ((String)js.get("identity")).split("/")[7];
-            if (!user_map.containsKey(idactor))
-            {
-               user_map.put(idactor, Integer.toString(user_map.size() + 1));
-               idactor = user_map.get(idactor);
-            }
-            else
-            {
-               idactor = user_map.get(idactor);
-            }
-            out.print(idactor + ";");
-
-            idEvent = "like";
-            out.print(idEvent + ";");
-            out.print(date + ";");
-            out.print(placeName + ";");
-            out.println();
-         }
-         offset += limit;
-         out.flush();
+         idEvent = "like";
+         out.print(idEvent + ";");
+         out.print(date + ";");
+         out.print(placeName + ";");
+         out.println();
       }
+      out.flush();
 
       if (LOG.isDebugEnabled())
       {

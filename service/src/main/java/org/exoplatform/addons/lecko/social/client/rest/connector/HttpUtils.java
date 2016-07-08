@@ -21,15 +21,18 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Sep
  * 29, 2015
  */
 public class HttpUtils {
-
+  private static Log LOG = ExoLogger.getLogger(HttpUtils.class);
   // GET
   public static String get(String url) throws Exception {
+    LOG.info(url);
     HttpURLConnection connection = (HttpURLConnection) (new URL(url)).openConnection();
     connection.setRequestMethod("GET");
     connection.connect();

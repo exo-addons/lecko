@@ -68,6 +68,7 @@ public class LeckoServiceController implements Startable
    }
    /**
     * Build dump data.
+    * @return String
     */
    @Managed
    @ManagedDescription("Build lecko data.")
@@ -133,6 +134,7 @@ public class LeckoServiceController implements Startable
 
    /**
     * Upload dump to lecko server.
+    * @return String
     */
    @Managed
    @ManagedDescription("Upload data to lecko server.")
@@ -202,7 +204,7 @@ public class LeckoServiceController implements Startable
       dataBuilder=new SimpleDataBuilder(exoSocialConnector,spaceService,jobStatusService);
    }
 
-   private  <T> T getService(Class<T> clazz) {
+   public static   <T> T getService(Class<T> clazz) {
       ExoContainer container = ExoContainerContext.getCurrentContainer();
       String containerName;
       if (container.getComponentInstanceOfType(clazz)==null) {

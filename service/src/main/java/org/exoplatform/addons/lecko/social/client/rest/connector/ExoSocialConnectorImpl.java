@@ -110,17 +110,17 @@ public class ExoSocialConnectorImpl implements ExoSocialConnector
    }
 
    @Override
-   public String getActivityComments(String url, int offset, int limit) throws Exception
+   public String getActivityComments(String url) throws Exception
    {
-      String newUrl = ServiceInfo.getActivityData(url, offset, limit);
+      String newUrl = ServiceInfo.getActivityData(url);
       String json = HttpUtils.get(newUrl);
       return json;
    }
 
    @Override
-   public String getActivityLikes(String url, int offset, int limit) throws Exception
+   public String getActivityLikes(String url) throws Exception
    {
-      String newUrl = ServiceInfo.getActivityData(url, offset, limit);
+      String newUrl = ServiceInfo.getActivityData(url);
       String json = HttpUtils.get(newUrl);
       return json;
    }

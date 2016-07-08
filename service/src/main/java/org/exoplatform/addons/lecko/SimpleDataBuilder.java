@@ -18,6 +18,7 @@
  */
 package org.exoplatform.addons.lecko;
 
+import org.exoplatform.addons.lecko.dao.JobStatus;
 import org.exoplatform.addons.lecko.social.client.rest.connector.ExoSocialConnector;
 import org.exoplatform.commons.persistence.impl.EntityManagerService;
 import org.exoplatform.commons.utils.CommonsUtils;
@@ -25,6 +26,7 @@ import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.commons.utils.PrivilegedFileHelper;
 import org.exoplatform.commons.utils.PropertyManager;
 import org.exoplatform.container.PortalContainer;
+import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -71,7 +73,12 @@ public class SimpleDataBuilder implements DataBuilder {
 
    private static boolean runBuild = false;
 
+   private final int spaceLimit;
+
+   private final int userLimit;
+
    public SimpleDataBuilder(ExoSocialConnector exoSocialConnector, SpaceService spaceService, JobStatusService jobStatusService)
+
    {
       this.exoSocialConnector = exoSocialConnector;
       this.spaceService = spaceService;
@@ -84,6 +91,17 @@ public class SimpleDataBuilder implements DataBuilder {
       }
       String  name = PropertyManager.getProperty(LECKO_OUTPUT_NAME);
       leckoOutputName = (name != null && ! name.isEmpty()) ? name : "dump";
+
+      if (PropertyManager.getProperty("exo.addon.lecko.spaceLimit")!=null) {
+         spaceLimit = Integer.parseInt(PropertyManager.getProperty("exo.addon.lecko.spaceLimit"));
+      } else {
+         spaceLimit=-1;
+      }
+      if (PropertyManager.getProperty("exo.addon.lecko.userLimit")!=null) {
+         userLimit = Integer.parseInt(PropertyManager.getProperty("exo.addon.lecko.userLimit"));
+      } else {
+         userLimit=-1;
+      }
 
    }
 
@@ -144,8 +162,8 @@ public class SimpleDataBuilder implements DataBuilder {
          int countSpace= 1;
 
          int lastSpaceLog=0;
-         while (hasNextSpace)
-         {
+         LOG.info("Lecko-Addons : Begin Space Extraction...");
+         while (spaceLimit != 0 && hasNextSpace) {
                //Extract all spaces by limit
                String json = exoSocialConnector.getSpaces(offset, size);
                JSONArray spaceList = null;
@@ -190,6 +208,8 @@ public class SimpleDataBuilder implements DataBuilder {
 
                      }
                      countSpace++;
+                     if(spaceLimit != -1 && countSpace > spaceLimit )
+			break;
                   } else {
                      LOG.info("Export was stopped");
                      return true;
@@ -197,16 +217,18 @@ public class SimpleDataBuilder implements DataBuilder {
                }
                offset += size;
                out.flush();
-
+	       if(spaceLimit != -1 && countSpace > spaceLimit )
+			break;
          }
+
          /** Load User activity*/
          offset = 0;
          size = 20;
          boolean hasNextUser = true;
          int countUser=1;
          int lastUserLog = 0;
-         while (hasNextUser)
-         {
+         LOG.info("Lecko-Addons : Begin User Extraction...");
+         while (userLimit!=0 && hasNextUser) {
                //Extract all users by limit
                String json = exoSocialConnector.getUsers(offset, size);
                JSONArray userList = null;
@@ -250,6 +272,7 @@ public class SimpleDataBuilder implements DataBuilder {
                      }
 
                      countUser++;
+		             if(userLimit != -1 && countUser > userLimit)  break;
                   } else {
                      LOG.info("Export was stopped");
                      return true;
@@ -257,13 +280,15 @@ public class SimpleDataBuilder implements DataBuilder {
                }
                offset += size;
                out.flush();
+               if(userLimit != -1 && countUser > userLimit)
+                  break;
 
          }
          LOG.info("Lecko-Addons : End Extraction");
       }
       catch (Exception ex)
       {
-         LOG.error(ex.getMessage());
+         LOG.error(ex);
          state = false;
       }
       finally
