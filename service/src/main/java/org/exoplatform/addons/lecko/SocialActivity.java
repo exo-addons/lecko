@@ -60,7 +60,7 @@ abstract class SocialActivity
 
    }
 
-   protected void getExoComments(String url, String placeName, PrintWriter out) throws Exception
+   protected void getExoComments(String url, String placeName, String displayName, PrintWriter out) throws Exception
    {
 
       if (LOG.isDebugEnabled())
@@ -106,7 +106,7 @@ abstract class SocialActivity
          out.print(idEvent + ";");
          date = (String)js.get("createDate");
          out.print(date + ";");
-         out.print(placeName + ";");
+         out.print(placeName + ";"+displayName+";");
          out.println();
       }
       out.flush();
@@ -119,7 +119,7 @@ abstract class SocialActivity
 
    }
 
-   protected void getLikes(String url, String date, String placeName, PrintWriter out) throws Exception
+   protected void getLikes(String url, String date, String placeName,String displayName, PrintWriter out) throws Exception
    {
       if (LOG.isDebugEnabled())
       {
@@ -163,7 +163,7 @@ abstract class SocialActivity
          idEvent = "like";
          out.print(idEvent + ";");
          out.print(date + ";");
-         out.print(placeName + ";");
+         out.print(placeName + ";"+displayName+";");
          out.println();
       }
       out.flush();

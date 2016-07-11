@@ -32,9 +32,12 @@ public class SpaceActivity extends SocialActivity
 
    String spaceId;
 
-   public SpaceActivity(String id, ExoSocialConnector exoSocialConnector)
+   String displayName;
+
+   public SpaceActivity(String id,String displayName, ExoSocialConnector exoSocialConnector)
    {
       this.spaceId = id;
+      this.displayName=displayName;
       this.exoSocialConnector = exoSocialConnector;
    }
    @Override
@@ -101,17 +104,17 @@ public class SpaceActivity extends SocialActivity
             placeName = (String)(((JSONObject)js.get("activityStream")).get("id"));
             if (type_space.equals("user"))
             {
-               placeName = "";
+               out.print(";;");
             }
-            out.print(placeName + ";");
+            out.print(placeName + ";"+this.displayName+";");
             out.println();
             url_comments = (String)js.get("comments");
             url_likes = (String)js.get("likes");
 
             //Getting Comments
-            getExoComments(url_comments, placeName, out);
+            getExoComments(url_comments, placeName,this.displayName, out);
             //Getting Likes
-            getLikes(url_likes, date, placeName, out);
+            getLikes(url_likes, date, placeName, this.displayName,out);
          }
          offsetActivities += sizeActivities;
          out.flush();

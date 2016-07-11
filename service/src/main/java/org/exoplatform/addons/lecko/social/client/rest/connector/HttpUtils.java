@@ -32,7 +32,9 @@ public class HttpUtils {
   private static Log LOG = ExoLogger.getLogger(HttpUtils.class);
   // GET
   public static String get(String url) throws Exception {
-    LOG.info(url);
+    if (LOG.isDebugEnabled()) {
+      LOG.debug(url);
+    }
     HttpURLConnection connection = (HttpURLConnection) (new URL(url)).openConnection();
     connection.setRequestMethod("GET");
     connection.connect();

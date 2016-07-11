@@ -154,6 +154,12 @@ public class SimpleDataBuilder implements DataBuilder {
          ListAccess<Space> spaceListAccess = spaceService.getAllSpacesWithListAccess();
          ListAccess<Identity> userListAccess = CommonsUtils.getService(IdentityManager.class).getIdentitiesByProfileFilter(OrganizationIdentityProvider.NAME, new ProfileFilter(), false);
 
+         //verifier si on a deja tout traité. Si oui, sortir directement.
+         if (getPercent()==100) {
+            LOG.info("Extraction already finished.");
+            return true;
+         }
+
          LOG.info("Lecko-Addons : Begin Extraction...");
          //Get All spaces
          int offset = 0;
@@ -186,6 +192,8 @@ public class SimpleDataBuilder implements DataBuilder {
                      JSONObject jsonObject = (JSONObject) obj;
                      //space ID
                      String spaceId = (String) jsonObject.get("id");
+                     String spaceDisplayName = (String) jsonObject.get("displayName");
+
                      double spacePercent = ((double)countSpace/spaceListAccess.getSize())*100;
                      if ((int)spacePercent % 5 == 0 && lastSpaceLog!=(int)spacePercent) {
                         LOG.info("Extract Data from spaces " + (int)spacePercent + "%");
@@ -196,7 +204,7 @@ public class SimpleDataBuilder implements DataBuilder {
                         if (LOG.isDebugEnabled()) {
                            LOG.debug("Export datas for space "+spaceId);
                         }
-                        SocialActivity sa = new SpaceActivity(spaceId, exoSocialConnector);
+                        SocialActivity sa = new SpaceActivity(spaceId,spaceDisplayName, exoSocialConnector);
                         sa.loadActivityStream(out);
 
                         //store the id, to say that the space is treated.
@@ -303,6 +311,8 @@ public class SimpleDataBuilder implements DataBuilder {
          {
             PrivilegedFileHelper.delete(file);
          }
+
+         runBuild=false;
       }
       return state;
    }
@@ -321,7 +331,6 @@ public class SimpleDataBuilder implements DataBuilder {
       EntityManagerService service = PortalContainer.getInstance().getComponentInstanceOfType(EntityManagerService.class);
       service.startRequest(PortalContainer.getInstance());
       //the em is put in threadLocal and use in the build.
-
       build();
       service.endRequest(PortalContainer.getInstance());
    }

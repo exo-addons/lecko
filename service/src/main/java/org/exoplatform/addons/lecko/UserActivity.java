@@ -104,9 +104,9 @@ public class UserActivity extends SocialActivity
                url_likes = (String)js.get("likes");
 
                //Getting Comments
-               getExoComments(url_comments, placeName, out);
+               getExoComments(url_comments, placeName,"", out);
                //Getting Likes
-               getLikes(url_likes, date, placeName, out);
+               getLikes(url_likes, date, placeName,"", out);
             }
          }
          offsetActivities += sizeActivities;
