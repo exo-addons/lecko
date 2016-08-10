@@ -26,7 +26,7 @@ public class JobStatus {
     private long id;
 
 
-    @Column(name = "IDENITTY_ID")
+    @Column(name = "IDENTITY_ID")
     private String      identityId;
 
     public long getId() {
