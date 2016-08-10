@@ -36,7 +36,11 @@ import java.io.File;
 
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com
+ *
+ * DEPRECATED : no more used
+ * All is done with StartLeckoExportJob and StopLeckoExportJob
  */
+@Deprecated
 public class LeckoJob implements Job
 {
    private static Log LOG = ExoLogger.getLogger(LeckoJob.class);
