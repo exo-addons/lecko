@@ -69,7 +69,6 @@ public class SimpleDataBuilder implements DataBuilder {
 
    private JobStatusService jobStatusService;
 
-   private static final String LECKO_OUTPUT_NAME= "exo.addons.lecko.out.name";
 
    private static boolean runBuild = false;
 
@@ -83,14 +82,11 @@ public class SimpleDataBuilder implements DataBuilder {
       this.exoSocialConnector = exoSocialConnector;
       this.spaceService = spaceService;
       this.jobStatusService=jobStatusService;
-      this.leckoTempDirectory = PropertyManager.getProperty("java.io.tmpdir") + "/lecko";
+
+      this.leckoTempDirectory = LeckoServiceController.getRootPath();
+
       File directory = new File(this.leckoTempDirectory );
-      if (!PrivilegedFileHelper.exists(directory))
-      {
-         PrivilegedFileHelper.mkdirs(directory);
-      }
-      String  name = PropertyManager.getProperty(LECKO_OUTPUT_NAME);
-      leckoOutputName = (name != null && ! name.isEmpty()) ? name : "dump";
+      leckoOutputName = LeckoServiceController.getFileName();
 
       if (PropertyManager.getProperty("exo.addon.lecko.spaceLimit")!=null) {
          spaceLimit = Integer.parseInt(PropertyManager.getProperty("exo.addon.lecko.spaceLimit"));
@@ -332,6 +328,11 @@ public class SimpleDataBuilder implements DataBuilder {
       service.startRequest(PortalContainer.getInstance());
       //the em is put in threadLocal and use in the build.
       build();
+
+      //try to upload data
+      //will run only if 100% finished
+      LeckoServiceController.getService(LeckoServiceController.class).doUpload();
+
       service.endRequest(PortalContainer.getInstance());
    }
 }

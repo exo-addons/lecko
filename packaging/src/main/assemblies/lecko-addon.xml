@@ -15,7 +15,7 @@
         <include>${project.groupId}:lecko-war:war</include>
       </includes>
       <scope>provided</scope>
-      <outputFileNameMapping>lecko.war</outputFileNameMapping>
+      <outputFileNameMapping>lecko-extension.war</outputFileNameMapping>
     </dependencySet>
     <!-- Libraries -->
     <dependencySet>
@@ -24,7 +24,7 @@
       <includes>
         <include>${project.groupId}:lecko-*:jar</include>
         <include>com.jcraft:jsch:jar</include>
-        <include>com.google.code.gson:gson:jar</include>
+        <!--include>com.google.code.gson:gson:jar</include-->
       </includes>
       <scope>provided</scope>
       <outputFileNameMapping>${artifact.artifactId}-${artifact.baseVersion}.${artifact.extension}

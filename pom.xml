@@ -44,7 +44,7 @@
     <url>https://github.com/exo-addons/lecko</url>
   </scm>
   <properties>
-    <platform.version>4.3.0</platform.version>
+    <platform.version>4.4.0-RC01</platform.version>
   </properties>
   <dependencyManagement>
     <dependencies>

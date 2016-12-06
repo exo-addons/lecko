@@ -47,9 +47,21 @@ import java.io.File;
 public class LeckoServiceController implements Startable
 {
    private static final Log LOG = ExoLogger.getLogger("org.exoplatform.addons.lecko.LeckoServiceController");
-   private static final String rootPath = PropertyManager.getProperty("java.io.tmpdir")+"/lecko";
+
+   public static String getRootPath() {
+      return rootPath;
+   }
+
+   private static String rootPath;
+
+   public static String getFileName() {
+      return fileName;
+   }
+
+   private static String fileName;
    private static final String LECKO_ENABLED = "exo.addons.lecko.job.enabled";
    private static final String LECKO_OUTPUT_NAME= "exo.addons.lecko.out.name";
+   private static final String LECKO_OUTPUT_DIRECTORY_NAME= "exo.addons.lecko.directory.out.name";
 
    private static String path;
 
@@ -57,14 +69,21 @@ public class LeckoServiceController implements Startable
 
    public LeckoServiceController()
    {
+
+      if (PropertyManager.getProperty(LECKO_OUTPUT_DIRECTORY_NAME)!=null) {
+         this.rootPath = PropertyManager.getProperty(LECKO_OUTPUT_DIRECTORY_NAME);
+      } else {
+         this.rootPath = PropertyManager.getProperty("java.io.tmpdir") + "/lecko";
+      }
+
       File directory = new File(this.rootPath );
       if (!PrivilegedFileHelper.exists(directory))
       {
          PrivilegedFileHelper.mkdirs(directory);
       }
 
-      String  name = PropertyManager.getProperty(LECKO_OUTPUT_NAME);
-      path = rootPath+"/"+((name != null && ! name.isEmpty()) ? name : "dump");
+      this.fileName=(PropertyManager.getProperty(LECKO_OUTPUT_NAME) != null) ? PropertyManager.getProperty(LECKO_OUTPUT_NAME) : "dump";
+      path = rootPath+"/"+((fileName != null && ! fileName.isEmpty()) ? fileName : "dump");
    }
    /**
     * Build dump data.
@@ -140,8 +159,6 @@ public class LeckoServiceController implements Startable
    @ManagedDescription("Upload data to lecko server.")
    public String UploadLeckoData()
    {
-      boolean status = false;
-      File file = new File(path);
       try
       {
          if (dataBuilder==null) {initDataBuilder();}
@@ -152,20 +169,7 @@ public class LeckoServiceController implements Startable
             return "Export is running, cannot send data.";
          } else {
 
-            if (file.exists()) {
-               SftpClient client = new SftpClient();
-               LOG.info("Start send Data to lecko server");
-               status = client.send(file.getAbsolutePath());
-               if (status) {
-                  LOG.info("End  send Data to lecko server");
-                  resetExtraction();
-               } else {
-                  LOG.info("Failed send Data to lecko server");
-               }
-            } else {
-               LOG.info("Failed send Data to lecko server file not exist : " + path);
-               return "Failed";
-            }
+            return doUpload();
          }
       }
       catch (Exception ex)
@@ -180,7 +184,31 @@ public class LeckoServiceController implements Startable
          //   file.delete();
          //}
       }
+
+   }
+
+
+   public String doUpload () {
+      File file = new File(path);
+      boolean status = false;
+
+      if (file.exists()) {
+         SftpClient client = new SftpClient();
+         LOG.info("Start send Data to lecko server");
+         status = client.send(file.getAbsolutePath());
+         if (status) {
+            LOG.info("End  send Data to lecko server");
+            resetExtraction();
+         } else {
+            LOG.info("Failed send Data to lecko server");
+         }
+
+      } else {
+         LOG.info("Failed send Data to lecko server file not exist : " + path);
+         return "Failed";
+      }
       return status ?"Success":"Failed";
+
    }
 
    @Managed
