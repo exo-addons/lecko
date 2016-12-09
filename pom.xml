@@ -30,7 +30,7 @@
   </parent>
   <groupId>org.exoplatform.addons.lecko</groupId>
   <artifactId>lecko-parent</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Lecko Analytics Add-on</name>
   <description>Lecko Analytics (http://analytics.lecko.fr) integration for eXo Platform</description>
@@ -42,7 +42,7 @@
   <scm>
     <connection>scm:git:git://github.com/exo-addons/lecko.git</connection>
     <developerConnection>scm:git:git@github.com:exo-addons/lecko.git</developerConnection>
-    <tag>v1.0.0</tag>
+    <tag>HEAD</tag>
     <url>https://github.com/exo-addons/lecko</url>
   </scm>
   <properties>

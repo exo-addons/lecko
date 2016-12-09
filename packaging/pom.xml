@@ -26,7 +26,7 @@
   <parent>
     <artifactId>lecko-parent</artifactId>
     <groupId>org.exoplatform.addons.lecko</groupId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
   </parent>
   <artifactId>lecko-packaging</artifactId>
   <packaging>pom</packaging>
@@ -35,14 +35,14 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>lecko-war</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.1-SNAPSHOT</version>
       <type>war</type>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>lecko-service</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.1-SNAPSHOT</version>
       <type>jar</type>
       <scope>provided</scope>
     </dependency>
