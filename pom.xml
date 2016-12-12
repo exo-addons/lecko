@@ -26,18 +26,18 @@
   <parent>
     <artifactId>addons-parent-pom</artifactId>
     <groupId>org.exoplatform.addons</groupId>
-    <version>6</version>
+    <version>7-RC01</version>
   </parent>
   <groupId>org.exoplatform.addons.lecko</groupId>
-  <artifactId>lecko-parent</artifactId>
+  <artifactId>lecko</artifactId>
   <version>1.0.x-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Lecko Analytics Add-on</name>
   <description>Lecko Analytics (http://analytics.lecko.fr) integration for eXo Platform</description>
   <modules>
-     <module>war</module>
-     <module>packaging</module>
-     <module>service</module>
+    <module>war</module>
+    <module>packaging</module>
+    <module>service</module>
   </modules>
   <scm>
     <connection>scm:git:git://github.com/exo-addons/lecko.git</connection>
@@ -46,7 +46,11 @@
     <url>https://github.com/exo-addons/lecko</url>
   </scm>
   <properties>
-    <platform.version>4.4.0-RC01</platform.version>
+    <!-- **************************************** -->
+    <!-- Dependencies versions -->
+    <!-- **************************************** -->
+    <com.jcraft.jsch.version>0.1.53</com.jcraft.jsch.version>
+    <org.exoplatform.platform.version>4.4.0-RC03</org.exoplatform.platform.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -54,9 +58,28 @@
       <dependency>
         <groupId>org.exoplatform.platform</groupId>
         <artifactId>platform</artifactId>
-        <version>${platform.version}</version>
+        <version>${org.exoplatform.platform.version}</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+      <!-- Declare our own artifacts -->
+      <dependency>
+        <groupId>org.exoplatform.addons.lecko</groupId>
+        <artifactId>lecko-service</artifactId>
+        <version>${project.version}</version>
+        <type>jar</type>
+      </dependency>
+      <dependency>
+        <groupId>org.exoplatform.addons.lecko</groupId>
+        <artifactId>lecko-war</artifactId>
+        <version>${project.version}</version>
+        <type>war</type>
+      </dependency>
+      <!-- Other dependencies -->
+      <dependency>
+        <groupId>com.jcraft</groupId>
+        <artifactId>jsch</artifactId>
+        <version>${com.jcraft.jsch.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
