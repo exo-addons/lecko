@@ -26,7 +26,7 @@
   <parent>
     <artifactId>lecko-parent</artifactId>
     <groupId>org.exoplatform.addons.lecko</groupId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.x-SNAPSHOT</version>
   </parent>
   <artifactId>lecko-war</artifactId>
   <packaging>war</packaging>
