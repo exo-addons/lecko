@@ -24,7 +24,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <artifactId>lecko-parent</artifactId>
+    <artifactId>lecko</artifactId>
     <groupId>org.exoplatform.addons.lecko</groupId>
     <version>1.0.x-SNAPSHOT</version>
   </parent>
@@ -35,29 +35,20 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>lecko-war</artifactId>
-      <version>1.0.x-SNAPSHOT</version>
       <type>war</type>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>lecko-service</artifactId>
-      <version>1.0.x-SNAPSHOT</version>
       <type>jar</type>
       <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>com.jcraft</groupId>
       <artifactId>jsch</artifactId>
-      <version>0.1.53</version>
       <scope>provided</scope>
     </dependency>
-    <!--dependency>
-		<groupId>com.google.code.gson</groupId>
-		<artifactId>gson</artifactId>
-		<version>2.3.1</version>
-      <scope>provided</scope>
-	</dependency-->
   </dependencies>
   <build>
     <finalName>lecko-addon</finalName>
