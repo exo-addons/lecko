@@ -29,7 +29,7 @@ import javax.persistence.*;
  */
 @Entity(name = "JobStatus")
 @ExoEntity
-@Table(name = "JOBSTATUS")
+@Table(name = "LECKO_JOB_STATUS")
 @NamedQueries({
 
     @NamedQuery(name = "JobStatus.findJobStatusByIdentityId", query = "SELECT j FROM JobStatus j WHERE j.identityId = :identityId"),

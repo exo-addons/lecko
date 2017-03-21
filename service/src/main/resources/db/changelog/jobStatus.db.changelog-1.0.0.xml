@@ -33,7 +33,7 @@
 
     <!-- Definition of JOBSTATUS table -->
     <changeSet author="jobStatus" id="1.0.0-1">
-        <createTable tableName="JOBSTATUS">
+        <createTable tableName="LECKO_JOB_STATUS">
             <column name="JOBSTATUS_ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1">
                 <constraints primaryKey="true" primaryKeyName="PK_JOBSTATUS" nullable="false"/>
             </column>
