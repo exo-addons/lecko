@@ -51,10 +51,7 @@
       </init-params>
 </component-->
 
-    <component>
-        <key>org.exoplatform.addons.lecko.rest.LeckoRestService</key>
-        <type>org.exoplatform.addons.lecko.rest.LeckoRestService</type>
-    </component>
+   
     <component>
         <key>org.exoplatform.addons.lecko.LeckoServiceController</key>
         <type>org.exoplatform.addons.lecko.LeckoServiceController</type>
