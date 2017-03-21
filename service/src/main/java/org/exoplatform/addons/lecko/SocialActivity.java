@@ -36,143 +36,118 @@ import org.json.simple.parser.ParseException;
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com
  */
-abstract class SocialActivity
-{
-   protected static Log LOG = ExoLogger.getLogger(SimpleDataBuilder.class);
+abstract class SocialActivity {
+  protected static Log                 LOG      = ExoLogger.getLogger(SimpleDataBuilder.class);
 
-   //anonymization MAP
-   protected static Map<String, String> user_map = new ConcurrentHashMap<String, String>();
+  // anonymization MAP
+  protected static Map<String, String> user_map = new ConcurrentHashMap<String, String>();
 
-   ExoSocialConnector exoSocialConnector;
+  ExoSocialConnector                   exoSocialConnector;
 
-   public abstract void loadActivityStream(PrintWriter out) throws Exception;
+  public abstract void loadActivityStream(PrintWriter out) throws Exception;
 
-   public static JSONArray parseJSONArray(String json, String entry) throws ParseException, JSONException
-   {
+  public static JSONArray parseJSONArray(String json, String entry) throws ParseException, JSONException {
 
-      JSONParser parser = new JSONParser();
+    JSONParser parser = new JSONParser();
 
-      Object obj = parser.parse(json);
+    Object obj = parser.parse(json);
 
-      JSONObject jsonObject = (JSONObject)obj;
+    JSONObject jsonObject = (JSONObject) obj;
 
-      JSONArray listEntry = (JSONArray)jsonObject.get(entry);
+    JSONArray listEntry = (JSONArray) jsonObject.get(entry);
 
-      return listEntry;
+    return listEntry;
 
-   }
+  }
 
-   protected void getExoComments(String url, String placeName, String displayName, PrintWriter out) throws Exception
-   {
+  protected void getExoComments(String url, String placeName, String displayName, PrintWriter out) throws Exception {
 
-      if (LOG.isDebugEnabled())
-      {
-         LOG.debug("Getting Comments : " + placeName);
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Getting Comments : " + placeName);
+    }
+    String result;
+    String idEvent = "";
+    String date = "";
+    String idactor = "";
+    result = exoSocialConnector.getActivityComments(url);
+    JSONArray jsonComments;
+    if (result == null) {
+      return;
+    } else {
+      jsonComments = parseJSONArray(result, "comments");
+    }
+
+    if (jsonComments == null || jsonComments.size() == 0) {
+      return;
+    }
+
+    for (Object obj : jsonComments) {
+      JSONObject js = (JSONObject) obj;
+      idactor = ((String) js.get("identity")).split("/")[7];
+      if (!user_map.containsKey(idactor)) {
+        user_map.put(idactor, Integer.toString(user_map.size() + 1));
+        idactor = user_map.get(idactor);
+      } else {
+        idactor = user_map.get(idactor);
       }
-      String result;
-      String idEvent = "";
-      String date = "";
-      String idactor = "";
-      result = exoSocialConnector.getActivityComments(url);
-      JSONArray jsonComments;
-      if (result == null)
-      {
-         return;
+      out.print(idactor + ";");
+
+      idEvent = "comment";
+      out.print(idEvent + ";");
+      date = (String) js.get("createDate");
+      out.print(date + ";");
+      out.print(placeName + ";" + displayName + ";");
+      out.println();
+    }
+    out.flush();
+
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("End Getting Comments : " + placeName);
+    }
+
+  }
+
+  protected void getLikes(String url, String date, String placeName, String displayName, PrintWriter out) throws Exception {
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("Getting Likes : " + placeName);
+    }
+    String result;
+    String idEvent = "";
+    String idactor = "";
+
+    result = exoSocialConnector.getActivityLikes(url);
+    JSONArray jsonLikes;
+    if (result == null) {
+      return;
+    } else {
+      jsonLikes = parseJSONArray(result, "likes");
+    }
+
+    if (jsonLikes == null || jsonLikes.size() == 0) {
+      return;
+    }
+
+    for (Object obj : jsonLikes) {
+      JSONObject js = (JSONObject) obj;
+      idactor = ((String) js.get("identity")).split("/")[7];
+      if (!user_map.containsKey(idactor)) {
+        user_map.put(idactor, Integer.toString(user_map.size() + 1));
+        idactor = user_map.get(idactor);
+      } else {
+        idactor = user_map.get(idactor);
       }
-      else
-      {
-         jsonComments = parseJSONArray(result, "comments");
-      }
+      out.print(idactor + ";");
 
-      if (jsonComments == null || jsonComments.size() == 0)
-      {
-         return;
-      }
+      idEvent = "like";
+      out.print(idEvent + ";");
+      out.print(date + ";");
+      out.print(placeName + ";" + displayName + ";");
+      out.println();
+    }
+    out.flush();
 
-      for (Object obj : jsonComments)
-      {
-         JSONObject js = (JSONObject)obj;
-         idactor = ((String)js.get("identity")).split("/")[7];
-         if (!user_map.containsKey(idactor))
-         {
-            user_map.put(idactor, Integer.toString(user_map.size() + 1));
-            idactor = user_map.get(idactor);
-         }
-         else
-         {
-            idactor = user_map.get(idactor);
-         }
-         out.print(idactor + ";");
-
-         idEvent = "comment";
-         out.print(idEvent + ";");
-         date = (String)js.get("createDate");
-         out.print(date + ";");
-         out.print(placeName + ";"+displayName+";");
-         out.println();
-      }
-      out.flush();
-
-
-      if (LOG.isDebugEnabled())
-      {
-         LOG.debug("End Getting Comments : " + placeName);
-      }
-
-   }
-
-   protected void getLikes(String url, String date, String placeName,String displayName, PrintWriter out) throws Exception
-   {
-      if (LOG.isDebugEnabled())
-      {
-         LOG.debug("Getting Likes : " + placeName);
-      }
-      String result;
-      String idEvent = "";
-      String idactor = "";
-
-      result = exoSocialConnector.getActivityLikes(url);
-      JSONArray jsonLikes;
-      if (result == null)
-      {
-         return;
-      }
-      else
-      {
-         jsonLikes = parseJSONArray(result, "likes");
-      }
-
-      if (jsonLikes == null || jsonLikes.size() == 0)
-      {
-         return;
-      }
-
-      for (Object obj : jsonLikes)
-      {
-         JSONObject js = (JSONObject)obj;
-         idactor = ((String)js.get("identity")).split("/")[7];
-         if (!user_map.containsKey(idactor))
-         {
-            user_map.put(idactor, Integer.toString(user_map.size() + 1));
-            idactor = user_map.get(idactor);
-         }
-         else
-         {
-            idactor = user_map.get(idactor);
-         }
-         out.print(idactor + ";");
-
-         idEvent = "like";
-         out.print(idEvent + ";");
-         out.print(date + ";");
-         out.print(placeName + ";"+displayName+";");
-         out.println();
-      }
-      out.flush();
-
-      if (LOG.isDebugEnabled())
-      {
-         LOG.debug("End Getting Likes : " + placeName);
-      }
-   }
+    if (LOG.isDebugEnabled()) {
+      LOG.debug("End Getting Likes : " + placeName);
+    }
+  }
 }

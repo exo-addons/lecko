@@ -39,35 +39,26 @@ import org.exoplatform.services.rest.resource.ResourceContainer;
  */
 @RolesAllowed("users")
 @Path("/lecko")
-public class LeckoRestService implements ResourceContainer
-{
-   private static final Log LOG = ExoLogger.getLogger("org.exoplatform.addons.lecko.rest.LeckoRestService");
-   @Path("create/{dumpName}")
-   @GET
-   public Response createOpp(
-      @Context HttpServletRequest request,
-      @PathParam("dumpName") String dumpName) throws Exception
-   {
-      new Thread(new Runnable()
-      {
-         @Override
-         public void run()
-         {
-            DataBuilder builder = LeckoServiceController.getService(SimpleDataBuilder.class);
-            try
-            {
-               builder.build();
-            }
-            catch (Exception ex)
-            {
-               LOG.error(ex.getMessage());
-            }
+public class LeckoRestService implements ResourceContainer {
+  private static final Log LOG = ExoLogger.getLogger("org.exoplatform.addons.lecko.rest.LeckoRestService");
 
-         }
-      }, "LeckoDumpService").start();
-      return Response.status(Response.Status.OK).build();
+  @Path("create/{dumpName}")
+  @GET
+  public Response createOpp(@Context HttpServletRequest request, @PathParam("dumpName") String dumpName) throws Exception {
+    new Thread(new Runnable() {
+      @Override
+      public void run() {
+        DataBuilder builder = LeckoServiceController.getService(SimpleDataBuilder.class);
+        try {
+          builder.build();
+        } catch (Exception ex) {
+          LOG.error(ex.getMessage());
+        }
 
-   }
+      }
+    }, "LeckoDumpService").start();
+    return Response.status(Response.Status.OK).build();
 
+  }
 
 }

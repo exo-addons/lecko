@@ -22,9 +22,9 @@
 
 -->
 <configuration
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd"
-    xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd"
+        xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
 
 
     <component>
@@ -52,50 +52,50 @@
 </component-->
 
     <component>
-      <key>org.exoplatform.addons.lecko.rest.LeckoRestService</key>
-       <type>org.exoplatform.addons.lecko.rest.LeckoRestService</type>
-  </component>
-  <component>
-      <key>org.exoplatform.addons.lecko.LeckoServiceController</key>
-      <type>org.exoplatform.addons.lecko.LeckoServiceController</type>
-  </component>
-  <component>
-		<key>org.exoplatform.addons.lecko.social.client.rest.connector.ExoSocialConnector</key>
-		<type>org.exoplatform.addons.lecko.social.client.rest.connector.ExoSocialConnectorImpl</type>
-		<init-params>
-			<value-param>
-				<name>username</name>
-				<value>${exo.api-access.user}</value>
-			</value-param>
-			<value-param>
-				<name>password</name>
-				<value>${exo.api-access.password}</value>
-			</value-param>
-         <value-param>
-				<name>baseUrl</name>
-				<value>${exo.api-access.baseUrl}</value>
-			</value-param>
-		</init-params>
-  </component>
-  <external-component-plugins>
-     <target-component>org.exoplatform.services.scheduler.JobSchedulerService</target-component>
-     <component-plugin profiles="all">
-     <name>AddCronJob</name>
-     <set-method>addCronJob</set-method>
-     <type>org.exoplatform.services.scheduler.CronJob</type>
-      <description>Start Lecko Export</description>
-      <init-params>
-        <properties-param>
-          <name>cronjob.info</name>
-          <description>Start Lecko Export</description>
-          <property name="jobName" value="leckoExportJobStart"/>
-          <property name="groupName" value="leckoExportJobStart"/>
-          <property name="job" value="org.exoplatform.addons.lecko.job.StartLeckoExportJob"/>
-          <property name="expression" value="${exo.addons.lecko.job.start.expression:0 0 21 * * ?}"/>
-        </properties-param>
-      </init-params>
-    </component-plugin>
-  </external-component-plugins>
+        <key>org.exoplatform.addons.lecko.rest.LeckoRestService</key>
+        <type>org.exoplatform.addons.lecko.rest.LeckoRestService</type>
+    </component>
+    <component>
+        <key>org.exoplatform.addons.lecko.LeckoServiceController</key>
+        <type>org.exoplatform.addons.lecko.LeckoServiceController</type>
+    </component>
+    <component>
+        <key>org.exoplatform.addons.lecko.social.client.rest.connector.ExoSocialConnector</key>
+        <type>org.exoplatform.addons.lecko.social.client.rest.connector.ExoSocialConnectorImpl</type>
+        <init-params>
+            <value-param>
+                <name>username</name>
+                <value>${exo.api-access.user}</value>
+            </value-param>
+            <value-param>
+                <name>password</name>
+                <value>${exo.api-access.password}</value>
+            </value-param>
+            <value-param>
+                <name>baseUrl</name>
+                <value>${exo.api-access.baseUrl}</value>
+            </value-param>
+        </init-params>
+    </component>
+    <external-component-plugins>
+        <target-component>org.exoplatform.services.scheduler.JobSchedulerService</target-component>
+        <component-plugin profiles="all">
+            <name>AddCronJob</name>
+            <set-method>addCronJob</set-method>
+            <type>org.exoplatform.services.scheduler.CronJob</type>
+            <description>Start Lecko Export</description>
+            <init-params>
+                <properties-param>
+                    <name>cronjob.info</name>
+                    <description>Start Lecko Export</description>
+                    <property name="jobName" value="leckoExportJobStart"/>
+                    <property name="groupName" value="leckoExportJobStart"/>
+                    <property name="job" value="org.exoplatform.addons.lecko.job.StartLeckoExportJob"/>
+                    <property name="expression" value="${exo.addons.lecko.job.start.expression:0 0 21 * * ?}"/>
+                </properties-param>
+            </init-params>
+        </component-plugin>
+    </external-component-plugins>
 
     <external-component-plugins>
         <target-component>org.exoplatform.services.scheduler.JobSchedulerService</target-component>
@@ -151,9 +151,6 @@
             </init-params>
         </component-plugin>
     </external-component-plugins>
-
-
-
 
 
 </configuration>

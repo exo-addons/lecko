@@ -34,6 +34,7 @@ import org.exoplatform.services.log.Log;
  */
 public class HttpUtils {
   private static Log LOG = ExoLogger.getLogger(HttpUtils.class);
+
   // GET
   public static String get(String url) throws Exception {
     if (LOG.isDebugEnabled()) {

@@ -28,81 +28,81 @@
     <external-component-plugins>
         <target-component>org.exoplatform.services.organization.OrganizationService</target-component>
         <component-plugin>
-        <name>init.service.listener</name>
-        <set-method>addListenerPlugin</set-method>
-        <type>org.exoplatform.services.organization.OrganizationDatabaseInitializer</type>
-        <description>this listener populate organization data for the first launch</description>
-        <init-params>
-        <value-param>
-            <name>checkDatabaseAlgorithm</name>
-            <description>check database</description>
-            <value>entry</value>
-        </value-param>
-        <value-param>
-            <name>printInformation</name>
-            <description>Print information init database</description>
-            <value>false</value>
-        </value-param>
+            <name>init.service.listener</name>
+            <set-method>addListenerPlugin</set-method>
+            <type>org.exoplatform.services.organization.OrganizationDatabaseInitializer</type>
+            <description>this listener populate organization data for the first launch</description>
+            <init-params>
+                <value-param>
+                    <name>checkDatabaseAlgorithm</name>
+                    <description>check database</description>
+                    <value>entry</value>
+                </value-param>
+                <value-param>
+                    <name>printInformation</name>
+                    <description>Print information init database</description>
+                    <value>false</value>
+                </value-param>
 
-        <object-param>
-        <name>configuration</name>
-        <description>description</description>
+                <object-param>
+                    <name>configuration</name>
+                    <description>description</description>
 
-            <object type="org.exoplatform.services.organization.OrganizationConfig">
-               <field  name="group">
+                    <object type="org.exoplatform.services.organization.OrganizationConfig">
+                        <field name="group">
                             <collection type="java.util.ArrayList">
                                 <value>
                                     <object type="org.exoplatform.services.organization.OrganizationConfig$Group">
-                                        <field  name="name">
+                                        <field name="name">
                                             <string>${exo.api-access.group}</string>
                                         </field>
-                             		<field name="parentId">
-                           		 <string>/platform</string>
-                         		 </field>
-                                        <field  name="description">
+                                        <field name="parentId">
+                                            <string>/platform</string>
+                                        </field>
+                                        <field name="description">
                                             <string>the /platform/api-access group</string>
                                         </field>
-                                        <field  name="label">
+                                        <field name="label">
                                             <string>api-access</string>
                                         </field>
                                     </object>
                                 </value>
 
                             </collection>
-                </field>
-                <field name="user">
-                    <collection type="java.util.ArrayList">
-                        <value>
-                            <object type="org.exoplatform.services.organization.OrganizationConfig$User">
-                                <field name="userName">
-                                    <string>${exo.api-access.user}</string>
-                                </field>
-                                <field name="password">
-                                    <string>${exo.api-access.password}</string>
-                                </field>
-                                <field name="firstName">
-                                    <string>lecko</string>
-                                </field>
-                                <field name="lastName">
-                                    <string>lecko</string>
-                                </field>
-                                <field name="email">
-                                    <string>noreply@exoplatform.com</string>
-                                </field>
-                                <field name="displayName">
-                                    <string>lecko</string>
-                                </field>
-                                <field name="groups">
-                                    <string>*:/platform/users,*:/platform/${exo.api-access.group}</string>
-                                </field>
-                            </object>
-                        </value>
-                    </collection>
-                </field>
+                        </field>
+                        <field name="user">
+                            <collection type="java.util.ArrayList">
+                                <value>
+                                    <object type="org.exoplatform.services.organization.OrganizationConfig$User">
+                                        <field name="userName">
+                                            <string>${exo.api-access.user}</string>
+                                        </field>
+                                        <field name="password">
+                                            <string>${exo.api-access.password}</string>
+                                        </field>
+                                        <field name="firstName">
+                                            <string>lecko</string>
+                                        </field>
+                                        <field name="lastName">
+                                            <string>lecko</string>
+                                        </field>
+                                        <field name="email">
+                                            <string>noreply@exoplatform.com</string>
+                                        </field>
+                                        <field name="displayName">
+                                            <string>lecko</string>
+                                        </field>
+                                        <field name="groups">
+                                            <string>*:/platform/users,*:/platform/${exo.api-access.group}</string>
+                                        </field>
+                                    </object>
+                                </value>
+                            </collection>
+                        </field>
 
-            </object>
-        </object-param>
-        </init-params>
+                    </object>
+                </object-param>
+            </init-params>
         </component-plugin>
     </external-component-plugins>
 </configuration>

@@ -39,7 +39,6 @@ public class StartLeckoExportJob implements Job {
 
   private static final Log LOG = ExoLogger.getLogger(StartLeckoExportJob.class.getName());
 
-
   public StartLeckoExportJob() throws Exception {
   }
 
@@ -48,10 +47,11 @@ public class StartLeckoExportJob implements Job {
       LOG.info("Start StartLeckoExportJob");
     }
 
-    LeckoServiceController leckoServiceController = (LeckoServiceController) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(LeckoServiceController.class);
+    LeckoServiceController leckoServiceController =
+                                                  (LeckoServiceController) ExoContainerContext.getCurrentContainer()
+                                                                                              .getComponentInstanceOfType(LeckoServiceController.class);
 
-
-    if  (leckoServiceController.getEnableLeckoJob()) {
+    if (leckoServiceController.getEnableLeckoJob()) {
       leckoServiceController.buildLeckoData();
     } else {
       LOG.info("Lecko is not enabled.");

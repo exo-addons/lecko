@@ -46,228 +46,220 @@ import java.io.File;
 @Managed
 @NameTemplate(@Property(key = "service", value = "LeckoServiceController"))
 @ManagedDescription("Lecko management jobs")
-public class LeckoServiceController implements Startable
-{
-   private static final Log LOG = ExoLogger.getLogger("org.exoplatform.addons.lecko.LeckoServiceController");
+public class LeckoServiceController implements Startable {
+  private static final Log LOG = ExoLogger.getLogger("org.exoplatform.addons.lecko.LeckoServiceController");
 
-   public static String getRootPath() {
-      return rootPath;
-   }
+  public static String getRootPath() {
+    return rootPath;
+  }
 
-   private static String rootPath;
+  private static String rootPath;
 
-   public static String getFileName() {
-      return fileName;
-   }
+  public static String getFileName() {
+    return fileName;
+  }
 
-   private static String fileName;
-   private static final String LECKO_ENABLED = "exo.addons.lecko.job.enabled";
-   private static final String LECKO_OUTPUT_NAME= "exo.addons.lecko.out.name";
-   private static final String LECKO_OUTPUT_DIRECTORY_NAME= "exo.addons.lecko.directory.out.name";
+  private static String       fileName;
 
-   private static String path;
+  private static final String LECKO_ENABLED               = "exo.addons.lecko.job.enabled";
 
-   private DataBuilder dataBuilder;
+  private static final String LECKO_OUTPUT_NAME           = "exo.addons.lecko.out.name";
 
-   public LeckoServiceController()
-   {
+  private static final String LECKO_OUTPUT_DIRECTORY_NAME = "exo.addons.lecko.directory.out.name";
 
-      if (PropertyManager.getProperty(LECKO_OUTPUT_DIRECTORY_NAME)!=null) {
-         this.rootPath = PropertyManager.getProperty(LECKO_OUTPUT_DIRECTORY_NAME);
+  private static String       path;
+
+  private DataBuilder         dataBuilder;
+
+  public LeckoServiceController() {
+
+    if (PropertyManager.getProperty(LECKO_OUTPUT_DIRECTORY_NAME) != null) {
+      this.rootPath = PropertyManager.getProperty(LECKO_OUTPUT_DIRECTORY_NAME);
+    } else {
+      this.rootPath = PropertyManager.getProperty("java.io.tmpdir") + "/lecko";
+    }
+
+    File directory = new File(this.rootPath);
+    if (!PrivilegedFileHelper.exists(directory)) {
+      PrivilegedFileHelper.mkdirs(directory);
+    }
+
+    this.fileName = (PropertyManager.getProperty(LECKO_OUTPUT_NAME) != null) ? PropertyManager.getProperty(LECKO_OUTPUT_NAME)
+                                                                             : "dump";
+    path = rootPath + "/" + ((fileName != null && !fileName.isEmpty()) ? fileName : "dump");
+  }
+
+  /**
+   * Build dump data.
+   * 
+   * @return String
+   */
+  @Managed
+  @ManagedDescription("Build lecko data.")
+  public String buildLeckoData() {
+
+    try {
+      if (dataBuilder == null) {
+        initDataBuilder();
+      }
+      if (!dataBuilder.getBuildStatus()) {
+        // export is not already running
+        new Thread(dataBuilder).start();
+        // dataBuilder.build();
       } else {
-         this.rootPath = PropertyManager.getProperty("java.io.tmpdir") + "/lecko";
+        return "Export is already running";
+      }
+    } catch (Exception ex) {
+      LOG.error(ex.getMessage());
+      return "Failed";
+    }
+    return "Job Started";
+  }
+
+  /**
+   * get Job Status
+   */
+  @Managed
+  @ManagedDescription("Get Lecko Job Status.")
+  public String getJobStatus() {
+    if (dataBuilder == null) {
+      initDataBuilder();
+    }
+    int percent = dataBuilder.getPercent();
+
+    String result = dataBuilder.getBuildStatus() ? "Export is running." : "Export is stopped.";
+    result += " Export is done at " + percent + "% for current extraction.";
+    return result;
+  }
+
+  /**
+   * Stop dump data.
+   */
+  @Managed
+  @ManagedDescription("Stop lecko export.")
+  public String stopLeckoExport() {
+
+    try {
+      if (dataBuilder == null) {
+        initDataBuilder();
       }
 
-      File directory = new File(this.rootPath );
-      if (!PrivilegedFileHelper.exists(directory))
-      {
-         PrivilegedFileHelper.mkdirs(directory);
+      dataBuilder.stopBuild();
+    } catch (Exception ex) {
+      LOG.error(ex.getMessage());
+      return "Failed";
+    }
+    return "Stopping job";
+  }
+
+  /**
+   * Upload dump to lecko server.
+   * 
+   * @return String
+   */
+  @Managed
+  @ManagedDescription("Upload data to lecko server.")
+  public String UploadLeckoData() {
+    try {
+      if (dataBuilder == null) {
+        initDataBuilder();
       }
-
-      this.fileName=(PropertyManager.getProperty(LECKO_OUTPUT_NAME) != null) ? PropertyManager.getProperty(LECKO_OUTPUT_NAME) : "dump";
-      path = rootPath+"/"+((fileName != null && ! fileName.isEmpty()) ? fileName : "dump");
-   }
-   /**
-    * Build dump data.
-    * @return String
-    */
-   @Managed
-   @ManagedDescription("Build lecko data.")
-   public String buildLeckoData()
-   {
-
-      try
-      {
-         if (dataBuilder==null) {initDataBuilder();}
-         if (!dataBuilder.getBuildStatus()) {
-            //export is not already running
-            new Thread(dataBuilder).start();
-            //dataBuilder.build();
-         } else {
-            return "Export is already running";
-         }
-      }
-      catch (Exception ex)
-      {
-         LOG.error(ex.getMessage());
-         return "Failed";
-      }
-      return "Job Started";
-   }
-
-   /**
-    * get Job Status
-    */
-   @Managed
-   @ManagedDescription("Get Lecko Job Status.")
-   public String getJobStatus()
-   {
-      if (dataBuilder==null) {initDataBuilder();}
-      int percent=dataBuilder.getPercent();
-
-      String result = dataBuilder.getBuildStatus() ? "Export is running." : "Export is stopped.";
-      result += " Export is done at "+percent+"% for current extraction.";
-      return result;
-   }
-
-   /**
-    * Stop dump data.
-    */
-   @Managed
-   @ManagedDescription("Stop lecko export.")
-   public String stopLeckoExport()
-   {
-
-      try
-      {
-         if (dataBuilder==null) {initDataBuilder();}
-
-         dataBuilder.stopBuild();
-      }
-      catch (Exception ex)
-      {
-         LOG.error(ex.getMessage());
-         return "Failed";
-      }
-      return "Stopping job";
-   }
-
-
-   /**
-    * Upload dump to lecko server.
-    * @return String
-    */
-   @Managed
-   @ManagedDescription("Upload data to lecko server.")
-   public String UploadLeckoData()
-   {
-      try
-      {
-         if (dataBuilder==null) {initDataBuilder();}
-         int percent=dataBuilder.getPercent();
-         if (percent<100) {
-            return "Cannot upload file, data not fully exported. Only "+percent+"% done.";
-         } else if (dataBuilder.getBuildStatus()) {
-            return "Export is running, cannot send data.";
-         } else {
-
-            return doUpload();
-         }
-      }
-      catch (Exception ex)
-      {
-         LOG.error("Failed send Data to lecko server : " +ex.getMessage());
-         return "Failed";
-      }
-      finally
-      {
-         //if (file != null && file.exists() && status)
-         //{
-         //   file.delete();
-         //}
-      }
-
-   }
-
-
-   public String doUpload () {
-      File file = new File(path);
-      boolean status = false;
-
-      if (file.exists()) {
-         SftpClient client = new SftpClient();
-         LOG.info("Start send Data to lecko server");
-         status = client.send(file.getAbsolutePath());
-         if (status) {
-            LOG.info("End  send Data to lecko server");
-            resetExtraction();
-         } else {
-            LOG.info("Failed send Data to lecko server");
-         }
-
+      int percent = dataBuilder.getPercent();
+      if (percent < 100) {
+        return "Cannot upload file, data not fully exported. Only " + percent + "% done.";
+      } else if (dataBuilder.getBuildStatus()) {
+        return "Export is running, cannot send data.";
       } else {
-         LOG.info("Failed send Data to lecko server file not exist : " + path);
-         return "Failed";
+
+        return doUpload();
       }
-      return status ?"Success":"Failed";
+    } catch (Exception ex) {
+      LOG.error("Failed send Data to lecko server : " + ex.getMessage());
+      return "Failed";
+    } finally {
+      // if (file != null && file.exists() && status)
+      // {
+      // file.delete();
+      // }
+    }
 
-   }
+  }
 
-   @Managed
-   @ManagedDescription("Enable/Disable lecko job. ")
-   public void enableLeckoJob(@ManagedName("enable") boolean enable)
-   {
-      PropertyManager.setProperty(LECKO_ENABLED,Boolean.toString(enable));
-   }
+  public String doUpload() {
+    File file = new File(path);
+    boolean status = false;
 
-   @Managed
-   @ManagedDescription("Enable/Disable lecko job. ")
-   public boolean getEnableLeckoJob()
-   {
-     return Boolean.parseBoolean(PropertyManager.getProperty(LECKO_ENABLED).trim());
-   }
-
-   private void initDataBuilder() {
-      ExoSocialConnector exoSocialConnector  = getService(ExoSocialConnector.class);
-      SpaceService spaceService  = getService(SpaceService.class);
-      JobStatusService jobStatusService  = getService(JobStatusService.class);
-      dataBuilder=new SimpleDataBuilder(exoSocialConnector,spaceService,jobStatusService);
-   }
-
-   public static   <T> T getService(Class<T> clazz) {
-      ExoContainer container = ExoContainerContext.getCurrentContainer();
-      String containerName;
-      if (container.getComponentInstanceOfType(clazz)==null) {
-         containerName = PortalContainer.getCurrentPortalContainerName();
-         container = RootContainer.getInstance().getPortalContainer(containerName);
+    if (file.exists()) {
+      SftpClient client = new SftpClient();
+      LOG.info("Start send Data to lecko server");
+      status = client.send(file.getAbsolutePath());
+      if (status) {
+        LOG.info("End  send Data to lecko server");
+        resetExtraction();
+      } else {
+        LOG.info("Failed send Data to lecko server");
       }
-      return clazz.cast(container.getComponentInstanceOfType(clazz));
-   }
 
-   /**
-    * Upload dump to lecko server.
-    */
-   @Managed
-   @ManagedDescription("Reset extraction job")
-   public String resetExtraction()
-   {
+    } else {
+      LOG.info("Failed send Data to lecko server file not exist : " + path);
+      return "Failed";
+    }
+    return status ? "Success" : "Failed";
 
-      if (dataBuilder==null) {initDataBuilder();}
+  }
 
-      dataBuilder.deleteDumpFile();
+  @Managed
+  @ManagedDescription("Enable/Disable lecko job. ")
+  public void enableLeckoJob(@ManagedName("enable") boolean enable) {
+    PropertyManager.setProperty(LECKO_ENABLED, Boolean.toString(enable));
+  }
 
-      JobStatusService jobStatusService = getService(JobStatusService.class);
-      return jobStatusService.resetStatus()? "Success":"Failed";
-   }
+  @Managed
+  @ManagedDescription("Enable/Disable lecko job. ")
+  public boolean getEnableLeckoJob() {
+    return Boolean.parseBoolean(PropertyManager.getProperty(LECKO_ENABLED).trim());
+  }
 
-   @Override
-   public void start()
-   {
-   }
+  private void initDataBuilder() {
+    ExoSocialConnector exoSocialConnector = getService(ExoSocialConnector.class);
+    SpaceService spaceService = getService(SpaceService.class);
+    JobStatusService jobStatusService = getService(JobStatusService.class);
+    dataBuilder = new SimpleDataBuilder(exoSocialConnector, spaceService, jobStatusService);
+  }
 
-   @Override
-   public void stop()
-   {
+  public static <T> T getService(Class<T> clazz) {
+    ExoContainer container = ExoContainerContext.getCurrentContainer();
+    String containerName;
+    if (container.getComponentInstanceOfType(clazz) == null) {
+      containerName = PortalContainer.getCurrentPortalContainerName();
+      container = RootContainer.getInstance().getPortalContainer(containerName);
+    }
+    return clazz.cast(container.getComponentInstanceOfType(clazz));
+  }
 
-   }
+  /**
+   * Upload dump to lecko server.
+   */
+  @Managed
+  @ManagedDescription("Reset extraction job")
+  public String resetExtraction() {
+
+    if (dataBuilder == null) {
+      initDataBuilder();
+    }
+
+    dataBuilder.deleteDumpFile();
+
+    JobStatusService jobStatusService = getService(JobStatusService.class);
+    return jobStatusService.resetStatus() ? "Success" : "Failed";
+  }
+
+  @Override
+  public void start() {
+  }
+
+  @Override
+  public void stop() {
+
+  }
 }

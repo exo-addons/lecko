@@ -26,46 +26,43 @@ import org.picocontainer.Startable;
 
 /**
  * Created by Romain Dénarié (romain.denarie@exoplatform.com) on 22/06/16.
- *
- * Service used to store and check if an entity is already treaten in the current dump
+ * Service used to store and check if an entity is already treaten in the
+ * current dump
  */
 public class JobStatusService implements Startable {
 
-    private JobStatusHandler jobStatusHandler;
+  private JobStatusHandler jobStatusHandler;
 
-    public JobStatusService(){
-        jobStatusHandler=new JobStatusHandler();
-    }
+  public JobStatusService() {
+    jobStatusHandler = new JobStatusHandler();
+  }
 
-    public void storeStatus(String identityId) {
-        JobStatus jobStatus = new JobStatus();
-        jobStatus.setIdentityId(identityId);
-        jobStatusHandler.create(jobStatus);
-    }
+  public void storeStatus(String identityId) {
+    JobStatus jobStatus = new JobStatus();
+    jobStatus.setIdentityId(identityId);
+    jobStatusHandler.create(jobStatus);
+  }
 
+  public JobStatus findByIdentityId(String identityId) {
+    return jobStatusHandler.findJobStatusByIdentityId(identityId);
+  }
 
-    public JobStatus findByIdentityId(String identityId){
-        return jobStatusHandler.findJobStatusByIdentityId(identityId);
-    }
+  public boolean resetStatus() {
+    return jobStatusHandler.resetStatus();
+  }
 
+  @Override
+  public void start() {
 
-    public boolean resetStatus() {
-        return jobStatusHandler.resetStatus();
-    }
+  }
 
+  @Override
+  public void stop() {
 
-    @Override
-    public void start() {
+  }
 
-    }
+  public Long countStatus() {
+    return jobStatusHandler.count();
 
-    @Override
-    public void stop() {
-
-    }
-
-    public Long countStatus()  {
-        return jobStatusHandler.count();
-
-    }
+  }
 }

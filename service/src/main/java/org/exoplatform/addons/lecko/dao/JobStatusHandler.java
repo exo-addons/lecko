@@ -38,7 +38,6 @@ package org.exoplatform.addons.lecko.dao;
 
 import javax.persistence.*;
 
-
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
 
 /**
@@ -47,32 +46,31 @@ import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
  */
 public class JobStatusHandler extends GenericDAOJPAImpl<JobStatus, Long> {
 
-    public JobStatus findJobStatusByIdentityId(String identityId) {
-        if (identityId == null || identityId.isEmpty()) {
-            return null;
-        }
-        EntityManager em = getEntityManager();
-
-        //System.out.println("Transaction isActive ? "+em.getTransaction().isActive());
-        //EntityTransaction et = em.getTransaction();
-        //et.begin();
-        Query query = em.createNamedQuery("JobStatus.findJobStatusByIdentityId", JobStatus.class);
-        //et.commit();
-        query.setParameter("identityId", identityId);
-        try {
-            return (JobStatus)query.getSingleResult();
-        } catch(NoResultException e) {
-            return null;
-        } catch (PersistenceException e) {
-            e.printStackTrace();
-            return null;
-        }
+  public JobStatus findJobStatusByIdentityId(String identityId) {
+    if (identityId == null || identityId.isEmpty()) {
+      return null;
     }
+    EntityManager em = getEntityManager();
 
-
-    public boolean resetStatus() {
-        deleteAll();
-        return true;
+    // System.out.println("Transaction isActive ?
+    // "+em.getTransaction().isActive());
+    // EntityTransaction et = em.getTransaction();
+    // et.begin();
+    Query query = em.createNamedQuery("JobStatus.findJobStatusByIdentityId", JobStatus.class);
+    // et.commit();
+    query.setParameter("identityId", identityId);
+    try {
+      return (JobStatus) query.getSingleResult();
+    } catch (NoResultException e) {
+      return null;
+    } catch (PersistenceException e) {
+      e.printStackTrace();
+      return null;
     }
+  }
+
+  public boolean resetStatus() {
+    deleteAll();
+    return true;
+  }
 }
-

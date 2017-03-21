@@ -30,103 +30,88 @@ import java.net.PasswordAuthentication;
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Sep
  * 29, 2015
  */
-public class ExoSocialConnectorImpl implements ExoSocialConnector
-{
+public class ExoSocialConnectorImpl implements ExoSocialConnector {
 
-   private static final Log log = ExoLogger.getLogger(ExoSocialConnectorImpl.class);
+  private static final Log log            = ExoLogger.getLogger(ExoSocialConnectorImpl.class);
 
-   private String userName;
+  private String           userName;
 
-   private String password;
+  private String           password;
 
-   private String baseUrl;
+  private String           baseUrl;
 
-   private String defaultBaseUrl = "http://localhost:8080";
+  private String           defaultBaseUrl = "http://localhost:8080";
 
+  public ExoSocialConnectorImpl(InitParams initParams) {
+    userName = initParams.getValueParam("username").getValue();
 
-   public ExoSocialConnectorImpl(InitParams initParams)
-   {
-      userName = initParams.getValueParam("username").getValue();
+    password = initParams.getValueParam("password").getValue();
 
-      password = initParams.getValueParam("password").getValue();
+    baseUrl = initParams.getValueParam("baseUrl").getValue();
 
-      baseUrl = initParams.getValueParam("baseUrl").getValue();
+    if (userName == null || userName.length() == 0) {
+      log.warn("Property 'userName' needs to be provided.");
+    }
 
-      if (userName == null || userName.length() == 0)
-      {
-         log.warn("Property 'userName' needs to be provided.");
+    if (baseUrl == null || baseUrl.length() == 0) {
+      baseUrl = defaultBaseUrl;
+    }
+
+    Authenticator.setDefault(new Authenticator() {
+      @Override
+      protected PasswordAuthentication getPasswordAuthentication() {
+        return new PasswordAuthentication(userName, password.toCharArray());
       }
+    });
 
-      if (baseUrl == null || baseUrl.length() == 0)
-      {
-         baseUrl = defaultBaseUrl;
-      }
+  }
 
+  public String getUserById(String username) throws Exception {
+    String url = baseUrl + ServiceInfo.getUserUri(username);
+    String json = HttpUtils.get(url);
+    return json;
+  }
 
-      Authenticator.setDefault(new Authenticator()
-      {
-         @Override
-         protected PasswordAuthentication getPasswordAuthentication()
-         {
-            return new PasswordAuthentication(userName, password.toCharArray());
-         }
-      });
+  @Override
+  public String getSpaces(int offset, int limit) throws Exception {
+    String url = baseUrl + ServiceInfo.getSpacesUri(offset, limit);
+    String json = HttpUtils.get(url);
+    return json;
+  }
 
-   }
+  @Override
+  public String getUsers(int offset, int limit) throws Exception {
+    String url = baseUrl + ServiceInfo.getUsersUri(offset, limit);
+    String json = HttpUtils.get(url);
+    return json;
+  }
 
-   public String getUserById(String username) throws Exception
-   {
-      String url = baseUrl + ServiceInfo.getUserUri(username);
-      String json = HttpUtils.get(url);
-      return json;
-   }
+  @Override
+  public String getActivitiesBySpaceID(String id, int offset, int limit) throws Exception {
+    String url = baseUrl + ServiceInfo.getSpaceActivities(id, offset, limit);
+    String json = HttpUtils.get(url);
+    return json;
+  }
 
-   @Override
-   public String getSpaces(int offset, int limit) throws Exception
-   {
-      String url = baseUrl + ServiceInfo.getSpacesUri(offset, limit);
-      String json = HttpUtils.get(url);
-      return json;
-   }
+  @Override
+  public String getActivitiesByUserID(String id, int offset, int limit) throws Exception {
+    String url = baseUrl + ServiceInfo.getUserActivities(id, offset, limit);
+    String json = HttpUtils.get(url);
+    return json;
+  }
 
-   @Override
-   public String getUsers(int offset, int limit) throws Exception
-   {
-      String url = baseUrl + ServiceInfo.getUsersUri(offset, limit);
-      String json = HttpUtils.get(url);
-      return json;
-   }
+  @Override
+  public String getActivityComments(String url) throws Exception {
+    String newUrl = ServiceInfo.getActivityData(url);
+    String json = HttpUtils.get(newUrl);
+    return json;
+  }
 
-   @Override
-   public String getActivitiesBySpaceID(String id, int offset, int limit) throws Exception
-   {
-      String url = baseUrl + ServiceInfo.getSpaceActivities(id, offset, limit);
-      String json = HttpUtils.get(url);
-      return json;
-   }
-
-   @Override
-   public String getActivitiesByUserID(String id, int offset, int limit) throws Exception
-   {
-      String url = baseUrl + ServiceInfo.getUserActivities(id, offset, limit);
-      String json = HttpUtils.get(url);
-      return json;
-   }
-
-   @Override
-   public String getActivityComments(String url) throws Exception
-   {
-      String newUrl = ServiceInfo.getActivityData(url);
-      String json = HttpUtils.get(newUrl);
-      return json;
-   }
-
-   @Override
-   public String getActivityLikes(String url) throws Exception
-   {
-      String newUrl = ServiceInfo.getActivityData(url);
-      String json = HttpUtils.get(newUrl);
-      return json;
-   }
+  @Override
+  public String getActivityLikes(String url) throws Exception {
+    String newUrl = ServiceInfo.getActivityData(url);
+    String json = HttpUtils.get(newUrl);
+    return json;
+  }
 
 }

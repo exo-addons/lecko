@@ -20,19 +20,14 @@
  */
 package org.exoplatform.addons.lecko.social.client.rest.connector;
 
-
 /**
- * Created by The eXo Platform SAS
- * Author : eXoPlatform
- *          exo@exoplatform.com
- * Sep 29, 2015  
+ * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Sep
+ * 29, 2015
  */
-public interface ExoSocialConnector
-{
-  
-  //User
-  public String getUserById(String username) throws Exception;
+public interface ExoSocialConnector {
 
+  // User
+  public String getUserById(String username) throws Exception;
 
   public String getSpaces(int offset, int limit) throws Exception;
 
@@ -45,6 +40,5 @@ public interface ExoSocialConnector
   public String getActivityComments(String url) throws Exception;
 
   public String getActivityLikes(String url) throws Exception;
-
 
 }

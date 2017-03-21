@@ -22,5 +22,5 @@
 
 -->
 <jboss-web>
-  <security-domain>java:/jaas/gatein-domain</security-domain>
+    <security-domain>java:/jaas/gatein-domain</security-domain>
 </jboss-web>

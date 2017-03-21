@@ -35,7 +35,6 @@ public class UploadAnResetLeckoDataJob implements Job {
 
   private static final Log LOG = ExoLogger.getLogger(UploadAnResetLeckoDataJob.class.getName());
 
-
   public UploadAnResetLeckoDataJob() throws Exception {
   }
 
@@ -44,10 +43,11 @@ public class UploadAnResetLeckoDataJob implements Job {
       LOG.info("Start UploadAnResetLeckoDataJob");
     }
 
-    LeckoServiceController leckoServiceController = (LeckoServiceController) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(LeckoServiceController.class);
+    LeckoServiceController leckoServiceController =
+                                                  (LeckoServiceController) ExoContainerContext.getCurrentContainer()
+                                                                                              .getComponentInstanceOfType(LeckoServiceController.class);
 
-
-    if  (leckoServiceController.getEnableLeckoJob()) {
+    if (leckoServiceController.getEnableLeckoJob()) {
 
       String result = leckoServiceController.UploadLeckoData();
       LOG.info(result);

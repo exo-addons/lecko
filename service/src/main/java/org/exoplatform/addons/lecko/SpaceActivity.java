@@ -29,99 +29,84 @@ import org.json.simple.JSONObject;
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com
  */
-public class SpaceActivity extends SocialActivity
-{
+public class SpaceActivity extends SocialActivity {
 
-   String spaceId;
+  String spaceId;
 
-   String displayName;
+  String displayName;
 
-   public SpaceActivity(String id,String displayName, ExoSocialConnector exoSocialConnector)
-   {
-      this.spaceId = id;
-      this.displayName=displayName;
-      this.exoSocialConnector = exoSocialConnector;
-   }
-   @Override
-   public void loadActivityStream(PrintWriter out) throws Exception
-   {
-      int offsetActivities = 0;
-      int sizeActivities = 20;
-      boolean hasNextActivity = true;
+  public SpaceActivity(String id, String displayName, ExoSocialConnector exoSocialConnector) {
+    this.spaceId = id;
+    this.displayName = displayName;
+    this.exoSocialConnector = exoSocialConnector;
+  }
 
-      String idEvent = "";
-      String date = "";
-      String idactor = "";
-      String placeName = "";
-      while (hasNextActivity)
-      {
-         //Get All activities by space id
-         String activitiesJson = exoSocialConnector.getActivitiesBySpaceID(spaceId, offsetActivities, sizeActivities);
-         JSONArray activitiesList;
-         if (activitiesJson == null)
-         {
-            break;
-         }
-         else
-         {
-            activitiesList = parseJSONArray(activitiesJson, "activities");
-         }
+  @Override
+  public void loadActivityStream(PrintWriter out) throws Exception {
+    int offsetActivities = 0;
+    int sizeActivities = 20;
+    boolean hasNextActivity = true;
 
-         if (activitiesList == null || activitiesList.size() == 0)
-         {
-            break;
-         }
-         else if (activitiesList.size() < sizeActivities)
-         {
-            hasNextActivity = false;
-         }
-         for (Object a : activitiesList)
-         {
-            JSONObject js = (JSONObject)a;
-            placeName = "none";
-            String type_space = "";
-            String url_comments = "no_url";
-            String url_likes = "no_url";
-
-            idactor = (String)(((JSONObject)js.get("owner")).get("id"));
-
-            //constuction de la map des users au fur et  mesure pour l'anonymisation
-            if (!user_map.containsKey(idactor))
-            {
-               user_map.put(idactor, Integer.toString(user_map.size() + 1));
-               idactor = user_map.get(idactor);
-            }
-            else
-            {
-               idactor = user_map.get(idactor);
-            }
-            out.print(idactor + ";");
-
-            idEvent = (String)js.get("type");
-            out.print(idEvent + ";");
-            date = (String)js.get("createDate");
-            out.print(date + ";");
-            type_space = (String)(((JSONObject)js.get("activityStream")).get("type"));
-            out.print(type_space + ";");
-            placeName = (String)(((JSONObject)js.get("activityStream")).get("id"));
-            if (type_space.equals("user"))
-            {
-               out.print(";;");
-            }
-            out.print(placeName + ";"+this.displayName+";");
-            out.println();
-            url_comments = (String)js.get("comments");
-            url_likes = (String)js.get("likes");
-
-            //Getting Comments
-            getExoComments(url_comments, placeName,this.displayName, out);
-            //Getting Likes
-            getLikes(url_likes, date, placeName, this.displayName,out);
-         }
-         offsetActivities += sizeActivities;
-         out.flush();
+    String idEvent = "";
+    String date = "";
+    String idactor = "";
+    String placeName = "";
+    while (hasNextActivity) {
+      // Get All activities by space id
+      String activitiesJson = exoSocialConnector.getActivitiesBySpaceID(spaceId, offsetActivities, sizeActivities);
+      JSONArray activitiesList;
+      if (activitiesJson == null) {
+        break;
+      } else {
+        activitiesList = parseJSONArray(activitiesJson, "activities");
       }
-   }
 
+      if (activitiesList == null || activitiesList.size() == 0) {
+        break;
+      } else if (activitiesList.size() < sizeActivities) {
+        hasNextActivity = false;
+      }
+      for (Object a : activitiesList) {
+        JSONObject js = (JSONObject) a;
+        placeName = "none";
+        String type_space = "";
+        String url_comments = "no_url";
+        String url_likes = "no_url";
+
+        idactor = (String) (((JSONObject) js.get("owner")).get("id"));
+
+        // constuction de la map des users au fur et mesure pour l'anonymisation
+        if (!user_map.containsKey(idactor)) {
+          user_map.put(idactor, Integer.toString(user_map.size() + 1));
+          idactor = user_map.get(idactor);
+        } else {
+          idactor = user_map.get(idactor);
+        }
+        out.print(idactor + ";");
+
+        idEvent = (String) js.get("type");
+        out.print(idEvent + ";");
+        date = (String) js.get("createDate");
+        out.print(date + ";");
+        type_space = (String) (((JSONObject) js.get("activityStream")).get("type"));
+        out.print(type_space + ";");
+        placeName = (String) (((JSONObject) js.get("activityStream")).get("id"));
+        if (type_space.equals("user")) {
+          out.print(";;");
+        }
+        out.print(placeName + ";" + this.displayName + ";");
+        out.println();
+        url_comments = (String) js.get("comments");
+        url_likes = (String) js.get("likes");
+
+        // Getting Comments
+        getExoComments(url_comments, placeName, this.displayName, out);
+        // Getting Likes
+        getLikes(url_likes, date, placeName, this.displayName, out);
+      }
+      offsetActivities += sizeActivities;
+      out.flush();
+    }
+  }
 
 }

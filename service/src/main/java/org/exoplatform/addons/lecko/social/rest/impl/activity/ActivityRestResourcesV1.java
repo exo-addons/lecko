@@ -66,83 +66,83 @@ import org.exoplatform.social.rest.entity.DataEntity;
 import org.exoplatform.social.service.rest.api.VersionResources;
 
 @Path(VersionResources.VERSION_ONE + "/social/activities")
-@Api(tags = VersionResources.VERSION_ONE + "/social/activities", value = VersionResources.VERSION_ONE + "/social/activities", description = "Managing activities together with comments and likes")
+@Api(tags = VersionResources.VERSION_ONE + "/social/activities", value = VersionResources.VERSION_ONE
+    + "/social/activities", description = "Managing activities together with comments and likes")
 public class ActivityRestResourcesV1 implements ActivityRestResources {
-  
-  private static final String SPACE_PREFIX = "/spaces/";
-  private static final String TYPE = "space";
 
-  
+  private static final String SPACE_PREFIX = "/spaces/";
+
+  private static final String TYPE         = "space";
+
   @GET
   @RolesAllowed("users")
-  @ApiOperation(value = "Gets all activities",
-                httpMethod = "GET",
-                response = Response.class,
-                notes = "This returns an activity in the list in the following cases: <br/><ul><li>the authenticated user is the super user, so he can see all the activities</li><li>this is a user activity and the owner of the activity is the authenticated user or one of his connections</li><li>this is a space activity and the authenticated user is a member of the space</li></ul>")
-  @ApiResponses(value = { 
-    @ApiResponse (code = 200, message = "Request fulfilled"),
-    @ApiResponse (code = 500, message = "Internal server error"),
-    @ApiResponse (code = 400, message = "Invalid query input") })
+  @ApiOperation(value = "Gets all activities", httpMethod = "GET", response = Response.class, notes = "This returns an activity in the list in the following cases: <br/><ul><li>the authenticated user is the super user, so he can see all the activities</li><li>this is a user activity and the owner of the activity is the authenticated user or one of his connections</li><li>this is a space activity and the authenticated user is a member of the space</li></ul>")
+  @ApiResponses(value = { @ApiResponse(code = 200, message = "Request fulfilled"),
+      @ApiResponse(code = 500, message = "Internal server error"), @ApiResponse(code = 400, message = "Invalid query input") })
   public Response getActivitiesOfCurrentUser(@Context UriInfo uriInfo,
                                              @ApiParam(value = "Offset", required = false, defaultValue = "0") @QueryParam("offset") int offset,
                                              @ApiParam(value = "Limit", required = false, defaultValue = "20") @QueryParam("limit") int limit,
                                              @ApiParam(value = "Returning the number of activities or not", defaultValue = "false") @QueryParam("returnSize") boolean returnSize,
                                              @ApiParam(value = "Asking for a full representation of a specific subresource, ex: comments or likes", required = false) @QueryParam("expand") String expand) throws Exception {
-    
+
     offset = offset > 0 ? offset : RestUtils.getOffset(uriInfo);
     limit = limit > 0 ? limit : RestUtils.getLimit(uriInfo);
-    
+
     String authenticatedUser = ConversationState.getCurrent().getIdentity().getUserId();
-    
-    Identity currentUser = CommonsUtils.getService(IdentityManager.class).getOrCreateIdentity(OrganizationIdentityProvider.NAME, authenticatedUser, true);
+
+    Identity currentUser = CommonsUtils.getService(IdentityManager.class).getOrCreateIdentity(OrganizationIdentityProvider.NAME,
+                                                                                              authenticatedUser,
+                                                                                              true);
 
     ActivityManager activityManager = CommonsUtils.getService(ActivityManager.class);
     RealtimeListAccess<ExoSocialActivity> listAccess = activityManager.getActivityFeedWithListAccess(currentUser);
     List<ExoSocialActivity> activities = listAccess.loadAsList(offset, limit);
-    
+
     List<DataEntity> activityEntities = new ArrayList<DataEntity>();
     for (ExoSocialActivity activity : activities) {
       DataEntity as = EntityBuilder.getActivityStream(activity, currentUser);
-      if (as == null && !hasMention(currentUser, activity)) continue;
+      if (as == null && !hasMention(currentUser, activity))
+        continue;
       ActivityEntity activityEntity = EntityBuilder.buildEntityFromActivity(activity, uriInfo.getPath(), expand);
       activityEntity.setActivityStream(as);
       //
-      activityEntities.add(activityEntity.getDataEntity()); 
+      activityEntities.add(activityEntity.getDataEntity());
     }
-    CollectionEntity collectionActivity = new CollectionEntity(activityEntities, EntityBuilder.ACTIVITIES_TYPE,  offset, limit);
-    if(returnSize) {
+    CollectionEntity collectionActivity = new CollectionEntity(activityEntities, EntityBuilder.ACTIVITIES_TYPE, offset, limit);
+    if (returnSize) {
       collectionActivity.setSize(listAccess.getSize());
     }
 
     return EntityBuilder.getResponse(collectionActivity, uriInfo, RestUtils.getJsonMediaType(), Response.Status.OK);
   }
-  
+
   @GET
   @Path("{id}")
   @RolesAllowed("users")
-  @ApiOperation(value = "Gets a specific activity by id",
-                httpMethod = "GET",
-                response = Response.class,
-				notes = "This returns the activity in the following cases: <br/><ul><li>this is a user activity and the owner of the activity is the authenticated user or one of his connections</li><li>this is a space activity and the authenticated user is a member of the space</li><li>the authenticated user is the super user</li></ul>")
-  @ApiResponses(value = { 
-    @ApiResponse (code = 200, message = "Request fulfilled"),
-    @ApiResponse (code = 500, message = "Internal server error"),
-    @ApiResponse (code = 400, message = "Invalid query input") })
+  @ApiOperation(value = "Gets a specific activity by id", httpMethod = "GET", response = Response.class, notes = "This returns the activity in the following cases: <br/><ul><li>this is a user activity and the owner of the activity is the authenticated user or one of his connections</li><li>this is a space activity and the authenticated user is a member of the space</li><li>the authenticated user is the super user</li></ul>")
+  @ApiResponses(value = { @ApiResponse(code = 200, message = "Request fulfilled"),
+      @ApiResponse(code = 500, message = "Internal server error"), @ApiResponse(code = 400, message = "Invalid query input") })
   public Response getActivityById(@Context UriInfo uriInfo,
                                   @ApiParam(value = "Activity id", required = true) @PathParam("id") String id,
                                   @ApiParam(value = "Asking for a full representation of a specific subresource, ex: comments or likes", required = false) @QueryParam("expand") String expand) throws Exception {
 
     String authenticatedUser = ConversationState.getCurrent().getIdentity().getUserId();
-    Identity currentUser = CommonsUtils.getService(IdentityManager.class).getOrCreateIdentity(OrganizationIdentityProvider.NAME, authenticatedUser, true);
-    
+    Identity currentUser = CommonsUtils.getService(IdentityManager.class).getOrCreateIdentity(OrganizationIdentityProvider.NAME,
+                                                                                              authenticatedUser,
+                                                                                              true);
+
     ActivityManager activityManager = CommonsUtils.getService(ActivityManager.class);
     ExoSocialActivity activity = activityManager.getActivity(id);
     if (activity == null) {
       throw new WebApplicationException(Response.Status.UNAUTHORIZED);
     }
-    
-    DataEntity as = EntityBuilder.getActivityStream(activity.isComment() ? activityManager.getParentActivity(activity) : activity, currentUser);
-    if (as == null && !hasMention(currentUser, activity)) { //current user doesn't have permission to view activity
+
+    DataEntity as = EntityBuilder.getActivityStream(activity.isComment() ? activityManager.getParentActivity(activity) : activity,
+                                                    currentUser);
+    if (as == null && !hasMention(currentUser, activity)) { // current user
+                                                            // doesn't have
+                                                            // permission to
+                                                            // view activity
       throw new WebApplicationException(Response.Status.UNAUTHORIZED);
     }
     ActivityEntity activityEntity = EntityBuilder.buildEntityFromActivity(activity, uriInfo.getPath(), expand);
@@ -157,61 +157,55 @@ public class ActivityRestResourcesV1 implements ActivityRestResources {
   @Path("{id}")
   @Produces(MediaType.APPLICATION_JSON)
   @RolesAllowed("users")
-  @ApiOperation(value = "Updates a specific activity by id",
-                httpMethod = "PUT",
-                response = Response.class,
-				notes = "This updates the activity in the following cases: <br/><ul><li>this is a user activity and the owner of the activity is the authenticated user</li><li>the authenticated user is the super user</li></ul>")
-  @ApiResponses(value = { 
-    @ApiResponse (code = 200, message = "Request fulfilled"),
-    @ApiResponse (code = 500, message = "Internal server error"),
-    @ApiResponse (code = 400, message = "Invalid query input") })
+  @ApiOperation(value = "Updates a specific activity by id", httpMethod = "PUT", response = Response.class, notes = "This updates the activity in the following cases: <br/><ul><li>this is a user activity and the owner of the activity is the authenticated user</li><li>the authenticated user is the super user</li></ul>")
+  @ApiResponses(value = { @ApiResponse(code = 200, message = "Request fulfilled"),
+      @ApiResponse(code = 500, message = "Internal server error"), @ApiResponse(code = 400, message = "Invalid query input") })
   public Response updateActivityById(@Context UriInfo uriInfo,
                                      @ApiParam(value = "Activity id", required = true) @PathParam("id") String id,
                                      @ApiParam(value = "Asking for a full representation of a specific subresource, ex: comments or likes", required = false) @QueryParam("expand") String expand,
                                      @ApiParam(value = "Activity object to be updated, ex: <br/>{<br/>\"title\" : \"My activity\"<br/>}", required = true) ActivityEntity model) throws Exception {
-  
+
     if (model == null || model.getTitle() == null || model.getTitle().length() == 0) {
       throw new WebApplicationException(Response.Status.BAD_REQUEST);
     }
     //
     String authenticatedUser = ConversationState.getCurrent().getIdentity().getUserId();
-    Identity currentUser = CommonsUtils.getService(IdentityManager.class).getOrCreateIdentity(OrganizationIdentityProvider.NAME, authenticatedUser, true);
-    
+    Identity currentUser = CommonsUtils.getService(IdentityManager.class).getOrCreateIdentity(OrganizationIdentityProvider.NAME,
+                                                                                              authenticatedUser,
+                                                                                              true);
+
     ActivityManager activityManager = CommonsUtils.getService(ActivityManager.class);
     ExoSocialActivity activity = activityManager.getActivity(id);
     if (activity == null) {
       throw new WebApplicationException(Response.Status.UNAUTHORIZED);
     }
     checkPermissionToModifyActivity(activity, currentUser);
-    //update activity's title
+    // update activity's title
     activity.setTitle(model.getTitle());
     activityManager.updateActivity(activity);
-    
+
     DataEntity as = EntityBuilder.getActivityStream(activity, currentUser);
     ActivityEntity activityInfo = EntityBuilder.buildEntityFromActivity(activity, uriInfo.getPath(), expand);
     activityInfo.setActivityStream(as);
-    
+
     return EntityBuilder.getResponse(activityInfo.getDataEntity(), uriInfo, RestUtils.getJsonMediaType(), Response.Status.OK);
   }
-  
+
   @DELETE
   @Path("{id}")
   @RolesAllowed("users")
-  @ApiOperation(value = "Deletes a specific activity by id",
-                httpMethod = "DELETE",
-                response = Response.class,
-				notes = "This deletes the activity in the following cases: <br/><ul><li>this is a user activity and the owner of the activity is the authenticated user</li><li>the authenticated user is the super user</li></ul>")
-  @ApiResponses(value = { 
-    @ApiResponse (code = 200, message = "Request fulfilled"),
-    @ApiResponse (code = 500, message = "Internal server error"),
-    @ApiResponse (code = 400, message = "Invalid query input") })
+  @ApiOperation(value = "Deletes a specific activity by id", httpMethod = "DELETE", response = Response.class, notes = "This deletes the activity in the following cases: <br/><ul><li>this is a user activity and the owner of the activity is the authenticated user</li><li>the authenticated user is the super user</li></ul>")
+  @ApiResponses(value = { @ApiResponse(code = 200, message = "Request fulfilled"),
+      @ApiResponse(code = 500, message = "Internal server error"), @ApiResponse(code = 400, message = "Invalid query input") })
   public Response deleteActivityById(@Context UriInfo uriInfo,
                                      @ApiParam(value = "Activity id", required = true) @PathParam("id") String id,
                                      @ApiParam(value = "Asking for a full representation of a specific subresource if any", required = false) @QueryParam("expand") String expand) throws Exception {
-    
+
     String authenticatedUser = ConversationState.getCurrent().getIdentity().getUserId();
-    Identity currentUser = CommonsUtils.getService(IdentityManager.class).getOrCreateIdentity(OrganizationIdentityProvider.NAME, authenticatedUser, true);
-    
+    Identity currentUser = CommonsUtils.getService(IdentityManager.class).getOrCreateIdentity(OrganizationIdentityProvider.NAME,
+                                                                                              authenticatedUser,
+                                                                                              true);
+
     ActivityManager activityManager = CommonsUtils.getService(ActivityManager.class);
     ExoSocialActivity activity = activityManager.getActivity(id);
     if (activity == null) {
@@ -222,45 +216,49 @@ public class ActivityRestResourcesV1 implements ActivityRestResources {
     DataEntity as = EntityBuilder.getActivityStream(activity, currentUser);
     ActivityEntity activityEntity = EntityBuilder.buildEntityFromActivity(activity, uriInfo.getPath(), expand);
     activityEntity.setActivityStream(as);
-    //Delete activity
+    // Delete activity
     activityManager.deleteActivity(activity);
     return EntityBuilder.getResponse(activityEntity.getDataEntity(), uriInfo, RestUtils.getJsonMediaType(), Response.Status.OK);
   }
-  
+
   @GET
   @Path("{id}/comments")
   @RolesAllowed("users")
-  @ApiOperation(value = "Gets comments of a specific activity",
-                httpMethod = "GET",
-                response = Response.class,
-				notes = "This returns a list of comments if the authenticated user has permissions to see the activity.")
-  @ApiResponses(value = { 
-    @ApiResponse (code = 200, message = "Request fulfilled"),
-    @ApiResponse (code = 500, message = "Internal server error"),
-    @ApiResponse (code = 400, message = "Invalid query input") })
+  @ApiOperation(value = "Gets comments of a specific activity", httpMethod = "GET", response = Response.class, notes = "This returns a list of comments if the authenticated user has permissions to see the activity.")
+  @ApiResponses(value = { @ApiResponse(code = 200, message = "Request fulfilled"),
+      @ApiResponse(code = 500, message = "Internal server error"), @ApiResponse(code = 400, message = "Invalid query input") })
   public Response getCommentsOfActivity(@Context UriInfo uriInfo,
                                         @ApiParam(value = "Activity id", required = true) @PathParam("id") String id,
                                         @ApiParam(value = "Offset", required = false, defaultValue = "0") @QueryParam("offset") int offset,
                                         @ApiParam(value = "Limit", required = false, defaultValue = "20") @QueryParam("limit") int limit,
                                         @ApiParam(value = "Returning the number of activities or not", defaultValue = "false") @QueryParam("returnSize") boolean returnSize,
                                         @ApiParam(value = "Asking for a full representation of a specific subresource if any", required = false) @QueryParam("expand") String expand) throws Exception {
-    
+
     offset = offset > 0 ? offset : RestUtils.getOffset(uriInfo);
     limit = limit > 0 ? limit : RestUtils.getLimit(uriInfo);
-    
+
     String authenticatedUser = ConversationState.getCurrent().getIdentity().getUserId();
-    Identity currentUser = CommonsUtils.getService(IdentityManager.class).getOrCreateIdentity(OrganizationIdentityProvider.NAME, authenticatedUser, true);
-    
+    Identity currentUser = CommonsUtils.getService(IdentityManager.class).getOrCreateIdentity(OrganizationIdentityProvider.NAME,
+                                                                                              authenticatedUser,
+                                                                                              true);
+
     ActivityManager activityManager = CommonsUtils.getService(ActivityManager.class);
     ExoSocialActivity activity = activityManager.getActivity(id);
     if (activity == null) {
       throw new WebApplicationException(Response.Status.UNAUTHORIZED);
     }
-    
-    if (EntityBuilder.getActivityStream(activity, currentUser) == null && !hasMention(currentUser, activity)) { //current user doesn't have permission to view activity
+
+    if (EntityBuilder.getActivityStream(activity, currentUser) == null && !hasMention(currentUser, activity)) { // current
+                                                                                                                // user
+                                                                                                                // doesn't
+                                                                                                                // have
+                                                                                                                // permission
+                                                                                                                // to
+                                                                                                                // view
+                                                                                                                // activity
       throw new WebApplicationException(Response.Status.UNAUTHORIZED);
     }
-    
+
     List<DataEntity> commentsEntity = new ArrayList<DataEntity>();
     RealtimeListAccess<ExoSocialActivity> listAccess = activityManager.getCommentsWithListAccess(activity);
     List<ExoSocialActivity> comments = listAccess.loadAsList(offset, limit);
@@ -268,121 +266,138 @@ public class ActivityRestResourcesV1 implements ActivityRestResources {
       CommentEntity commentInfo = EntityBuilder.buildEntityFromComment(comment, uriInfo.getPath(), expand, true);
       commentsEntity.add(commentInfo.getDataEntity());
     }
-    
-    CollectionEntity collectionComment = new CollectionEntity(commentsEntity, EntityBuilder.COMMENTS_TYPE, offset, limit);    
-    if(returnSize) {
+
+    CollectionEntity collectionComment = new CollectionEntity(commentsEntity, EntityBuilder.COMMENTS_TYPE, offset, limit);
+    if (returnSize) {
       collectionComment.setSize(listAccess.getSize());
     }
     //
     return EntityBuilder.getResponse(collectionComment, uriInfo, RestUtils.getJsonMediaType(), Response.Status.OK);
   }
-  
+
   @POST
   @Path("{id}/comments")
   @Produces(MediaType.APPLICATION_JSON)
   @RolesAllowed("users")
-  @ApiOperation(value = "Posts a comment on a specific activity",
-                httpMethod = "POST",
-                response = Response.class,
-				notes = "This posts the comment if the authenticated user has permissions to see the activity.")
-  @ApiResponses(value = { 
-    @ApiResponse (code = 200, message = "Request fulfilled"),
-    @ApiResponse (code = 500, message = "Internal server error"),
-    @ApiResponse (code = 400, message = "Invalid query input") })
+  @ApiOperation(value = "Posts a comment on a specific activity", httpMethod = "POST", response = Response.class, notes = "This posts the comment if the authenticated user has permissions to see the activity.")
+  @ApiResponses(value = { @ApiResponse(code = 200, message = "Request fulfilled"),
+      @ApiResponse(code = 500, message = "Internal server error"), @ApiResponse(code = 400, message = "Invalid query input") })
   public Response postComment(@Context UriInfo uriInfo,
                               @ApiParam(value = "Activity id", required = true) @PathParam("id") String id,
                               @ApiParam(value = "Asking for a full representation of a specific subresource if any", required = false) @QueryParam("expand") String expand,
                               @ApiParam(value = "Comment object to be posted, ex: <br/>{<br/>\"title\" : \"My comment\"<br/>}", required = true) CommentEntity model) throws Exception {
-    
+
     if (model == null || model.getTitle() == null || model.getTitle().length() == 0) {
       throw new WebApplicationException(Response.Status.BAD_REQUEST);
     }
-    
+
     String authenticatedUser = ConversationState.getCurrent().getIdentity().getUserId();
-    Identity currentUser = CommonsUtils.getService(IdentityManager.class).getOrCreateIdentity(OrganizationIdentityProvider.NAME, authenticatedUser, true);
-    
+    Identity currentUser = CommonsUtils.getService(IdentityManager.class).getOrCreateIdentity(OrganizationIdentityProvider.NAME,
+                                                                                              authenticatedUser,
+                                                                                              true);
+
     ActivityManager activityManager = CommonsUtils.getService(ActivityManager.class);
     ExoSocialActivity activity = activityManager.getActivity(id);
     if (activity == null) {
       throw new WebApplicationException(Response.Status.UNAUTHORIZED);
     }
-    
-    if (EntityBuilder.getActivityStream(activity, currentUser) == null && !hasMention(currentUser, activity)) { //current user doesn't have permission to view activity
+
+    if (EntityBuilder.getActivityStream(activity, currentUser) == null && !hasMention(currentUser, activity)) { // current
+                                                                                                                // user
+                                                                                                                // doesn't
+                                                                                                                // have
+                                                                                                                // permission
+                                                                                                                // to
+                                                                                                                // view
+                                                                                                                // activity
       throw new WebApplicationException(Response.Status.UNAUTHORIZED);
     }
-    
+
     ExoSocialActivity comment = new ExoSocialActivityImpl();
     comment.setTitle(model.getTitle());
     comment.setUserId(currentUser.getId());
     activityManager.saveComment(activity, comment);
-    
-    return EntityBuilder.getResponse(EntityBuilder.buildEntityFromActivity(activityManager.getActivity(comment.getId()), uriInfo.getPath(), expand), uriInfo, RestUtils.getJsonMediaType(), Response.Status.OK);
+
+    return EntityBuilder.getResponse(EntityBuilder.buildEntityFromActivity(activityManager.getActivity(comment.getId()),
+                                                                           uriInfo.getPath(),
+                                                                           expand),
+                                     uriInfo,
+                                     RestUtils.getJsonMediaType(),
+                                     Response.Status.OK);
   }
-  
+
   @GET
   @Path("{id}/likes")
   @RolesAllowed("users")
-  @ApiOperation(value = "Gets likes of a specific activity",
-                httpMethod = "GET",
-                response = Response.class,
-				notes = "This returns a list of likes if the authenticated user has permissions to see the activity.")
-  @ApiResponses(value = { 
-    @ApiResponse (code = 200, message = "Request fulfilled"),
-    @ApiResponse (code = 500, message = "Internal server error"),
-    @ApiResponse (code = 400, message = "Invalid query input") })
+  @ApiOperation(value = "Gets likes of a specific activity", httpMethod = "GET", response = Response.class, notes = "This returns a list of likes if the authenticated user has permissions to see the activity.")
+  @ApiResponses(value = { @ApiResponse(code = 200, message = "Request fulfilled"),
+      @ApiResponse(code = 500, message = "Internal server error"), @ApiResponse(code = 400, message = "Invalid query input") })
   public Response getLikesOfActivity(@Context UriInfo uriInfo,
                                      @ApiParam(value = "Activity id", required = true) @PathParam("id") String id,
                                      @ApiParam(value = "Offset", required = false, defaultValue = "0") @QueryParam("offset") int offset,
                                      @ApiParam(value = "Limit", required = false, defaultValue = "20") @QueryParam("limit") int limit,
                                      @ApiParam(value = "Asking for a full representation of a specific subresource if any", required = false) @QueryParam("expand") String expand) throws Exception {
-    
+
     offset = offset > 0 ? offset : RestUtils.getOffset(uriInfo);
     limit = limit > 0 ? limit : RestUtils.getLimit(uriInfo);
-    
+
     String authenticatedUser = ConversationState.getCurrent().getIdentity().getUserId();
-    Identity currentUser = CommonsUtils.getService(IdentityManager.class).getOrCreateIdentity(OrganizationIdentityProvider.NAME, authenticatedUser, true);
-    
+    Identity currentUser = CommonsUtils.getService(IdentityManager.class).getOrCreateIdentity(OrganizationIdentityProvider.NAME,
+                                                                                              authenticatedUser,
+                                                                                              true);
+
     ActivityManager activityManager = CommonsUtils.getService(ActivityManager.class);
     ExoSocialActivity activity = activityManager.getActivity(id);
     if (activity == null) {
       throw new WebApplicationException(Response.Status.UNAUTHORIZED);
     }
-    
-    if (EntityBuilder.getActivityStream(activity, currentUser) == null && !hasMention(currentUser, activity)) { //current user doesn't have permission to view activity
+
+    if (EntityBuilder.getActivityStream(activity, currentUser) == null && !hasMention(currentUser, activity)) { // current
+                                                                                                                // user
+                                                                                                                // doesn't
+                                                                                                                // have
+                                                                                                                // permission
+                                                                                                                // to
+                                                                                                                // view
+                                                                                                                // activity
       throw new WebApplicationException(Response.Status.UNAUTHORIZED);
     }
     List<DataEntity> likesEntity = EntityBuilder.buildEntityFromLike(activity, uriInfo.getPath(), expand, offset, limit);
-    CollectionEntity collectionLike = new CollectionEntity(likesEntity, EntityBuilder.LIKES_TYPE, offset, limit);    
+    CollectionEntity collectionLike = new CollectionEntity(likesEntity, EntityBuilder.LIKES_TYPE, offset, limit);
     //
     return EntityBuilder.getResponse(collectionLike, uriInfo, RestUtils.getJsonMediaType(), Response.Status.OK);
   }
-  
+
   @POST
   @Path("{id}/likes")
   @Produces(MediaType.APPLICATION_JSON)
   @RolesAllowed("users")
-  @ApiOperation(value = "Adds a like to a specific activity",
-                httpMethod = "POST",
-                response = Response.class,
-				notes = "This adds the like if the authenticated user has permissions to see the activity.")
-  @ApiResponses(value = { 
-    @ApiResponse (code = 200, message = "Request fulfilled"),
-    @ApiResponse (code = 500, message = "Internal server error"),
-    @ApiResponse (code = 400, message = "Invalid query input") })
+  @ApiOperation(value = "Adds a like to a specific activity", httpMethod = "POST", response = Response.class, notes = "This adds the like if the authenticated user has permissions to see the activity.")
+  @ApiResponses(value = { @ApiResponse(code = 200, message = "Request fulfilled"),
+      @ApiResponse(code = 500, message = "Internal server error"), @ApiResponse(code = 400, message = "Invalid query input") })
   public Response addLike(@Context UriInfo uriInfo,
                           @ApiParam(value = "Activity id", required = true) @PathParam("id") String id,
                           @ApiParam(value = "Asking for a full representation of a subresource if any", required = false) @QueryParam("expand") String expand) throws Exception {
-    
+
     String authenticatedUser = ConversationState.getCurrent().getIdentity().getUserId();
-    Identity currentUser = CommonsUtils.getService(IdentityManager.class).getOrCreateIdentity(OrganizationIdentityProvider.NAME, authenticatedUser, true);
-    
+    Identity currentUser = CommonsUtils.getService(IdentityManager.class).getOrCreateIdentity(OrganizationIdentityProvider.NAME,
+                                                                                              authenticatedUser,
+                                                                                              true);
+
     ActivityManager activityManager = CommonsUtils.getService(ActivityManager.class);
     ExoSocialActivity activity = activityManager.getActivity(id);
     if (activity == null) {
       throw new WebApplicationException(Response.Status.UNAUTHORIZED);
     }
-    
-    if (EntityBuilder.getActivityStream(activity, currentUser) == null && !hasMention(currentUser, activity)) { //current user doesn't have permission to view activity
+
+    if (EntityBuilder.getActivityStream(activity, currentUser) == null && !hasMention(currentUser, activity)) { // current
+                                                                                                                // user
+                                                                                                                // doesn't
+                                                                                                                // have
+                                                                                                                // permission
+                                                                                                                // to
+                                                                                                                // view
+                                                                                                                // activity
       throw new WebApplicationException(Response.Status.UNAUTHORIZED);
     }
     List<String> likerIds = new ArrayList<String>(Arrays.asList(activity.getLikeIdentityIds()));
@@ -392,27 +407,29 @@ public class ActivityRestResourcesV1 implements ActivityRestResources {
       activity.setLikeIdentityIds(likerIds.toArray(identityIds));
       activityManager.updateActivity(activity);
     }
-    return EntityBuilder.getResponse(EntityBuilder.buildEntityFromActivity(activityManager.getActivity(id), uriInfo.getPath(), expand), uriInfo, RestUtils.getJsonMediaType(), Response.Status.OK);
+    return EntityBuilder.getResponse(EntityBuilder.buildEntityFromActivity(activityManager.getActivity(id),
+                                                                           uriInfo.getPath(),
+                                                                           expand),
+                                     uriInfo,
+                                     RestUtils.getJsonMediaType(),
+                                     Response.Status.OK);
   }
-  
+
   @GET
   @Path("{id}/likes/{username}")
   @RolesAllowed("users")
-  @ApiOperation(value = "Gets a like of a specific user for a given activity",
-                httpMethod = "GET",
-                response = Response.class,
-                notes = "This returns the like if the authenticated user has permissions to see the activity.")
-  @ApiResponses(value = { 
-    @ApiResponse (code = 200, message = "Request fulfilled"),
-    @ApiResponse (code = 500, message = "Internal server error"),
-    @ApiResponse (code = 400, message = "Invalid query input") })
+  @ApiOperation(value = "Gets a like of a specific user for a given activity", httpMethod = "GET", response = Response.class, notes = "This returns the like if the authenticated user has permissions to see the activity.")
+  @ApiResponses(value = { @ApiResponse(code = 200, message = "Request fulfilled"),
+      @ApiResponse(code = 500, message = "Internal server error"), @ApiResponse(code = 400, message = "Invalid query input") })
   public Response getLikesActivityOfUser(@Context UriInfo uriInfo,
                                          @ApiParam(value = "Activity id", required = true) @PathParam("id") String id,
                                          @ApiParam(value = "User name", required = true) @PathParam("username") String username,
                                          @ApiParam(value = "Asking for a full representation of a specific subresource if any", required = false) @QueryParam("expand") String expand) throws Exception {
-    
-    Identity userToGetLike = CommonsUtils.getService(IdentityManager.class).getOrCreateIdentity(OrganizationIdentityProvider.NAME, username, true);
-    
+
+    Identity userToGetLike = CommonsUtils.getService(IdentityManager.class).getOrCreateIdentity(OrganizationIdentityProvider.NAME,
+                                                                                                username,
+                                                                                                true);
+
     ActivityManager activityManager = CommonsUtils.getService(ActivityManager.class);
     ExoSocialActivity activity = activityManager.getActivity(id);
     if (activity == null) {
@@ -425,39 +442,36 @@ public class ActivityRestResourcesV1 implements ActivityRestResources {
     }
 
     CollectionEntity collectionLike = new CollectionEntity(likesEntity, EntityBuilder.LIKES_TYPE, 0, 1);
-    
+
     //
     return EntityBuilder.getResponse(collectionLike, uriInfo, RestUtils.getJsonMediaType(), Response.Status.OK);
   }
-  
+
   @DELETE
   @Path("{id}/likes/{username}")
   @RolesAllowed("users")
-  @ApiOperation(value = "Deletes a like of a specific user for a given activity",
-                httpMethod = "DELETE",
-                response = Response.class,
-                notes = "This deletes the like if the authenticated user is the given user or the super user.")
-  @ApiResponses(value = { 
-    @ApiResponse (code = 200, message = "Request fulfilled"),
-    @ApiResponse (code = 500, message = "Internal server error"),
-    @ApiResponse (code = 400, message = "Invalid query input") })
+  @ApiOperation(value = "Deletes a like of a specific user for a given activity", httpMethod = "DELETE", response = Response.class, notes = "This deletes the like if the authenticated user is the given user or the super user.")
+  @ApiResponses(value = { @ApiResponse(code = 200, message = "Request fulfilled"),
+      @ApiResponse(code = 500, message = "Internal server error"), @ApiResponse(code = 400, message = "Invalid query input") })
   public Response deleteLike(@Context UriInfo uriInfo,
-                                     @ApiParam(value = "Activity id", required = true) @PathParam("id") String id,
-                                     @ApiParam(value = "User name", required = true) @PathParam("username") String username,
-                                     @ApiParam(value = "Asking for a full representation of a specific subresource if any", required = false) @QueryParam("expand") String expand) throws Exception {
-    
+                             @ApiParam(value = "Activity id", required = true) @PathParam("id") String id,
+                             @ApiParam(value = "User name", required = true) @PathParam("username") String username,
+                             @ApiParam(value = "Asking for a full representation of a specific subresource if any", required = false) @QueryParam("expand") String expand) throws Exception {
+
     String authenticatedUser = ConversationState.getCurrent().getIdentity().getUserId();
     if (!authenticatedUser.equals(username)) {
       throw new WebApplicationException(Response.Status.UNAUTHORIZED);
     }
-    Identity currentUser = CommonsUtils.getService(IdentityManager.class).getOrCreateIdentity(OrganizationIdentityProvider.NAME, authenticatedUser, true);
+    Identity currentUser = CommonsUtils.getService(IdentityManager.class).getOrCreateIdentity(OrganizationIdentityProvider.NAME,
+                                                                                              authenticatedUser,
+                                                                                              true);
 
     ActivityManager activityManager = CommonsUtils.getService(ActivityManager.class);
     ExoSocialActivity activity = activityManager.getActivity(id);
     if (activity == null) {
       throw new WebApplicationException(Response.Status.UNAUTHORIZED);
     }
-    
+
     List<String> likerIds = new ArrayList<String>(Arrays.asList(activity.getLikeIdentityIds()));
     if (likerIds.contains(currentUser.getId())) {
       likerIds.remove(currentUser.getId());
@@ -465,30 +479,38 @@ public class ActivityRestResourcesV1 implements ActivityRestResources {
       activity.setLikeIdentityIds(likerIds.toArray(identityIds));
       activityManager.updateActivity(activity);
     }
-    return EntityBuilder.getResponse(EntityBuilder.buildEntityFromActivity(activityManager.getActivity(id), uriInfo.getPath(), expand), uriInfo, RestUtils.getJsonMediaType(), Response.Status.OK);
+    return EntityBuilder.getResponse(EntityBuilder.buildEntityFromActivity(activityManager.getActivity(id),
+                                                                           uriInfo.getPath(),
+                                                                           expand),
+                                     uriInfo,
+                                     RestUtils.getJsonMediaType(),
+                                     Response.Status.OK);
   }
+
   private void checkPermissionToModifyActivity(ExoSocialActivity activity, Identity currentUser) {
     if (activity.getActivityStream().getType().toString().equalsIgnoreCase(TYPE)) {
       SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
-      String spaceGroupId = SPACE_PREFIX + activity.getActivityStream().getPrettyId();;
+      String spaceGroupId = SPACE_PREFIX + activity.getActivityStream().getPrettyId();
+      ;
       Space space = spaceService.getSpaceByGroupId(spaceGroupId);
       if (space == null) {
         throw new WebApplicationException(Response.Status.UNAUTHORIZED);
       }
-      if(!activity.getPosterId().equals(currentUser.getId()) && !spaceService.isManager(space, currentUser.getRemoteId())) {
+      if (!activity.getPosterId().equals(currentUser.getId()) && !spaceService.isManager(space, currentUser.getRemoteId())) {
         throw new WebApplicationException(Response.Status.UNAUTHORIZED);
       }
-    }else {
-      if(!activity.getPosterId().equals(currentUser.getId())) {
+    } else {
+      if (!activity.getPosterId().equals(currentUser.getId())) {
         throw new WebApplicationException(Response.Status.UNAUTHORIZED);
       }
     }
   }
-  
+
   private boolean hasMention(Identity currentUser, ExoSocialActivity activity) {
     String[] mentionerIds = activity.getMentionedIds();
     for (String id : mentionerIds) {
-      if (id.startsWith(currentUser.getId())) return true;
+      if (id.startsWith(currentUser.getId()))
+        return true;
     }
     return false;
   }

@@ -21,69 +21,72 @@
 package org.exoplatform.addons.lecko.social.client.rest.connector;
 
 /**
- * Created by The eXo Platform SAS
- * Author : eXoPlatform
- *          exo@exoplatform.com
- * Sep 29, 2015  
+ * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com Sep
+ * 29, 2015
  */
 public class ServiceInfo {
-  
+
   public static final String REST_URL = "/rest/private/v1/social";
-  
-  //User
+
+  // User
   public static String getUsersUri(int offset, int limit) {
-    return REST_URL + "/users?offset="+offset+"&limit="+limit;
+    return REST_URL + "/users?offset=" + offset + "&limit=" + limit;
   }
+
   public static String getUserUri(String username) {
-    return REST_URL + "/users/" + username; 
+    return REST_URL + "/users/" + username;
   }
+
   public static String getUserConnectionsUri(String username) {
     return REST_URL + "/users/" + username + "/connections";
   }
+
   public static String getUserSpacesUri(String username) {
     return REST_URL + "/users/" + username + "/spaces";
   }
+
   public static String getUserActivitiesUri(String username) {
     return REST_URL + "/users/" + username + "/activities";
   }
-  
-  //UserRelationship
+
+  // UserRelationship
   public static String getUserRelationshipsUri() {
     return REST_URL + "/usersRelationships";
   }
+
   public static String getUserRelationshipUri(String id) {
-    return REST_URL + "/usersRelationships/" + id; 
+    return REST_URL + "/usersRelationships/" + id;
   }
-  
-  //Get Spaces
+
+  // Get Spaces
   public static String getSpacesUri(int offset, int limit) {
-    return REST_URL + "/spaces?offset="+offset+"&limit="+limit;
+    return REST_URL + "/spaces?offset=" + offset + "&limit=" + limit;
   }
-  
-  //SpaceMembership
+
+  // SpaceMembership
   public static String getSpaceMembershipsUri() {
     return REST_URL + "/spacesMemberships";
   }
-  
-  //Activity
+
+  // Activity
   public static String getLikesUri(String activity_id) {
     return REST_URL + "/activities/" + activity_id + "/likes";
   }
+
   public static String getCommentsUri(String activity_id) {
     return REST_URL + "/activities/" + activity_id + "/comments";
   }
 
   public static String getSpaceActivities(String id, int offset, int limit) {
-    return REST_URL + "/spaces/" + id + "/activities?offset="+offset+"&limit="+limit;
+    return REST_URL + "/spaces/" + id + "/activities?offset=" + offset + "&limit=" + limit;
   }
 
   public static String getUserActivities(String id, int offset, int limit) {
-    return REST_URL + "/users/" + id + "/activities?type=owner&offset="+offset+"&limit="+limit;
+    return REST_URL + "/users/" + id + "/activities?type=owner&offset=" + offset + "&limit=" + limit;
   }
 
-
-  public static String getActivityData(String url){
-    return url.replace("rest","rest/private");
+  public static String getActivityData(String url) {
+    return url.replace("rest", "rest/private");
   }
 
 }
