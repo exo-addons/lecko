@@ -174,7 +174,7 @@ public class LeckoServiceController implements Startable {
         return doUpload();
       }
     } catch (Exception ex) {
-      LOG.error("Failed send Data to lecko server : " + ex.getMessage());
+      LOG.error("Failed send Data to lecko server",ex.getMessage());
       return "Failed";
     } finally {
       // if (file != null && file.exists() && status)
@@ -201,7 +201,7 @@ public class LeckoServiceController implements Startable {
       }
 
     } else {
-      LOG.info("Failed send Data to lecko server file not exist : " + path);
+      LOG.info("Failed send Data to lecko server file not exist : {}",path);
       return "Failed";
     }
     return status ? "Success" : "Failed";

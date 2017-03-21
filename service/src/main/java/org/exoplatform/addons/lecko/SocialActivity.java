@@ -62,9 +62,7 @@ abstract class SocialActivity {
 
   protected void getExoComments(String url, String placeName, String displayName, PrintWriter out) throws Exception {
 
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("Getting Comments : " + placeName);
-    }
+    LOG.debug("Getting Comments : {} ", placeName);
     String result;
     String idEvent = "";
     String date = "";
@@ -101,16 +99,14 @@ abstract class SocialActivity {
     }
     out.flush();
 
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("End Getting Comments : " + placeName);
-    }
+    LOG.debug("End Getting Comments : {} ", placeName);
 
   }
 
   protected void getLikes(String url, String date, String placeName, String displayName, PrintWriter out) throws Exception {
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("Getting Likes : " + placeName);
-    }
+
+    LOG.debug("Getting Likes : {}",placeName);
+
     String result;
     String idEvent = "";
     String idactor = "";
@@ -146,8 +142,6 @@ abstract class SocialActivity {
     }
     out.flush();
 
-    if (LOG.isDebugEnabled()) {
-      LOG.debug("End Getting Likes : " + placeName);
-    }
+    LOG.debug("End Getting Likes : {} ", placeName);
   }
 }

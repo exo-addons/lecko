@@ -37,9 +37,8 @@ public class HttpUtils {
 
   // GET
   public static String get(String url) throws Exception {
-    if (LOG.isDebugEnabled()) {
-      LOG.debug(url);
-    }
+
+    LOG.debug("HTTPUtils : try to get url={}",url);
     HttpURLConnection connection = (HttpURLConnection) (new URL(url)).openConnection();
     connection.setRequestMethod("GET");
     connection.connect();

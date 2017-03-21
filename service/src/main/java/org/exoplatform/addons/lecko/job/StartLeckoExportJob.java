@@ -43,9 +43,7 @@ public class StartLeckoExportJob implements Job {
   }
 
   public void execute(JobExecutionContext context) throws JobExecutionException {
-    if (LOG.isInfoEnabled()) {
-      LOG.info("Start StartLeckoExportJob");
-    }
+    LOG.info("Start StartLeckoExportJob");
 
     LeckoServiceController leckoServiceController =
                                                   (LeckoServiceController) ExoContainerContext.getCurrentContainer()
@@ -57,9 +55,6 @@ public class StartLeckoExportJob implements Job {
       LOG.info("Lecko is not enabled.");
     }
 
-    if (LOG.isInfoEnabled()) {
-
-      LOG.info("End StartLeckoExportJob");
-    }
+    LOG.info("End StartLeckoExportJob");
   }
 }

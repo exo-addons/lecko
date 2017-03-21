@@ -40,9 +40,7 @@ public class StopLeckoExportJob implements Job {
   }
 
   public void execute(JobExecutionContext context) throws JobExecutionException {
-    if (LOG.isInfoEnabled()) {
-      LOG.info("Start StopLeckoExportJob");
-    }
+    LOG.info("Start StopLeckoExportJob");
     LeckoServiceController leckoServiceController =
                                                   (LeckoServiceController) ExoContainerContext.getCurrentContainer()
                                                                                               .getComponentInstanceOfType(LeckoServiceController.class);
@@ -53,9 +51,6 @@ public class StopLeckoExportJob implements Job {
       LOG.info("Lecko is not enabled.");
     }
 
-    if (LOG.isInfoEnabled()) {
-
-      LOG.info("End StopLeckoExportJob");
-    }
+    LOG.info("End StopLeckoExportJob");
   }
 }

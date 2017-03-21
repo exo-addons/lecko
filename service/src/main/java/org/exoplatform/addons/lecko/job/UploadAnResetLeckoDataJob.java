@@ -39,9 +39,7 @@ public class UploadAnResetLeckoDataJob implements Job {
   }
 
   public void execute(JobExecutionContext context) throws JobExecutionException {
-    if (LOG.isInfoEnabled()) {
-      LOG.info("Start UploadAnResetLeckoDataJob");
-    }
+    LOG.info("Start UploadAnResetLeckoDataJob");
 
     LeckoServiceController leckoServiceController =
                                                   (LeckoServiceController) ExoContainerContext.getCurrentContainer()
@@ -55,9 +53,6 @@ public class UploadAnResetLeckoDataJob implements Job {
       LOG.info("Lecko is not enabled.");
     }
 
-    if (LOG.isInfoEnabled()) {
-
-      LOG.info("End UploadAnResetLeckoDataJob");
-    }
+    LOG.info("End UploadAnResetLeckoDataJob");
   }
 }

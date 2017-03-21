@@ -191,23 +191,19 @@ public class SimpleDataBuilder implements DataBuilder {
 
             double spacePercent = ((double) countSpace / spaceListAccess.getSize()) * 100;
             if ((int) spacePercent % 5 == 0 && lastSpaceLog != (int) spacePercent) {
-              LOG.info("Extract Data from spaces " + (int) spacePercent + "%");
+              LOG.info("Extract Data from spaces {}%",(int) spacePercent);
               lastSpaceLog = (int) spacePercent;
             }
             if (jobStatusService.findByIdentityId(spaceId) == null) {
               // space not treaten in this iteration
-              if (LOG.isDebugEnabled()) {
-                LOG.debug("Export datas for space " + spaceId);
-              }
+              LOG.debug("Export datas for spaceId={} ", spaceId);
               SocialActivity sa = new SpaceActivity(spaceId, spaceDisplayName, exoSocialConnector);
               sa.loadActivityStream(out);
 
               // store the id, to say that the space is treated.
               jobStatusService.storeStatus(spaceId);
             } else {
-              if (LOG.isDebugEnabled()) {
-                LOG.debug("Data already extracted for this space:" + spaceId + " in this iteration.");
-              }
+              LOG.debug("Data already extracted for this space: {} in this iteration.",spaceId);
 
             }
             countSpace++;
@@ -257,20 +253,17 @@ public class SimpleDataBuilder implements DataBuilder {
             String userId = (String) jsonObject.get("username");
             double userPercent = ((double) countUser / userListAccess.getSize()) * 100;
             if ((int) userPercent % 5 == 0 && lastUserLog != (int) userPercent) {
-              LOG.info("Extract Data from users " + (int) userPercent + "%");
+              LOG.info("Extract Data from users {}%",(int) userPercent);
               lastUserLog = (int) userPercent;
             }
             if (jobStatusService.findByIdentityId(userId) == null) {
-              if (LOG.isDebugEnabled()) {
-                LOG.debug("Extract Data from user:" + userId);
-              }
+              LOG.debug("Extract Data from user:{}",userId);
+
               SocialActivity ua = new UserActivity(userId, exoSocialConnector);
               ua.loadActivityStream(out);
               jobStatusService.storeStatus(userId);
             } else {
-              if (LOG.isDebugEnabled()) {
-                LOG.info("Data already extracted for this user :" + userId + " in this iteration.");
-              }
+                LOG.info("Data already extracted for this user : {} in this iteration.", userId);
 
             }
 
