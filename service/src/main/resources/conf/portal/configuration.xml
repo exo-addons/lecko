@@ -36,44 +36,11 @@
         <type>org.exoplatform.commons.persistence.impl.EntityManagerService</type>
     </component>
 
-    <!--component>
-      <key>org.exoplatform.addons.lecko.DataBuilder</key>
-      <type>org.exoplatform.addons.lecko.SimpleDataBuilder</type>  
-      <init-params>
-          <value-param>
-              <name>SpaceLimit</name>
-              <value>${exo.addons.lecko.DataBuilder.SpaceLimit:-1}</value>
-          </value-param>
-          <value-param>
-              <name>UserLimit</name>
-              <value>${exo.addons.lecko.DataBuilder.UserLimit:-1}</value>
-          </value-param>
-      </init-params>
-</component-->
-
-   
     <component>
         <key>org.exoplatform.addons.lecko.LeckoServiceController</key>
         <type>org.exoplatform.addons.lecko.LeckoServiceController</type>
     </component>
-    <component>
-        <key>org.exoplatform.addons.lecko.social.client.rest.connector.ExoSocialConnector</key>
-        <type>org.exoplatform.addons.lecko.social.client.rest.connector.ExoSocialConnectorImpl</type>
-        <init-params>
-            <value-param>
-                <name>username</name>
-                <value>${exo.api-access.user}</value>
-            </value-param>
-            <value-param>
-                <name>password</name>
-                <value>${exo.api-access.password}</value>
-            </value-param>
-            <value-param>
-                <name>baseUrl</name>
-                <value>${exo.api-access.baseUrl}</value>
-            </value-param>
-        </init-params>
-    </component>
+
     <external-component-plugins>
         <target-component>org.exoplatform.services.scheduler.JobSchedulerService</target-component>
         <component-plugin profiles="all">

@@ -21,55 +21,58 @@
 package org.exoplatform.addons.lecko;
 
 import java.io.PrintWriter;
-import org.exoplatform.addons.lecko.social.client.rest.connector.ExoSocialConnector;
-import org.json.JSONException;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import org.exoplatform.commons.utils.ISO8601;
+import org.exoplatform.social.common.RealtimeListAccess;
+import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.manager.ActivityManager;
+import org.exoplatform.social.core.manager.IdentityManager;
 
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com
  */
 public class UserActivity extends SocialActivity {
-  private String id;
+  private Identity userIdentity;
 
-  public UserActivity(String id, ExoSocialConnector exoSocialConnector) {
-    this.id = id;
-    this.exoSocialConnector = exoSocialConnector;
+  public UserActivity(Identity identity) {
+    super();
+    this.userIdentity=identity;
   }
 
   @Override
-  public void loadActivityStream(PrintWriter out) throws Exception {
-    int offsetActivities = 0;
-    int sizeActivities = 20;
+  public void loadActivityStream(PrintWriter out, IdentityManager identityManager, ActivityManager activityManager) throws Exception {
+    int offsetActivities=DEFAULT_OFFSET;
+    int sizeActivities = DEFAULT_LIMIT;
     boolean hasNextActivity = true;
 
     String idEvent = "";
     String date = "";
     String idactor = "";
     String placeName = "";
+    RealtimeListAccess<ExoSocialActivity> listAccess = activityManager.getActivitiesOfSpaceWithListAccess(userIdentity);
     while (hasNextActivity) {
-      // Get All activities by space id
-      String activitiesJson = exoSocialConnector.getActivitiesByUserID(id, offsetActivities, sizeActivities);
-      JSONArray activitiesList;
-      if (activitiesJson == null) {
-        break;
-      } else {
-        activitiesList = parseJSONArray(activitiesJson, "activities");
-      }
 
-      if (activitiesList == null || activitiesList.size() == 0) {
+
+      List<ExoSocialActivity> activities = listAccess.loadAsList(offsetActivities, DEFAULT_LIMIT);
+      if (activities.size()== 0) {
         break;
-      } else if (activitiesList.size() < sizeActivities) {
+      } else if (activities.size() < DEFAULT_LIMIT) {
         hasNextActivity = false;
       }
-      for (Object a : activitiesList) {
-        JSONObject js = (JSONObject) a;
+
+      for (ExoSocialActivity activity : activities) {
+
         String type_space = "";
         String url_comments = "no_url";
         String url_likes = "no_url";
-        type_space = (String) (((JSONObject) js.get("activityStream")).get("type"));
-        if ("user".equals(type_space)) {
-          idactor = (String) (((JSONObject) js.get("owner")).get("id"));
+        type_space=activity.getActivityStream().getType().toString();
+        if ("organization".equals(type_space)) {
+          type_space="user";
+          idactor = activity.getPosterId();
 
           // constuction de la map des users au fur et mesure pour
           // l'anonymisation
@@ -80,21 +83,19 @@ public class UserActivity extends SocialActivity {
             idactor = user_map.get(idactor);
           }
           out.print(idactor + ";");
-
-          idEvent = (String) js.get("type");
-          out.print(idEvent + ";");
-          date = (String) js.get("createDate");
+          out.print(activity.getType() + ";");
+          Calendar createdDate = Calendar.getInstance();
+          createdDate.setTime(new Date(activity.getPostedTime()));
+          date = ISO8601.format(createdDate);
           out.print(date + ";");
           out.print(type_space + ";");
           out.print(placeName + ";");
           out.println();
-          url_comments = (String) js.get("comments");
-          url_likes = (String) js.get("likes");
 
           // Getting Comments
-          getExoComments(url_comments, placeName, "", out);
+          getExoComments(activity, placeName, "", activityManager, out);
           // Getting Likes
-          getLikes(url_likes, date, placeName, "", out);
+          getLikes(activity, date, placeName, "", identityManager, out);
         }
       }
       offsetActivities += sizeActivities;
