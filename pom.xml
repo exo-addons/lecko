@@ -21,7 +21,8 @@
     02110-1301 USA, or see <http://www.gnu.org/licenses />.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>addons-parent-pom</artifactId>
@@ -30,7 +31,7 @@
     </parent>
     <groupId>org.exoplatform.addons.lecko</groupId>
     <artifactId>lecko</artifactId>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>1.0.x-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Lecko Analytics Add-on</name>
     <description>Lecko Analytics (http://analytics.lecko.fr) integration for eXo Platform</description>
