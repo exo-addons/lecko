@@ -37,8 +37,8 @@ import javax.persistence.*;
 public class JobStatus {
 
   @Id
-  @SequenceGenerator(name = "SEQ_JOB_STATUS_ID", sequenceName = "SEQ_JOB_STATUS_ID")
-  @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_JOB_STATUS_ID")
+  @SequenceGenerator(name = "SEQ_TASK_LECKO_JOB_STATUS_JOBSTATUS_ID", sequenceName = "SEQ_TASK_LECKO_JOB_STATUS_JOBSTATUS_ID")
+  @GeneratedValue(strategy = GenerationType.AUTO, generator = "SEQ_TASK_LECKO_JOB_STATUS_JOBSTATUS_ID")
   @Column(name = "JOBSTATUS_ID")
   private long   id;
 
