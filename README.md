@@ -9,10 +9,6 @@ Then, when the extract is finished, we send datas to lecko FTP, and the current 
 Theses jobs can be deactivated with property exo.addons.lecko.job.enabled. If set to false, startJob, stopJob and exportJob will have no effect.
 
 Properties :
-* exo.api-access.user=api #username with will make api call
-* exo.api-access.password=password #password for user making api call
-* exo.api-access.group=api-access 
-
 * exo.addons.lecko.job.start.expression=0 0 21 * * ? #when export starts. Default value : start export each days at 9:00 PM
 * exo.addons.lecko.job.stop.expression=0 0 6 * * ? #when export stops. Default value : stop export each days at 6:00 AM
 * exo.addons.lecko.job.enabled=true #enable jobs

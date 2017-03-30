@@ -21,7 +21,6 @@
 package org.exoplatform.addons.lecko;
 
 import org.exoplatform.addons.lecko.Utils.SftpClient;
-import org.exoplatform.addons.lecko.social.client.rest.connector.ExoSocialConnector;
 import org.exoplatform.commons.utils.PrivilegedFileHelper;
 import org.exoplatform.commons.utils.PropertyManager;
 import org.exoplatform.container.ExoContainer;
@@ -35,7 +34,8 @@ import org.exoplatform.management.jmx.annotations.NameTemplate;
 import org.exoplatform.management.jmx.annotations.Property;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-import org.exoplatform.social.core.space.model.Space;
+import org.exoplatform.social.core.manager.ActivityManager;
+import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.spi.SpaceService;
 import org.picocontainer.Startable;
 import java.io.File;
@@ -221,10 +221,11 @@ public class LeckoServiceController implements Startable {
   }
 
   private void initDataBuilder() {
-    ExoSocialConnector exoSocialConnector = getService(ExoSocialConnector.class);
     SpaceService spaceService = getService(SpaceService.class);
     JobStatusService jobStatusService = getService(JobStatusService.class);
-    dataBuilder = new SimpleDataBuilder(exoSocialConnector, spaceService, jobStatusService);
+    IdentityManager identityManager = getService(IdentityManager.class);
+    ActivityManager activityManager= getService(ActivityManager.class);
+    dataBuilder = new SimpleDataBuilder(spaceService,identityManager,activityManager, jobStatusService);
   }
 
   public static <T> T getService(Class<T> clazz) {

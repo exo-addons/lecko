@@ -21,17 +21,17 @@
 package org.exoplatform.addons.lecko;
 
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import org.exoplatform.addons.lecko.social.client.rest.connector.ExoSocialConnector;
+
+import org.exoplatform.commons.utils.ISO8601;
+import org.exoplatform.social.common.RealtimeListAccess;
+import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+import org.exoplatform.social.core.manager.ActivityManager;
+import org.exoplatform.social.core.manager.IdentityManager;
+
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-import org.json.JSONException;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com
@@ -42,69 +42,57 @@ abstract class SocialActivity {
   // anonymization MAP
   protected static Map<String, String> user_map = new ConcurrentHashMap<String, String>();
 
-  ExoSocialConnector                   exoSocialConnector;
+  protected int DEFAULT_OFFSET = 0;
+  protected int DEFAULT_LIMIT = 20;
 
-  public abstract void loadActivityStream(PrintWriter out) throws Exception;
+  public abstract void loadActivityStream(PrintWriter out, IdentityManager identityManager, ActivityManager activityManager) throws Exception;
 
-  public static JSONArray parseJSONArray(String json, String entry) throws ParseException, JSONException {
-
-    JSONParser parser = new JSONParser();
-
-    Object obj = parser.parse(json);
-
-    JSONObject jsonObject = (JSONObject) obj;
-
-    JSONArray listEntry = (JSONArray) jsonObject.get(entry);
-
-    return listEntry;
-
-  }
-
-  protected void getExoComments(String url, String placeName, String displayName, PrintWriter out) throws Exception {
+  protected void getExoComments(ExoSocialActivity activity, String placeName, String displayName, ActivityManager
+          activityManager, PrintWriter out) throws Exception {
 
     LOG.debug("Getting Comments : {} ", placeName);
     String result;
     String idEvent = "";
     String date = "";
     String idactor = "";
-    result = exoSocialConnector.getActivityComments(url);
-    JSONArray jsonComments;
-    if (result == null) {
-      return;
-    } else {
-      jsonComments = parseJSONArray(result, "comments");
-    }
+    int offsetComments=DEFAULT_OFFSET;
+    boolean hasNextComments = true;
 
-    if (jsonComments == null || jsonComments.size() == 0) {
-      return;
-    }
-
-    for (Object obj : jsonComments) {
-      JSONObject js = (JSONObject) obj;
-      String[] splitted = ((String) js.get("identity")).split("/");
-      idactor = splitted[splitted.length-1];
-      if (!user_map.containsKey(idactor)) {
-        user_map.put(idactor, Integer.toString(user_map.size() + 1));
-        idactor = user_map.get(idactor);
-      } else {
-        idactor = user_map.get(idactor);
+    RealtimeListAccess<ExoSocialActivity> commentsWithListAccess=activityManager.getCommentsWithListAccess(activity);
+    while (hasNextComments) {
+      List<ExoSocialActivity> comments = commentsWithListAccess.loadAsList(offsetComments, DEFAULT_LIMIT);
+      if (comments.size() == 0) {
+        return;
       }
-      out.print(idactor + ";");
+      for (ExoSocialActivity comment : comments) {
+        idactor = comment.getPosterId();
+        if (!user_map.containsKey(idactor)) {
+          user_map.put(idactor, Integer.toString(user_map.size() + 1));
+          idactor = user_map.get(idactor);
+        } else {
+          idactor = user_map.get(idactor);
+        }
+        out.print(idactor + ";");
 
-      idEvent = "comment";
-      out.print(idEvent + ";");
-      date = (String) js.get("createDate");
-      out.print(date + ";");
-      out.print(placeName + ";" + displayName + ";");
-      out.println();
+        idEvent = "comment";
+        out.print(idEvent + ";");
+        Calendar createdDate = Calendar.getInstance();
+        createdDate.setTime(new Date(comment.getPostedTime()));
+        date = ISO8601.format(createdDate);
+        out.print(date + ";");
+        out.print(placeName + ";" + displayName + ";");
+        out.println();
+      }
+      offsetComments += DEFAULT_LIMIT;
+      out.flush();
     }
-    out.flush();
 
     LOG.debug("End Getting Comments : {} ", placeName);
 
   }
 
-  protected void getLikes(String url, String date, String placeName, String displayName, PrintWriter out) throws Exception {
+  protected void getLikes(ExoSocialActivity activity, String date, String placeName, String displayName, IdentityManager
+          identityManager,  PrintWriter out) throws Exception {
 
     LOG.debug("Getting Likes : {}",placeName);
 
@@ -112,22 +100,10 @@ abstract class SocialActivity {
     String idEvent = "";
     String idactor = "";
 
-    result = exoSocialConnector.getActivityLikes(url);
-    JSONArray jsonLikes;
-    if (result == null) {
-      return;
-    } else {
-      jsonLikes = parseJSONArray(result, "likes");
-    }
+    List<String> likerIds = Arrays.asList(activity.getLikeIdentityIds());
+    for (String likerId : likerIds) {
+      idactor = identityManager.getIdentity(likerId, false).getRemoteId();
 
-    if (jsonLikes == null || jsonLikes.size() == 0) {
-      return;
-    }
-
-    for (Object obj : jsonLikes) {
-      JSONObject js = (JSONObject) obj;
-      String[] splitted = ((String) js.get("identity")).split("/");
-      idactor = splitted[splitted.length-1];
       if (!user_map.containsKey(idactor)) {
         user_map.put(idactor, Integer.toString(user_map.size() + 1));
         idactor = user_map.get(idactor);
@@ -138,12 +114,15 @@ abstract class SocialActivity {
 
       idEvent = "like";
       out.print(idEvent + ";");
+
+      //here we put the date of the activity because we dont have the date of the like.
       out.print(date + ";");
       out.print(placeName + ";" + displayName + ";");
       out.println();
+      out.flush();
     }
-    out.flush();
 
     LOG.debug("End Getting Likes : {} ", placeName);
   }
+
 }

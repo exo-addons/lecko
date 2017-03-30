@@ -20,15 +20,18 @@
  */
 package org.exoplatform.addons.lecko;
 
-import org.exoplatform.addons.lecko.dao.JobStatus;
-import org.exoplatform.addons.lecko.social.client.rest.connector.ExoSocialConnector;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+
+import org.exoplatform.social.core.manager.ActivityManager;
+
 import org.exoplatform.commons.persistence.impl.EntityManagerService;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.commons.utils.PrivilegedFileHelper;
 import org.exoplatform.commons.utils.PropertyManager;
 import org.exoplatform.container.PortalContainer;
-import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -37,18 +40,6 @@ import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.profile.ProfileFilter;
 import org.exoplatform.social.core.space.model.Space;
 import org.exoplatform.social.core.space.spi.SpaceService;
-import org.json.JSONException;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
-import javax.persistence.EntityManager;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.HashMap;
 
 /**
  * Created by The eXo Platform SAS. Author : Simon 12.02.2016
@@ -58,8 +49,6 @@ import java.util.HashMap;
 public class SimpleDataBuilder implements DataBuilder {
   private static Log         LOG      = ExoLogger.getLogger(SimpleDataBuilder.class);
 
-  private ExoSocialConnector exoSocialConnector;
-
   private SpaceService       spaceService;
 
   private final String       leckoTempDirectory;
@@ -68,18 +57,21 @@ public class SimpleDataBuilder implements DataBuilder {
 
   private JobStatusService   jobStatusService;
 
+  private IdentityManager identityManager;
+
+  private ActivityManager activityManager;
+
   private static boolean     runBuild = false;
 
   private final int          spaceLimit;
 
   private final int          userLimit;
 
-  public SimpleDataBuilder(ExoSocialConnector exoSocialConnector, SpaceService spaceService, JobStatusService jobStatusService)
-
-  {
-    this.exoSocialConnector = exoSocialConnector;
+  public SimpleDataBuilder(SpaceService spaceService, IdentityManager identityManager, ActivityManager activityManager, JobStatusService jobStatusService) {
     this.spaceService = spaceService;
     this.jobStatusService = jobStatusService;
+    this.activityManager = activityManager;
+    this.identityManager=identityManager;
 
     this.leckoTempDirectory = LeckoServiceController.getRootPath();
 
@@ -166,28 +158,20 @@ public class SimpleDataBuilder implements DataBuilder {
       LOG.info("Lecko-Addons : Begin Space Extraction...");
       while (spaceLimit != 0 && hasNextSpace) {
         // Extract all spaces by limit
-        String json = exoSocialConnector.getSpaces(offset, size);
-        JSONArray spaceList = null;
+        Space[] spaces = spaceListAccess.load(offset, size);
 
-        if (json == null) {
+        if (spaces.length == 0) {
           break;
-        } else {
-          spaceList = SocialActivity.parseJSONArray(json, "spaces");
-        }
-
-        if (spaceList == null || spaceList.size() == 0) {
-          break;
-        } else if (spaceList.size() < size) {
+        } else if (spaces.length < size) {
           hasNextSpace = false;
         }
 
         // Extract all activities by space ID
-        for (Object obj : spaceList) {
+        for (Space space : spaces) {
           if (runBuild) {
-            JSONObject jsonObject = (JSONObject) obj;
             // space ID
-            String spaceId = (String) jsonObject.get("id");
-            String spaceDisplayName = (String) jsonObject.get("displayName");
+            String spaceId = space.getId();
+            String spaceDisplayName = space.getDisplayName();
 
             double spacePercent = ((double) countSpace / spaceListAccess.getSize()) * 100;
             if ((int) spacePercent % 5 == 0 && lastSpaceLog != (int) spacePercent) {
@@ -197,8 +181,8 @@ public class SimpleDataBuilder implements DataBuilder {
             if (jobStatusService.findByIdentityId(spaceId) == null) {
               // space not treaten in this iteration
               LOG.debug("Export datas for spaceId={} ", spaceId);
-              SocialActivity sa = new SpaceActivity(spaceId, spaceDisplayName, exoSocialConnector);
-              sa.loadActivityStream(out);
+              SocialActivity sa = new SpaceActivity(space);
+              sa.loadActivityStream(out, identityManager, activityManager);
 
               // store the id, to say that the space is treated.
               jobStatusService.storeStatus(spaceId);
@@ -229,28 +213,19 @@ public class SimpleDataBuilder implements DataBuilder {
       LOG.info("Lecko-Addons : Begin User Extraction...");
       while (userLimit != 0 && hasNextUser) {
         // Extract all users by limit
-        String json = exoSocialConnector.getUsers(offset, size);
-        JSONArray userList = null;
-
-        if (json == null) {
+        Identity[] identities = userListAccess.load(offset,size);
+        if (identities.length == 0) {
           break;
-        } else {
-          userList = SocialActivity.parseJSONArray(json, "users");
-        }
-
-        if (userList == null || userList.size() == 0) {
-          break;
-        } else if (userList.size() < size) {
+        } else if (identities.length < size) {
           hasNextUser = false;
         }
 
         // Extract all activities by user ID
-        for (Object obj : userList) {
+        for (Identity identity : identities) {
           if (runBuild) {
 
-            JSONObject jsonObject = (JSONObject) obj;
             // user ID
-            String userId = (String) jsonObject.get("username");
+            String userId = identity.getRemoteId();
             double userPercent = ((double) countUser / userListAccess.getSize()) * 100;
             if ((int) userPercent % 5 == 0 && lastUserLog != (int) userPercent) {
               LOG.info("Extract Data from users {}%",(int) userPercent);
@@ -259,8 +234,8 @@ public class SimpleDataBuilder implements DataBuilder {
             if (jobStatusService.findByIdentityId(userId) == null) {
               LOG.debug("Extract Data from user:{}",userId);
 
-              SocialActivity ua = new UserActivity(userId, exoSocialConnector);
-              ua.loadActivityStream(out);
+              SocialActivity ua = new UserActivity(identity);
+              ua.loadActivityStream(out, identityManager, activityManager);
               jobStatusService.storeStatus(userId);
             } else {
                 LOG.info("Data already extracted for this user : {} in this iteration.", userId);

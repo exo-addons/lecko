@@ -23,13 +23,8 @@ package org.exoplatform.addons.lecko.job;
 import org.exoplatform.addons.lecko.LeckoServiceController;
 import org.exoplatform.container.ExoContainerContext;
 import org.quartz.Job;
-import org.quartz.JobDataMap;
-
-import org.exoplatform.commons.utils.ExoProperties;
-import org.exoplatform.container.xml.InitParams;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-import org.exoplatform.services.scheduler.CronJob;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 

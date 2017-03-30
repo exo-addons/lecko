@@ -29,16 +29,7 @@
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
     <dependencySets>
-        <!-- Extension war -->
-        <dependencySet>
-            <useProjectArtifact>false</useProjectArtifact>
-            <outputDirectory></outputDirectory>
-            <includes>
-                <include>${project.groupId}:lecko-war:war</include>
-            </includes>
-            <scope>provided</scope>
-            <outputFileNameMapping>lecko-extension.war</outputFileNameMapping>
-        </dependencySet>
+
         <!-- Libraries -->
         <dependencySet>
             <useProjectArtifact>false</useProjectArtifact>

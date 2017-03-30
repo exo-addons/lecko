@@ -36,7 +36,6 @@
     <name>Lecko Analytics Add-on</name>
     <description>Lecko Analytics (http://analytics.lecko.fr) integration for eXo Platform</description>
     <modules>
-        <module>war</module>
         <module>packaging</module>
         <module>service</module>
     </modules>
@@ -69,12 +68,6 @@
                 <artifactId>lecko-service</artifactId>
                 <version>${project.version}</version>
                 <type>jar</type>
-            </dependency>
-            <dependency>
-                <groupId>org.exoplatform.addons.lecko</groupId>
-                <artifactId>lecko-war</artifactId>
-                <version>${project.version}</version>
-                <type>war</type>
             </dependency>
             <!-- Other dependencies -->
             <dependency>
