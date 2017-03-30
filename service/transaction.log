@@ -268,3 +268,6 @@
 2017-03-30 11:11:24,723 [main] INFO  com.arjuna.ats.arjuna - ARJUNA012163: Starting service com.arjuna.ats.arjuna.recovery.ActionStatusService on port 34989
 2017-03-30 11:11:24,746 [main] INFO  com.arjuna.ats.arjuna - ARJUNA012337: TransactionStatusManagerItem host: 127.0.0.1 port: 34989
 2017-03-30 11:11:24,807 [main] INFO  com.arjuna.ats.arjuna - ARJUNA012170: TransactionStatusManager started on port 34989 and host 127.0.0.1 with service com.arjuna.ats.arjuna.recovery.ActionStatusService
+2017-03-30 11:19:48,012 [main] INFO  com.arjuna.ats.arjuna - ARJUNA012163: Starting service com.arjuna.ats.arjuna.recovery.ActionStatusService on port 35931
+2017-03-30 11:19:48,013 [main] INFO  com.arjuna.ats.arjuna - ARJUNA012337: TransactionStatusManagerItem host: 127.0.0.1 port: 35931
+2017-03-30 11:19:48,055 [main] INFO  com.arjuna.ats.arjuna - ARJUNA012170: TransactionStatusManager started on port 35931 and host 127.0.0.1 with service com.arjuna.ats.arjuna.recovery.ActionStatusService

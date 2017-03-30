@@ -1,12 +1,7 @@
 package org.exoplatform.lecko;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.exoplatform.addons.lecko.JobStatusService;
 import org.exoplatform.addons.lecko.LeckoServiceController;
 import org.exoplatform.addons.lecko.SimpleDataBuilder;
-import org.exoplatform.addons.lecko.social.client.rest.connector.ExoSocialConnector;
-import org.exoplatform.services.organization.User;
-import org.exoplatform.services.organization.UserHandler;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -14,7 +9,6 @@ import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvide
 import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.space.SpaceUtils;
 import org.exoplatform.social.core.space.model.Space;
-import org.exoplatform.social.core.space.spi.SpaceService;
 import org.junit.Before;
 
 import java.io.BufferedReader;
@@ -96,7 +90,7 @@ public class TestSpaceActivity extends AbstractLeckoTestCase {
             file.delete();
         }
 
-        SimpleDataBuilder dataBuilder = new SimpleDataBuilder(exoSocialConnector, spaceService, jobStatusService);
+        SimpleDataBuilder dataBuilder = new SimpleDataBuilder(spaceService, identityManager,activityManager, jobStatusService);
         dataBuilder.build();
 
         String fileContent = readFile(file);
