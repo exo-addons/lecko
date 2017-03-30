@@ -3,6 +3,8 @@
 
 ### Java ###
 *.class
+.mvn/timing.properties
+transaction.log
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
@@ -25,7 +27,7 @@ pom.xml.next
 release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
-.mvn/timing.properties
+
 
 
 ### Intellij ###
