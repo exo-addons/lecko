@@ -81,7 +81,8 @@ abstract class SocialActivity {
 
     for (Object obj : jsonComments) {
       JSONObject js = (JSONObject) obj;
-      idactor = ((String) js.get("identity")).split("/")[7];
+      String[] splitted = ((String) js.get("identity")).split("/");
+      idactor = splitted[splitted.length-1];
       if (!user_map.containsKey(idactor)) {
         user_map.put(idactor, Integer.toString(user_map.size() + 1));
         idactor = user_map.get(idactor);
@@ -125,7 +126,8 @@ abstract class SocialActivity {
 
     for (Object obj : jsonLikes) {
       JSONObject js = (JSONObject) obj;
-      idactor = ((String) js.get("identity")).split("/")[7];
+      String[] splitted = ((String) js.get("identity")).split("/");
+      idactor = splitted[splitted.length-1];
       if (!user_map.containsKey(idactor)) {
         user_map.put(idactor, Integer.toString(user_map.size() + 1));
         idactor = user_map.get(idactor);
