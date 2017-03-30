@@ -61,8 +61,6 @@ abstract class SocialActivity {
     RealtimeListAccess<ExoSocialActivity> commentsWithListAccess=activityManager.getCommentsWithListAccess(activity);
     while (hasNextComments) {
       List<ExoSocialActivity> comments = commentsWithListAccess.loadAsList(offsetComments, DEFAULT_LIMIT);
-
-
       if (comments.size() == 0) {
         return;
       }
@@ -105,6 +103,7 @@ abstract class SocialActivity {
     List<String> likerIds = Arrays.asList(activity.getLikeIdentityIds());
     for (String likerId : likerIds) {
       idactor = identityManager.getIdentity(likerId, false).getRemoteId();
+
       if (!user_map.containsKey(idactor)) {
         user_map.put(idactor, Integer.toString(user_map.size() + 1));
         idactor = user_map.get(idactor);

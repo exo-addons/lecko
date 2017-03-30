@@ -27,7 +27,7 @@
     <parent>
         <artifactId>addons-parent-pom</artifactId>
         <groupId>org.exoplatform.addons</groupId>
-        <version>7-RC01</version>
+        <version>7</version>
     </parent>
     <groupId>org.exoplatform.addons.lecko</groupId>
     <artifactId>lecko</artifactId>
@@ -50,7 +50,7 @@
         <!-- Dependencies versions -->
         <!-- **************************************** -->
         <com.jcraft.jsch.version>0.1.53</com.jcraft.jsch.version>
-        <org.exoplatform.platform.version>4.4.0-RC03</org.exoplatform.platform.version>
+        <org.exoplatform.platform.version>4.4.0</org.exoplatform.platform.version>
     </properties>
     <dependencyManagement>
         <dependencies>
