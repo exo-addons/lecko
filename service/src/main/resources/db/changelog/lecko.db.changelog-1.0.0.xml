@@ -41,6 +41,11 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-
+        <modifySql dbms="mysql">
+            <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci"/>
+        </modifySql>
+    </changeSet>
+    <changeSet author="jobStatus" id="1.0.0-2" dbms="oracle,postgresql">
+        <createSequence sequenceName="SEQ_TASK_LECKO_JOB_STATUS_JOBSTATUS_ID" startValue="1"/>
     </changeSet>
 </databaseChangeLog>
