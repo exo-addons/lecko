@@ -20,72 +20,69 @@ import org.junit.Before;
 
 import java.util.logging.Logger;
 
-
-@ConfiguredBy({
-        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.portal-configuration.xml"),
-        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.test.jcr-configuration.xml"),
-        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.portal-mop-configuration.xml"),
-        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.identity-configuration.xml"),
-        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/exo.social.component.core.test.configuration.xml"),
-        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/exo.social.test.jcr-configuration.xml"),
-        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/exo.social.test.portal-configuration.xml"),
-        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/component.search.configuration.xml"),
-        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/lecko-test-configuration.xml")
-})
+@ConfiguredBy({ @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.portal-configuration.xml"),
+    @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.test.jcr-configuration.xml"),
+    @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.portal-mop-configuration.xml"),
+    @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.identity-configuration.xml"),
+    @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/exo.social.component.core.test.configuration.xml"),
+    @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/exo.social.test.jcr-configuration.xml"),
+    @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/exo.social.test.portal-configuration.xml"),
+    @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/component.search.configuration.xml"),
+    @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/lecko-test-configuration.xml") })
 public class AbstractLeckoTestCase extends BaseExoTestCase {
-    static Logger log = Logger.getLogger("LeckoTestCase");
+  static Logger                 log = Logger.getLogger("LeckoTestCase");
 
-    protected SpaceService spaceService;
-    protected OrganizationService organizationService;
-    protected IdentityManager identityManager;
-    protected ActivityManager activityManager;
-    protected PortalContainer container;
-    protected ResourceBinder resourceBinder;
+  protected SpaceService        spaceService;
 
-    protected JobStatusService jobStatusService;
-    protected Authenticator authenticator;
+  protected OrganizationService organizationService;
 
+  protected IdentityManager     identityManager;
 
+  protected ActivityManager     activityManager;
 
+  protected PortalContainer     container;
 
-    @Before
-    public void setUp() throws Exception {
-        begin();
-        initServices();
+  protected ResourceBinder      resourceBinder;
 
+  protected JobStatusService    jobStatusService;
 
-    }
+  protected Authenticator       authenticator;
 
-    private void initServices() throws Exception {
-        container = getContainer();
-        spaceService = (SpaceService) container.getComponentInstanceOfType(SpaceService.class);
-        organizationService = (OrganizationService) container.getComponentInstanceOfType(OrganizationService.class);
-        identityManager = (IdentityManager) container.getComponentInstanceOfType(IdentityManager.class);
-        activityManager = (ActivityManager) container.getComponentInstanceOfType(ActivityManager.class);
+  @Before
+  public void setUp() throws Exception {
+    begin();
+    initServices();
 
-        jobStatusService = (JobStatusService) container.getComponentInstanceOfType(JobStatusService.class);
-        resourceBinder= (ResourceBinder) container.getComponentInstanceOfType(ResourceBinder.class);
+  }
 
-        authenticator = (Authenticator)container.getComponentInstanceOfType(Authenticator.class);
+  private void initServices() throws Exception {
+    container = getContainer();
+    spaceService = (SpaceService) container.getComponentInstanceOfType(SpaceService.class);
+    organizationService = (OrganizationService) container.getComponentInstanceOfType(OrganizationService.class);
+    identityManager = (IdentityManager) container.getComponentInstanceOfType(IdentityManager.class);
+    activityManager = (ActivityManager) container.getComponentInstanceOfType(ActivityManager.class);
 
-        //add user api in group apiAccess
-        User api = organizationService.getUserHandler().findUserByName("api");
-        Group group = organizationService.getGroupHandler().findGroupById("api-access");
-        MembershipType mb = organizationService.getMembershipTypeHandler().findMembershipType("member");
-        organizationService.getMembershipHandler().linkMembership(api,group,mb,true);
+    jobStatusService = (JobStatusService) container.getComponentInstanceOfType(JobStatusService.class);
+    resourceBinder = (ResourceBinder) container.getComponentInstanceOfType(ResourceBinder.class);
 
+    authenticator = (Authenticator) container.getComponentInstanceOfType(Authenticator.class);
 
-        ConversationState c = new ConversationState(authenticator.createIdentity("api"));
-        ConversationState.setCurrent(c);
+    // add user api in group apiAccess
+    User api = organizationService.getUserHandler().findUserByName("api");
+    Group group = organizationService.getGroupHandler().findGroupById("api-access");
+    MembershipType mb = organizationService.getMembershipTypeHandler().findMembershipType("member");
+    organizationService.getMembershipHandler().linkMembership(api, group, mb, true);
 
-    }
+    ConversationState c = new ConversationState(authenticator.createIdentity("api"));
+    ConversationState.setCurrent(c);
 
+  }
 
-    @Override
-    protected void tearDown() throws Exception {
+  @Override
+  protected void tearDown() throws Exception {
 
-        jobStatusService.resetStatus();
-        end();
-    }
+    jobStatusService.resetStatus();
+    end();
+  }
 
 }

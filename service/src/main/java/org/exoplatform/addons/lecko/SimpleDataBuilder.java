@@ -47,31 +47,34 @@ import org.exoplatform.social.core.space.spi.SpaceService;
  * @version $Id$
  */
 public class SimpleDataBuilder implements DataBuilder {
-  private static Log         LOG      = ExoLogger.getLogger(SimpleDataBuilder.class);
+  private static Log       LOG      = ExoLogger.getLogger(SimpleDataBuilder.class);
 
-  private SpaceService       spaceService;
+  private SpaceService     spaceService;
 
-  private final String       leckoTempDirectory;
+  private final String     leckoTempDirectory;
 
-  private final String       leckoOutputName;
+  private final String     leckoOutputName;
 
-  private JobStatusService   jobStatusService;
+  private JobStatusService jobStatusService;
 
-  private IdentityManager identityManager;
+  private IdentityManager  identityManager;
 
-  private ActivityManager activityManager;
+  private ActivityManager  activityManager;
 
-  private static boolean     runBuild = false;
+  private static boolean   runBuild = false;
 
-  private final int          spaceLimit;
+  private final int        spaceLimit;
 
-  private final int          userLimit;
+  private final int        userLimit;
 
-  public SimpleDataBuilder(SpaceService spaceService, IdentityManager identityManager, ActivityManager activityManager, JobStatusService jobStatusService) {
+  public SimpleDataBuilder(SpaceService spaceService,
+                           IdentityManager identityManager,
+                           ActivityManager activityManager,
+                           JobStatusService jobStatusService) {
     this.spaceService = spaceService;
     this.jobStatusService = jobStatusService;
     this.activityManager = activityManager;
-    this.identityManager=identityManager;
+    this.identityManager = identityManager;
 
     this.leckoTempDirectory = LeckoServiceController.getRootPath();
 
@@ -175,7 +178,7 @@ public class SimpleDataBuilder implements DataBuilder {
 
             double spacePercent = ((double) countSpace / spaceListAccess.getSize()) * 100;
             if ((int) spacePercent % 5 == 0 && lastSpaceLog != (int) spacePercent) {
-              LOG.info("Extract Data from spaces {}%",(int) spacePercent);
+              LOG.info("Extract Data from spaces {}%", (int) spacePercent);
               lastSpaceLog = (int) spacePercent;
             }
             if (jobStatusService.findByIdentityId(spaceId) == null) {
@@ -187,7 +190,7 @@ public class SimpleDataBuilder implements DataBuilder {
               // store the id, to say that the space is treated.
               jobStatusService.storeStatus(spaceId);
             } else {
-              LOG.debug("Data already extracted for this space: {} in this iteration.",spaceId);
+              LOG.debug("Data already extracted for this space: {} in this iteration.", spaceId);
 
             }
             countSpace++;
@@ -213,7 +216,7 @@ public class SimpleDataBuilder implements DataBuilder {
       LOG.info("Lecko-Addons : Begin User Extraction...");
       while (userLimit != 0 && hasNextUser) {
         // Extract all users by limit
-        Identity[] identities = userListAccess.load(offset,size);
+        Identity[] identities = userListAccess.load(offset, size);
         if (identities.length == 0) {
           break;
         } else if (identities.length < size) {
@@ -228,17 +231,17 @@ public class SimpleDataBuilder implements DataBuilder {
             String userId = identity.getRemoteId();
             double userPercent = ((double) countUser / userListAccess.getSize()) * 100;
             if ((int) userPercent % 5 == 0 && lastUserLog != (int) userPercent) {
-              LOG.info("Extract Data from users {}%",(int) userPercent);
+              LOG.info("Extract Data from users {}%", (int) userPercent);
               lastUserLog = (int) userPercent;
             }
             if (jobStatusService.findByIdentityId(userId) == null) {
-              LOG.debug("Extract Data from user:{}",userId);
+              LOG.debug("Extract Data from user:{}", userId);
 
               SocialActivity ua = new UserActivity(identity);
               ua.loadActivityStream(out, identityManager, activityManager);
               jobStatusService.storeStatus(userId);
             } else {
-                LOG.info("Data already extracted for this user : {} in this iteration.", userId);
+              LOG.info("Data already extracted for this user : {} in this iteration.", userId);
 
             }
 

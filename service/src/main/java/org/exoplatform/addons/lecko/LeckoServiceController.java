@@ -174,7 +174,7 @@ public class LeckoServiceController implements Startable {
         return doUpload();
       }
     } catch (Exception ex) {
-      LOG.error("Failed send Data to lecko server",ex.getMessage());
+      LOG.error("Failed send Data to lecko server", ex.getMessage());
       return "Failed";
     } finally {
       // if (file != null && file.exists() && status)
@@ -201,7 +201,7 @@ public class LeckoServiceController implements Startable {
       }
 
     } else {
-      LOG.info("Failed send Data to lecko server file not exist : {}",path);
+      LOG.info("Failed send Data to lecko server file not exist : {}", path);
       return "Failed";
     }
     return status ? "Success" : "Failed";
@@ -224,8 +224,8 @@ public class LeckoServiceController implements Startable {
     SpaceService spaceService = getService(SpaceService.class);
     JobStatusService jobStatusService = getService(JobStatusService.class);
     IdentityManager identityManager = getService(IdentityManager.class);
-    ActivityManager activityManager= getService(ActivityManager.class);
-    dataBuilder = new SimpleDataBuilder(spaceService,identityManager,activityManager, jobStatusService);
+    ActivityManager activityManager = getService(ActivityManager.class);
+    dataBuilder = new SimpleDataBuilder(spaceService, identityManager, activityManager, jobStatusService);
   }
 
   public static <T> T getService(Class<T> clazz) {

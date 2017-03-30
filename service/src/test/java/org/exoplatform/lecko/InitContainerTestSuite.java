@@ -10,13 +10,10 @@ import org.exoplatform.commons.testing.BaseExoContainerTestSuite;
 import org.exoplatform.commons.testing.ConfigTestCase;
 
 @RunWith(Suite.class)
-@SuiteClasses({
-  TestSpaceActivity.class,
-  TestUserActivity.class
-})
+@SuiteClasses({ TestSpaceActivity.class, TestUserActivity.class })
 @ConfigTestCase(AbstractLeckoTestCase.class)
 public class InitContainerTestSuite extends BaseExoContainerTestSuite {
-  
+
   @BeforeClass
   public static void setUp() throws Exception {
     initConfiguration(InitContainerTestSuite.class);

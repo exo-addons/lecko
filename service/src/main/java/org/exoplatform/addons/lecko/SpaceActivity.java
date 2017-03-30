@@ -40,13 +40,16 @@ import org.exoplatform.social.core.space.model.Space;
 public class SpaceActivity extends SocialActivity {
 
   Space space;
+
   public SpaceActivity(Space space) {
     super();
     this.space = space;
   }
 
   @Override
-  public void loadActivityStream(PrintWriter out, IdentityManager identityManager, ActivityManager activityManager) throws Exception {
+  public void loadActivityStream(PrintWriter out,
+                                 IdentityManager identityManager,
+                                 ActivityManager activityManager) throws Exception {
 
     boolean hasNextActivity = true;
 
@@ -54,14 +57,14 @@ public class SpaceActivity extends SocialActivity {
     String date = "";
     String idactor = "";
     String placeName = "";
-    int offsetActivities=DEFAULT_OFFSET;
-    Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(),false);
+    int offsetActivities = DEFAULT_OFFSET;
+    Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(), false);
     RealtimeListAccess<ExoSocialActivity> listAccess = activityManager.getActivitiesOfSpaceWithListAccess(spaceIdentity);
     while (hasNextActivity) {
       // Get All activities by space id
       List<ExoSocialActivity> activities = listAccess.loadAsList(offsetActivities, DEFAULT_LIMIT);
 
-      if (activities.size()== 0) {
+      if (activities.size() == 0) {
         break;
       } else if (activities.size() < DEFAULT_LIMIT) {
         hasNextActivity = false;

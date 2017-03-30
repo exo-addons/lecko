@@ -40,12 +40,14 @@ public class UserActivity extends SocialActivity {
 
   public UserActivity(Identity identity) {
     super();
-    this.userIdentity=identity;
+    this.userIdentity = identity;
   }
 
   @Override
-  public void loadActivityStream(PrintWriter out, IdentityManager identityManager, ActivityManager activityManager) throws Exception {
-    int offsetActivities=DEFAULT_OFFSET;
+  public void loadActivityStream(PrintWriter out,
+                                 IdentityManager identityManager,
+                                 ActivityManager activityManager) throws Exception {
+    int offsetActivities = DEFAULT_OFFSET;
     int sizeActivities = DEFAULT_LIMIT;
     boolean hasNextActivity = true;
 
@@ -56,9 +58,8 @@ public class UserActivity extends SocialActivity {
     RealtimeListAccess<ExoSocialActivity> listAccess = activityManager.getActivitiesOfSpaceWithListAccess(userIdentity);
     while (hasNextActivity) {
 
-
       List<ExoSocialActivity> activities = listAccess.loadAsList(offsetActivities, DEFAULT_LIMIT);
-      if (activities.size()== 0) {
+      if (activities.size() == 0) {
         break;
       } else if (activities.size() < DEFAULT_LIMIT) {
         hasNextActivity = false;
@@ -69,9 +70,9 @@ public class UserActivity extends SocialActivity {
         String type_space = "";
         String url_comments = "no_url";
         String url_likes = "no_url";
-        type_space=activity.getActivityStream().getType().toString();
+        type_space = activity.getActivityStream().getType().toString();
         if ("organization".equals(type_space)) {
-          type_space="user";
+          type_space = "user";
           idactor = activity.getPosterId();
 
           // constuction de la map des users au fur et mesure pour

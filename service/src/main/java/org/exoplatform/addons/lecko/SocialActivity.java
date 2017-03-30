@@ -37,28 +37,34 @@ import org.exoplatform.services.log.Log;
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com
  */
 abstract class SocialActivity {
-  protected static Log                 LOG      = ExoLogger.getLogger(SimpleDataBuilder.class);
+  protected static Log                 LOG            = ExoLogger.getLogger(SimpleDataBuilder.class);
 
   // anonymization MAP
-  protected static Map<String, String> user_map = new ConcurrentHashMap<String, String>();
+  protected static Map<String, String> user_map       = new ConcurrentHashMap<String, String>();
 
-  protected int DEFAULT_OFFSET = 0;
-  protected int DEFAULT_LIMIT = 20;
+  protected int                        DEFAULT_OFFSET = 0;
 
-  public abstract void loadActivityStream(PrintWriter out, IdentityManager identityManager, ActivityManager activityManager) throws Exception;
+  protected int                        DEFAULT_LIMIT  = 20;
 
-  protected void getExoComments(ExoSocialActivity activity, String placeName, String displayName, ActivityManager
-          activityManager, PrintWriter out) throws Exception {
+  public abstract void loadActivityStream(PrintWriter out,
+                                          IdentityManager identityManager,
+                                          ActivityManager activityManager) throws Exception;
+
+  protected void getExoComments(ExoSocialActivity activity,
+                                String placeName,
+                                String displayName,
+                                ActivityManager activityManager,
+                                PrintWriter out) throws Exception {
 
     LOG.debug("Getting Comments : {} ", placeName);
     String result;
     String idEvent = "";
     String date = "";
     String idactor = "";
-    int offsetComments=DEFAULT_OFFSET;
+    int offsetComments = DEFAULT_OFFSET;
     boolean hasNextComments = true;
 
-    RealtimeListAccess<ExoSocialActivity> commentsWithListAccess=activityManager.getCommentsWithListAccess(activity);
+    RealtimeListAccess<ExoSocialActivity> commentsWithListAccess = activityManager.getCommentsWithListAccess(activity);
     while (hasNextComments) {
       List<ExoSocialActivity> comments = commentsWithListAccess.loadAsList(offsetComments, DEFAULT_LIMIT);
       if (comments.size() == 0) {
@@ -91,10 +97,14 @@ abstract class SocialActivity {
 
   }
 
-  protected void getLikes(ExoSocialActivity activity, String date, String placeName, String displayName, IdentityManager
-          identityManager,  PrintWriter out) throws Exception {
+  protected void getLikes(ExoSocialActivity activity,
+                          String date,
+                          String placeName,
+                          String displayName,
+                          IdentityManager identityManager,
+                          PrintWriter out) throws Exception {
 
-    LOG.debug("Getting Likes : {}",placeName);
+    LOG.debug("Getting Likes : {}", placeName);
 
     String result;
     String idEvent = "";
@@ -115,7 +125,8 @@ abstract class SocialActivity {
       idEvent = "like";
       out.print(idEvent + ";");
 
-      //here we put the date of the activity because we dont have the date of the like.
+      // here we put the date of the activity because we dont have the date of
+      // the like.
       out.print(date + ";");
       out.print(placeName + ";" + displayName + ";");
       out.println();
