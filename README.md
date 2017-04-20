@@ -1,6 +1,8 @@
 Lecko Analytics Add-on
 =======
 
+Version 1.1.x is designed to make a full export.
+
 Lecko Analytics (http://analytics.lecko.fr) integration for eXo Platform
 
 Some jobs are added to be able to stop and resume the export. The first job is StartLeckoExportJob, which create a new thread which resume the export. The second job is StopLeckoExportJob. This job will stop the export. The idea is to make the export running during the night to not impact platform performances.
