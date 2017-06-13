@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 
+import org.exoplatform.container.component.RequestLifeCycle;
 import org.exoplatform.social.core.manager.ActivityManager;
 
 import org.exoplatform.commons.persistence.impl.EntityManagerService;
@@ -261,9 +262,7 @@ public class SimpleDataBuilder implements DataBuilder {
       }
       LOG.info("Lecko-Addons : End Extraction");
     } catch (Exception ex) {
-      LOG.info("Lecko-Addons : Extraction stopped by exception");
-      LOG.error(ex);
-      ex.printStackTrace();
+      LOG.error("Lecko-Addons : Extraction stopped by exception", ex);
       state = false;
     } finally {
       if (out != null) {
@@ -289,15 +288,16 @@ public class SimpleDataBuilder implements DataBuilder {
   // @Override
   public void run() {
     // need to create enttityManager for the thread.
-    EntityManagerService service = PortalContainer.getInstance().getComponentInstanceOfType(EntityManagerService.class);
-    service.startRequest(PortalContainer.getInstance());
+    //EntityManagerService service = PortalContainer.getInstance().getComponentInstanceOfType(EntityManagerService.class);
+    //service.startRequest(PortalContainer.getInstance());
+    RequestLifeCycle.begin(PortalContainer.getInstance());
     // the em is put in threadLocal and use in the build.
     build();
 
     // try to upload data
     // will run only if 100% finished
     LeckoServiceController.getService(LeckoServiceController.class).UploadLeckoData();
-
-    service.endRequest(PortalContainer.getInstance());
+    RequestLifeCycle.end();
+    //service.endRequest(PortalContainer.getInstance());
   }
 }
