@@ -261,7 +261,9 @@ public class SimpleDataBuilder implements DataBuilder {
       }
       LOG.info("Lecko-Addons : End Extraction");
     } catch (Exception ex) {
+      LOG.info("Lecko-Addons : Extraction stopped by exception");
       LOG.error(ex);
+      ex.printStackTrace();
       state = false;
     } finally {
       if (out != null) {
