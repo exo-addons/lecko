@@ -294,7 +294,7 @@ public class SimpleDataBuilder implements DataBuilder {
 
     // try to upload data
     // will run only if 100% finished
-    LeckoServiceController.getService(LeckoServiceController.class).doUpload();
+    LeckoServiceController.getService(LeckoServiceController.class).UploadLeckoData();
 
     service.endRequest(PortalContainer.getInstance());
   }
