@@ -242,7 +242,7 @@ public class SimpleDataBuilder implements DataBuilder {
               ua.loadActivityStream(out, identityManager, activityManager);
               jobStatusService.storeStatus(userId);
             } else {
-              LOG.info("Data already extracted for this user : {} in this iteration.", userId);
+              LOG.debug("Data already extracted for this user : {} in this iteration.", userId);
 
             }
 
