@@ -39,12 +39,17 @@ package org.exoplatform.addons.lecko.dao;
 import javax.persistence.*;
 
 import org.exoplatform.commons.persistence.impl.GenericDAOJPAImpl;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 
 /**
  * @author <a href="trongtt@exoplatform.com">Trong Tran</a>
  * @version $Revision$
  */
 public class JobStatusHandler extends GenericDAOJPAImpl<JobStatus, Long> {
+
+  private static final Log LOG = ExoLogger.getLogger("org.exoplatform.addons.lecko.dao.JobStatusHandler");
+
 
   public JobStatus findJobStatusByIdentityId(String identityId) {
     if (identityId == null || identityId.isEmpty()) {
@@ -64,7 +69,8 @@ public class JobStatusHandler extends GenericDAOJPAImpl<JobStatus, Long> {
     } catch (NoResultException e) {
       return null;
     } catch (PersistenceException e) {
-      e.printStackTrace();
+
+      LOG.error("Exception when accessing DB : {}",e);
       return null;
     }
   }

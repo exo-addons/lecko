@@ -110,7 +110,7 @@ public class LeckoServiceController implements Startable {
         return "Export is already running";
       }
     } catch (Exception ex) {
-      LOG.error(ex.getMessage());
+      LOG.error("Lecko-Addons : error when starting the job", ex);
       return "Failed";
     }
     return "Job Started";
