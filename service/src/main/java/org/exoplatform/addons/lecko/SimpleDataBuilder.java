@@ -261,6 +261,9 @@ public class SimpleDataBuilder implements DataBuilder {
 
       }
       LOG.info("Lecko-Addons : End Extraction");
+    } catch (ExportException ex) {
+      LOG.error("Lecko-Addons : Extraction stopped by ExportException. Stop the extract by security", ex);
+      state = false;
     } catch (Exception ex) {
       LOG.error("Lecko-Addons : Extraction stopped by exception", ex);
       state = false;
@@ -288,16 +291,15 @@ public class SimpleDataBuilder implements DataBuilder {
   // @Override
   public void run() {
     // need to create enttityManager for the thread.
-    //EntityManagerService service = PortalContainer.getInstance().getComponentInstanceOfType(EntityManagerService.class);
-    //service.startRequest(PortalContainer.getInstance());
-    RequestLifeCycle.begin(PortalContainer.getInstance());
+    EntityManagerService service = PortalContainer.getInstance().getComponentInstanceOfType(EntityManagerService.class);
+    service.startRequest(PortalContainer.getInstance());
     // the em is put in threadLocal and use in the build.
     build();
 
     // try to upload data
     // will run only if 100% finished
     LeckoServiceController.getService(LeckoServiceController.class).UploadLeckoData();
-    RequestLifeCycle.end();
-    //service.endRequest(PortalContainer.getInstance());
+
+    service.endRequest(PortalContainer.getInstance());
   }
 }

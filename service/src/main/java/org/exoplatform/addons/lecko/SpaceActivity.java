@@ -26,6 +26,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.exoplatform.commons.utils.ISO8601;
+import org.exoplatform.container.PortalContainer;
+import org.exoplatform.container.component.RequestLifeCycle;
 import org.exoplatform.social.common.RealtimeListAccess;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -51,64 +53,79 @@ public class SpaceActivity extends SocialActivity {
                                  IdentityManager identityManager,
                                  ActivityManager activityManager) throws Exception {
 
-    boolean hasNextActivity = true;
 
-    String idEvent = "";
-    String date = "";
-    String idactor = "";
-    String placeName = "";
-    int offsetActivities = DEFAULT_OFFSET;
-    Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(), false);
-    RealtimeListAccess<ExoSocialActivity> listAccess = activityManager.getActivitiesOfSpaceWithListAccess(spaceIdentity);
-    while (hasNextActivity) {
-      // Get All activities by space id
-      List<ExoSocialActivity> activities = listAccess.loadAsList(offsetActivities, DEFAULT_LIMIT);
+//    RequestLifeCycle.begin(PortalContainer.getInstance());
+//    try {
+      boolean hasNextActivity = true;
 
-      if (activities.size() == 0) {
-        break;
-      } else if (activities.size() < DEFAULT_LIMIT) {
-        hasNextActivity = false;
-      }
+      String idEvent = "";
+      String date = "";
+      String idactor = "";
+      String placeName = "";
+      int offsetActivities = DEFAULT_OFFSET;
+      Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME, space.getPrettyName(), false);
 
-      for (ExoSocialActivity activity : activities) {
-        String type_space = "";
-        String url_comments = "no_url";
-        String url_likes = "no_url";
+      RealtimeListAccess<ExoSocialActivity> listAccess = activityManager.getActivitiesOfSpaceWithListAccess(spaceIdentity);
 
-        idactor = activity.getPosterId();
 
-        // constuction de la map des users au fur et mesure pour l'anonymisation
-        if (!user_map.containsKey(idactor)) {
-          user_map.put(idactor, Integer.toString(user_map.size() + 1));
-          idactor = user_map.get(idactor);
+      int activityCountToTreat = listAccess.getSize();
+      int activityTreated = 0;
+
+      while (hasNextActivity) {
+        // Get All activities by space id
+        List<ExoSocialActivity> activities = listAccess.loadAsList(offsetActivities, DEFAULT_LIMIT);
+
+        if (activities.size() != 0) {
+
+          for (ExoSocialActivity activity : activities) {
+            String type_space = "";
+            String url_comments = "no_url";
+            String url_likes = "no_url";
+
+            idactor = activity.getPosterId();
+
+            // constuction de la map des users au fur et mesure pour l'anonymisation
+            if (!user_map.containsKey(idactor)) {
+              user_map.put(idactor, Integer.toString(user_map.size() + 1));
+              idactor = user_map.get(idactor);
+            } else {
+              idactor = user_map.get(idactor);
+            }
+            out.print(idactor + ";");
+
+            idEvent = activity.getType();
+            out.print(idEvent + ";");
+            Calendar createdDate = Calendar.getInstance();
+            createdDate.setTime(new Date(activity.getPostedTime()));
+            date = ISO8601.format(createdDate);
+            out.print(date + ";");
+            type_space = activity.getActivityStream().getType().toString();
+            out.print(type_space + ";");
+            placeName = activity.getActivityStream().getPrettyId();
+            if (type_space.equals("user")) {
+              out.print(";;");
+            }
+            out.print(placeName + ";" + space.getDisplayName() + ";");
+            out.println();
+
+            // Getting Comments
+            getExoComments(activity, placeName, space.getDisplayName(), activityManager, out);
+            // Getting Likes
+            getLikes(activity, date, placeName, space.getDisplayName(), identityManager, out);
+            activityTreated++;
+          }
+          offsetActivities += DEFAULT_LIMIT;
+          out.flush();
         } else {
-          idactor = user_map.get(idactor);
+          hasNextActivity = false;
         }
-        out.print(idactor + ";");
-
-        idEvent = activity.getType();
-        out.print(idEvent + ";");
-        Calendar createdDate = Calendar.getInstance();
-        createdDate.setTime(new Date(activity.getPostedTime()));
-        date = ISO8601.format(createdDate);
-        out.print(date + ";");
-        type_space = activity.getActivityStream().getType().toString();
-        out.print(type_space + ";");
-        placeName = activity.getActivityStream().getPrettyId();
-        if (type_space.equals("user")) {
-          out.print(";;");
-        }
-        out.print(placeName + ";" + space.getDisplayName() + ";");
-        out.println();
-
-        // Getting Comments
-        getExoComments(activity, placeName, space.getDisplayName(), activityManager, out);
-        // Getting Likes
-        getLikes(activity, date, placeName, space.getDisplayName(), identityManager, out);
       }
-      offsetActivities += DEFAULT_LIMIT;
-      out.flush();
-    }
+      if (activityCountToTreat != activityTreated) {
+        throw new ExportException("Exported acitvities for user " + space.getDisplayName() + " doesn't correspond to the number of activities. An error occured during the export.");
+      }
+//    } finally {
+//      RequestLifeCycle.end();
+//    }
   }
 
 }

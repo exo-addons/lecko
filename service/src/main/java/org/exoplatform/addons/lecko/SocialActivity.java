@@ -65,32 +65,41 @@ abstract class SocialActivity {
     boolean hasNextComments = true;
 
     RealtimeListAccess<ExoSocialActivity> commentsWithListAccess = activityManager.getCommentsWithListAccess(activity);
+    int commentCountToTreat = commentsWithListAccess.getSize();
+    int commentTreated = 0;
     while (hasNextComments) {
       List<ExoSocialActivity> comments = commentsWithListAccess.loadAsList(offsetComments, DEFAULT_LIMIT);
-      if (comments.size() == 0) {
-        return;
-      }
-      for (ExoSocialActivity comment : comments) {
-        idactor = comment.getPosterId();
-        if (!user_map.containsKey(idactor)) {
-          user_map.put(idactor, Integer.toString(user_map.size() + 1));
-          idactor = user_map.get(idactor);
-        } else {
-          idactor = user_map.get(idactor);
-        }
-        out.print(idactor + ";");
+      if (comments.size() != 0) {
 
-        idEvent = "comment";
-        out.print(idEvent + ";");
-        Calendar createdDate = Calendar.getInstance();
-        createdDate.setTime(new Date(comment.getPostedTime()));
-        date = ISO8601.format(createdDate);
-        out.print(date + ";");
-        out.print(placeName + ";" + displayName + ";");
-        out.println();
+        for (ExoSocialActivity comment : comments) {
+          idactor = comment.getPosterId();
+          if (!user_map.containsKey(idactor)) {
+            user_map.put(idactor, Integer.toString(user_map.size() + 1));
+            idactor = user_map.get(idactor);
+          } else {
+            idactor = user_map.get(idactor);
+          }
+          out.print(idactor + ";");
+
+          idEvent = "comment";
+          out.print(idEvent + ";");
+          Calendar createdDate = Calendar.getInstance();
+          createdDate.setTime(new Date(comment.getPostedTime()));
+          date = ISO8601.format(createdDate);
+          out.print(date + ";");
+          out.print(placeName + ";" + displayName + ";");
+          out.println();
+          commentTreated++;
+        }
+        offsetComments += DEFAULT_LIMIT;
+        out.flush();
+      } else {
+        hasNextComments=false;
       }
-      offsetComments += DEFAULT_LIMIT;
-      out.flush();
+    }
+
+    if (commentCountToTreat!=commentTreated) {
+      throw new ExportException("Exported comments for activity "+activity.getId()+" doesn't correspond to the number of comments. An error occured during the export.");
     }
 
     LOG.debug("End Getting Comments : {} ", placeName);
@@ -111,6 +120,8 @@ abstract class SocialActivity {
     String idactor = "";
 
     List<String> likerIds = Arrays.asList(activity.getLikeIdentityIds());
+    int likeCountToTreat = likerIds.size();
+    int likeTreated = 0;
     for (String likerId : likerIds) {
       idactor = identityManager.getIdentity(likerId, false).getRemoteId();
 
@@ -131,8 +142,11 @@ abstract class SocialActivity {
       out.print(placeName + ";" + displayName + ";");
       out.println();
       out.flush();
+      likeTreated++;
     }
-
+    if (likeCountToTreat!=likeTreated) {
+      throw new ExportException("Exported like for activity "+activity.getId()+" doesn't correspond to the number of likes. An error occured during the export.");
+    }
     LOG.debug("End Getting Likes : {} ", placeName);
   }
 
