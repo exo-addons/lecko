@@ -33,6 +33,7 @@ import javax.persistence.*;
 @NamedQueries({
 
     @NamedQuery(name = "JobStatus.findJobStatusByIdentityId", query = "SELECT j FROM JobStatus j WHERE j.identityId = :identityId"),
+        @NamedQuery(name = "JobStatus.findJobStatusByIdentityIdAndProviderId", query = "SELECT j FROM JobStatus j WHERE j.identityId = :identityId AND j.providerId= :providerId"),
     @NamedQuery(name = "JobStatus.reset", query = "DELETE FROM JobStatus") })
 public class JobStatus {
 
@@ -45,9 +46,14 @@ public class JobStatus {
   @Column(name = "IDENTITY_ID")
   private String identityId;
 
+  @Column(name = "PROVIDER_ID")
+  private String providerId;
+
   public long getId() {
     return id;
   }
+
+
 
   public void setId(long id) {
     this.id = id;
@@ -59,5 +65,13 @@ public class JobStatus {
 
   public void setIdentityId(String identityId) {
     this.identityId = identityId;
+  }
+
+  public String getProviderId() {
+    return providerId;
+  }
+
+  public void setProviderId(String providerId) {
+    this.providerId = providerId;
   }
 }

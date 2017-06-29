@@ -79,4 +79,29 @@ public class JobStatusHandler extends GenericDAOJPAImpl<JobStatus, Long> {
     deleteAll();
     return true;
   }
+
+  public JobStatus findJobStatusByIdentityIdAndProvider(String identityId, String providerId) {
+    if (identityId == null || identityId.isEmpty()) {
+      return null;
+    }
+    EntityManager em = getEntityManager();
+
+    // System.out.println("Transaction isActive ?
+    // "+em.getTransaction().isActive());
+    // EntityTransaction et = em.getTransaction();
+    // et.begin();
+    Query query = em.createNamedQuery("JobStatus.findJobStatusByIdentityIdAndProviderId", JobStatus.class);
+    // et.commit();
+    query.setParameter("identityId", identityId);
+    query.setParameter("providerId",providerId);
+    try {
+      return (JobStatus) query.getSingleResult();
+    } catch (NoResultException e) {
+      return null;
+    } catch (PersistenceException e) {
+
+      LOG.error("Exception when accessing DB : {}",e);
+      return null;
+    }
+  }
 }

@@ -37,14 +37,19 @@ public class JobStatusService implements Startable {
     jobStatusHandler = new JobStatusHandler();
   }
 
-  public void storeStatus(String identityId) {
+  public void storeStatus(String identityId, String providerId) {
     JobStatus jobStatus = new JobStatus();
     jobStatus.setIdentityId(identityId);
+    jobStatus.setProviderId(providerId);
     jobStatusHandler.create(jobStatus);
   }
 
   public JobStatus findByIdentityId(String identityId) {
     return jobStatusHandler.findJobStatusByIdentityId(identityId);
+  }
+
+  public JobStatus findByIdentityIdAndProvider(String identityId, String providerId) {
+    return jobStatusHandler.findJobStatusByIdentityIdAndProvider(identityId,providerId);
   }
 
   public boolean resetStatus() {

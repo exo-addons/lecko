@@ -48,4 +48,15 @@
     <changeSet author="lecko" id="1.0.0-2" dbms="oracle,postgresql">
         <createSequence sequenceName="SEQ_TASK_LECKO_JOB_STATUS_JOBSTATUS_ID" startValue="1"/>
     </changeSet>
+
+
+    <!-- Definition column ACTIVITY_ID for TASK_TASKS table -->
+    <changeSet author="lecko" id="1.0.0-3">
+        <addColumn tableName="LECKO_JOB_STATUS">
+            <column name="PROVIDER_ID" type="NVARCHAR(50)" defaultValue="">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

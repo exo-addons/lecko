@@ -109,7 +109,7 @@
             <init-params>
                 <values-param>
                     <name>changelogs</name>
-                    <description>Change logs of task management</description>
+                    <description>Change logs of lecko addon</description>
                     <value>db/changelog/lecko.db.changelog-1.0.0.xml</value>
                 </values-param>
             </init-params>
