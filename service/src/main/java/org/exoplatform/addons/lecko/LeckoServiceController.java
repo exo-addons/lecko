@@ -251,10 +251,12 @@ public class LeckoServiceController implements Startable {
     }
 
     dataBuilder.deleteDumpFile();
+    dataBuilder.resetCounter();
 
     JobStatusService jobStatusService = getService(JobStatusService.class);
     return jobStatusService.resetStatus() ? "Success" : "Failed";
   }
+
 
   @Override
   public void start() {

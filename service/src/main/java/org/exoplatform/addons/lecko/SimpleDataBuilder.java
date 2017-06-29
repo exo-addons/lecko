@@ -62,6 +62,10 @@ public class SimpleDataBuilder implements DataBuilder {
 
   private ActivityManager  activityManager;
 
+  private int initialNbSpaces;
+
+  private int initialNbUsers;
+
   private static boolean   runBuild = false;
 
   private final int        spaceLimit;
@@ -78,6 +82,9 @@ public class SimpleDataBuilder implements DataBuilder {
     this.identityManager = identityManager;
 
     this.leckoTempDirectory = LeckoServiceController.getRootPath();
+
+    this.initialNbSpaces=-1;
+    this.initialNbUsers=-1;
 
     File directory = new File(this.leckoTempDirectory);
     leckoOutputName = LeckoServiceController.getFileName();
@@ -106,19 +113,35 @@ public class SimpleDataBuilder implements DataBuilder {
 
   @Override
   public int getPercent() {
-    ListAccess<Space> spaceListAccess = spaceService.getAllSpacesWithListAccess();
-    ListAccess<Identity> userListAccess = CommonsUtils.getService(IdentityManager.class)
-                                                      .getIdentitiesByProfileFilter(OrganizationIdentityProvider.NAME,
-                                                                                    new ProfileFilter(),
-                                                                                    false);
 
-    try {
-      return (int) (((double) jobStatusService.countStatus() / (spaceListAccess.getSize() + userListAccess.getSize())) * 100);
-    } catch (Exception e) {
-      e.printStackTrace();
-      return 0;
+
+    if (this.initialNbSpaces!=-1 && this.initialNbUsers!=-1) {
+      LOG.info("Initial count status : {}, nbSpaces : {}, nb users : {}", jobStatusService.countStatus(), this.initialNbSpaces, this.initialNbUsers);
+      int result =  (int) (((double) jobStatusService.countStatus() / (this.initialNbUsers + this.initialNbSpaces)) * 100);
+      if (result>100) result = 100;
+      return result;
+    } else {
+      ListAccess<Space> spaceListAccess = spaceService.getAllSpacesWithListAccess();
+      ListAccess<Identity> userListAccess = CommonsUtils.getService(IdentityManager.class)
+              .getIdentitiesByProfileFilter(OrganizationIdentityProvider.NAME,
+                      new ProfileFilter(),
+                      false);
+
+      try {
+        LOG.info("count status : {}, nbSpaces : {}, nb users : {}", jobStatusService.countStatus(), spaceListAccess.getSize(), userListAccess.getSize());
+        return (int) (((double) jobStatusService.countStatus() / (spaceListAccess.getSize() + userListAccess.getSize())) * 100);
+      } catch (Exception e) {
+        LOG.error("Error when counting status", e);
+        return 0;
+      }
     }
 
+  }
+
+  @Override
+  public void resetCounter() {
+    this.initialNbSpaces=-1;
+    this.initialNbUsers=-1;
   }
 
   public void resumeBuild() {
@@ -144,6 +167,9 @@ public class SimpleDataBuilder implements DataBuilder {
                                                         .getIdentitiesByProfileFilter(OrganizationIdentityProvider.NAME,
                                                                                       new ProfileFilter(),
                                                                                       false);
+      this.initialNbUsers=userListAccess.getSize();
+      this.initialNbSpaces=spaceListAccess.getSize();
+
 
       // verifier si on a deja tout traité. Si oui, sortir directement.
       if (getPercent() == 100) {
@@ -182,14 +208,14 @@ public class SimpleDataBuilder implements DataBuilder {
               LOG.info("Extract Data from spaces {}%", (int) spacePercent);
               lastSpaceLog = (int) spacePercent;
             }
-            if (jobStatusService.findByIdentityId(spaceId) == null) {
+            if (jobStatusService.findByIdentityIdAndProvider(spaceId,"space") == null) {
               // space not treaten in this iteration
               LOG.debug("Export datas for spaceId={} ", spaceId);
               SocialActivity sa = new SpaceActivity(space);
               sa.loadActivityStream(out, identityManager, activityManager);
 
               // store the id, to say that the space is treated.
-              jobStatusService.storeStatus(spaceId);
+              jobStatusService.storeStatus(spaceId, "space");
             } else {
               LOG.debug("Data already extracted for this space: {} in this iteration.", spaceId);
 
@@ -210,7 +236,7 @@ public class SimpleDataBuilder implements DataBuilder {
 
       /** Load User activity */
       offset = 0;
-      size = 20;
+      size = 100;
       boolean hasNextUser = true;
       int countUser = 1;
       int lastUserLog = 0;
@@ -235,12 +261,12 @@ public class SimpleDataBuilder implements DataBuilder {
               LOG.info("Extract Data from users {}%", (int) userPercent);
               lastUserLog = (int) userPercent;
             }
-            if (jobStatusService.findByIdentityId(userId) == null) {
+            if (jobStatusService.findByIdentityIdAndProvider(userId,"organization") == null) {
               LOG.debug("Extract Data from user:{}", userId);
 
               SocialActivity ua = new UserActivity(identity);
               ua.loadActivityStream(out, identityManager, activityManager);
-              jobStatusService.storeStatus(userId);
+              jobStatusService.storeStatus(userId, "organization");
             } else {
               LOG.debug("Data already extracted for this user : {} in this iteration.", userId);
 

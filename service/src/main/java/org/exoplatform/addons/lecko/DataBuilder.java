@@ -34,4 +34,6 @@ public interface DataBuilder extends Runnable {
   boolean getBuildStatus();
 
   int getPercent();
+
+  void resetCounter();
 }
