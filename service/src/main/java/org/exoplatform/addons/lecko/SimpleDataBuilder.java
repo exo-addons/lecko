@@ -318,14 +318,15 @@ public class SimpleDataBuilder implements DataBuilder {
   public void run() {
     // need to create enttityManager for the thread.
     EntityManagerService service = PortalContainer.getInstance().getComponentInstanceOfType(EntityManagerService.class);
-    service.startRequest(PortalContainer.getInstance());
+    //service.startRequest(PortalContainer.getInstance());
+    RequestLifeCycle.begin(service);
     // the em is put in threadLocal and use in the build.
     build();
 
     // try to upload data
     // will run only if 100% finished
     LeckoServiceController.getService(LeckoServiceController.class).UploadLeckoData();
-
-    service.endRequest(PortalContainer.getInstance());
+    RequestLifeCycle.end();
+    //service.endRequest(PortalContainer.getInstance());
   }
 }
