@@ -156,10 +156,6 @@ public class SimpleDataBuilder implements DataBuilder {
     runBuild = true;
     try {
       String extractOutputPath = leckoTempDirectory + "/" + leckoOutputName;
-      file = new File(extractOutputPath);
-      if (!PrivilegedFileHelper.exists(file)) {
-        PrivilegedFileHelper.delete(file);
-      }
 
       out = new PrintWriter(new FileWriter(extractOutputPath, true));
       ListAccess<Space> spaceListAccess = spaceService.getAllSpacesWithListAccess();
@@ -297,10 +293,6 @@ public class SimpleDataBuilder implements DataBuilder {
       if (out != null) {
         out.flush();
         out.close();
-      }
-
-      if (!state && file != null && PrivilegedFileHelper.exists(file)) {
-        PrivilegedFileHelper.delete(file);
       }
 
       runBuild = false;
