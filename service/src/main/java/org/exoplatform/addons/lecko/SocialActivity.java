@@ -54,6 +54,7 @@ abstract class SocialActivity {
                                 String placeName,
                                 String displayName,
                                 ActivityManager activityManager,
+                                IdentityManager identityManager,
                                 PrintWriter out) throws Exception {
 
     LOG.debug("Getting Comments : {} ", placeName);
@@ -89,6 +90,9 @@ abstract class SocialActivity {
           out.print(date + ";");
           out.print(placeName + ";" + displayName + ";");
           out.println();
+
+          getLikes(comment, date, placeName, "", identityManager, out);
+
           commentTreated++;
         }
         offsetComments += DEFAULT_LIMIT;

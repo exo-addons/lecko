@@ -99,7 +99,7 @@ public class UserActivity extends SocialActivity {
               out.println();
 
               // Getting Comments
-              getExoComments(activity, placeName, "", activityManager, out);
+              getExoComments(activity, placeName, "", activityManager, identityManager, out);
               // Getting Likes
               getLikes(activity, date, placeName, "", identityManager, out);
 

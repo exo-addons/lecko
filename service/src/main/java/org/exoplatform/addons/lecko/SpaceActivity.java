@@ -109,7 +109,7 @@ public class SpaceActivity extends SocialActivity {
             out.println();
 
             // Getting Comments
-            getExoComments(activity, placeName, space.getDisplayName(), activityManager, out);
+            getExoComments(activity, placeName, space.getDisplayName(), activityManager, identityManager, out);
             // Getting Likes
             getLikes(activity, date, placeName, space.getDisplayName(), identityManager, out);
             activityTreated++;
