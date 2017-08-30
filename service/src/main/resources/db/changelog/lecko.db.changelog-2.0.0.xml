@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (C) 2003-2016 eXo Platform SAS.
+
+    This file is part of Lecko Analytics Add-on - Service.
+
+    Lecko Analytics Add-on - Service is free software; you can redistribute it and/or modify it
+    under the terms of the GNU Lesser General Public License as
+    published by the Free Software Foundation; either version 3 of
+    the License, or (at your option) any later version.
+
+    Lecko Analytics Add-on - Service software is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+    Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public
+    License along with Lecko Analytics Add-on - Service; if not, write to the Free
+    Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+    02110-1301 USA, or see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+    <!-- Managing both DB that use sequences and db that use auto increment -->
+    <property name="autoIncrement" value="true" dbms="mysql,mssql,h2,sybase,db2,hsqldb"/>
+    <property name="autoIncrement" value="false" dbms="oracle,postgresql"/>
+
+    <!-- Definition of JOBSTATUS table -->
+    <changeSet author="lecko" id="2.0.0-1">
+        <createTable tableName="USERS_EVENTS_TYPE">
+            <column name="EVENT_TYPE_ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1">
+                <constraints primaryKey="true" primaryKeyName="PK_EVENT_TYPE" nullable="false"/>
+            </column>
+            <column name="NAME" type="NVARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="USERS_EVENTS">
+            <column name="EVENT_ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1">
+                <constraints primaryKey="true" primaryKeyName="PK_EVENT" nullable="false"/>
+            </column>
+            <column name="REFERENCED_OBJECT_ID" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="USER_ID" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EVENT_TYPE_ID" type="BIGINT">
+                <constraints foreignKeyName="FK_USERS_EVENTS_EVENT_TYPE" references="USERS_EVENTS_TYPE(EVENT_TYPE_ID)" nullable="false"/>
+            </column>
+            <column name="DATE" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="LECKO_EVENTS_EXPORT">
+            <column name="EVENT_EXPORT_ID" type="BIGINT" autoIncrement="${autoIncrement}" startWith="1">
+                <constraints primaryKey="true" primaryKeyName="PK_EVENT_EXPORT" nullable="false"/>
+            </column>
+            <column name="EVENT_ID" type="BIGINT">
+                <constraints foreignKeyName="FK_EVENTS_EXPORT_EVENT_ID" references="USERS_EVENTS(EVENT_ID)" nullable="false"/>
+            </column>
+            <column name="EXPORTED_DATE" type="TIMESTAMP">
+                <constraints nullable="true"/>
+            </column>
+        </createTable>
+        <modifySql dbms="mysql">
+            <append value=" ENGINE=INNODB CHARSET=UTF8 COLLATE utf8_general_ci"/>
+        </modifySql>
+    </changeSet>
+    <changeSet author="lecko" id="2.0.0-2" dbms="oracle,postgresql">
+        <createSequence sequenceName="SEQ_USERS_EVENTS_EVENT_ID" startValue="1"/>
+        <createSequence sequenceName="SEQ_USERS_EVENTS_TYPE_EVENT_TYPE_ID" startValue="1"/>
+        <createSequence sequenceName="SEQ_LECKO_EVENTS_EXPORT_EVENT_EXPORT_ID" startValue="1"/>
+    </changeSet>
+
+</databaseChangeLog>

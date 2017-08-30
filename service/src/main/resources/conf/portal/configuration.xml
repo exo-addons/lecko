@@ -111,6 +111,7 @@
                     <name>changelogs</name>
                     <description>Change logs of lecko addon</description>
                     <value>db/changelog/lecko.db.changelog-1.0.0.xml</value>
+                    <value>db/changelog/lecko.db.changelog-2.0.0.xml</value>
                 </values-param>
             </init-params>
         </component-plugin>
