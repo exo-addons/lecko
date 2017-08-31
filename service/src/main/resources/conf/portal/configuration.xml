@@ -118,4 +118,15 @@
     </external-component-plugins>
 
 
+    <!--Listener for saving event when a new activity is created-->
+    <external-component-plugins>
+        <target-component>org.exoplatform.social.core.manager.ActivityManager</target-component>
+        <component-plugin>
+            <name>LeckoActivityListener</name>
+            <set-method>addActivityEventListener</set-method>
+            <type>org.exoplatform.addons.lecko.listeners.LeckoActivityListener</type>
+        </component-plugin>
+    </external-component-plugins>
+
+
 </configuration>
