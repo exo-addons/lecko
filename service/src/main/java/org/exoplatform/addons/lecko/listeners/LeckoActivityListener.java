@@ -14,11 +14,15 @@ import org.exoplatform.social.core.manager.ActivityManager;
 public class LeckoActivityListener extends ActivityListenerPlugin {
 
     private static final Log LOG = ExoLogger.getLogger(LeckoActivityListener.class.getName());
-    public static final String SPACE_ACTIVITY_TYPE = "SPACE_ACTIVITY";
 
+    private ActivityManager activityManager;
+
+    public LeckoActivityListener(ActivityManager activityManager) {
+        this.activityManager = activityManager;
+    }
 
     public enum excludedTypes {
-        SPACE_ACTIVITY;
+        SPACE_ACTIVITY,USER_ACTIVITIES_FOR_RELATIONSHIP,USER_COMMENTS_ACTIVITY_FOR_RELATIONSHIP;
         public static boolean contains(String s)
         {
             for(excludedTypes type:values())
@@ -30,7 +34,7 @@ public class LeckoActivityListener extends ActivityListenerPlugin {
 
     @Override
     public void saveActivity(ActivityLifeCycleEvent activityLifeCycleEvent) {
-        LOG.debug("Save Activity Event, store it to USERS_EVENTS");
+        LOG.debug("Save Activity Event.");
         ExoSocialActivity activity = activityLifeCycleEvent.getSource();
         activity = CommonsUtils.getService(ActivityManager.class).getActivity(activity.getId());
         if (!excludedTypes.contains(activity.getType())) {
@@ -39,7 +43,9 @@ public class LeckoActivityListener extends ActivityListenerPlugin {
             LOG.debug("Activity is type {}, which is an excluded type", activity.getType());
         }
 
+
     }
+
 
     @Override
     public void updateActivity(ActivityLifeCycleEvent activityLifeCycleEvent) {
@@ -48,6 +54,20 @@ public class LeckoActivityListener extends ActivityListenerPlugin {
 
     @Override
     public void saveComment(ActivityLifeCycleEvent activityLifeCycleEvent) {
+        LOG.debug("Save Comment Event");
+        ExoSocialActivity comment = activityLifeCycleEvent.getSource();
+        ExoSocialActivity activity = activityManager.getParentActivity(comment);
+        while (activity.isComment()) {
+            //this is for when we will be able to comment a comment.
+            activity=activityManager.getParentActivity(activity);
+        }
+
+        if (!excludedTypes.contains(activity.getType())) {
+            LOG.debug("Parent activity is type {}, which is not an excluded type", activity.getType());
+        } else {
+            LOG.debug("Parent activity is type {}, which is an excluded type", activity.getType());
+        }
+
 
     }
 
@@ -55,4 +75,10 @@ public class LeckoActivityListener extends ActivityListenerPlugin {
     public void likeActivity(ActivityLifeCycleEvent activityLifeCycleEvent) {
 
     }
+
+    @Override
+    public void likeComment(ActivityLifeCycleEvent activityLifeCycleEvent) {
+
+    }
+
 }
