@@ -14,13 +14,31 @@ import org.exoplatform.social.core.manager.ActivityManager;
 public class LeckoActivityListener extends ActivityListenerPlugin {
 
     private static final Log LOG = ExoLogger.getLogger(LeckoActivityListener.class.getName());
+    public static final String SPACE_ACTIVITY_TYPE = "SPACE_ACTIVITY";
 
+
+    public enum excludedTypes {
+        SPACE_ACTIVITY;
+        public static boolean contains(String s)
+        {
+            for(excludedTypes type:values())
+                if (type.name().equals(s))
+                    return true;
+            return false;
+        }
+    }
 
     @Override
     public void saveActivity(ActivityLifeCycleEvent activityLifeCycleEvent) {
         LOG.debug("Save Activity Event, store it to USERS_EVENTS");
         ExoSocialActivity activity = activityLifeCycleEvent.getSource();
         activity = CommonsUtils.getService(ActivityManager.class).getActivity(activity.getId());
+        if (!excludedTypes.contains(activity.getType())) {
+            LOG.debug("Activity is type {}, which is not an excluded type", activity.getType());
+        } else {
+            LOG.debug("Activity is type {}, which is an excluded type", activity.getType());
+        }
+
     }
 
     @Override
