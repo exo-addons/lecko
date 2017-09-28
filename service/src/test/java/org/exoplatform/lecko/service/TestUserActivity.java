@@ -1,31 +1,54 @@
-package org.exoplatform.lecko;
+package org.exoplatform.lecko.service;
 
 import org.exoplatform.addons.lecko.LeckoServiceController;
 import org.exoplatform.addons.lecko.SimpleDataBuilder;
+import org.exoplatform.lecko.test.AbstractServiceTest;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
+import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
+import org.exoplatform.social.core.space.model.Space;
 import org.junit.Before;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Romain Dénarié (romain.denarie@exoplatform.com) on 24/03/17.
  */
-public class TestUserActivity extends AbstractLeckoTestCase {
+public class TestUserActivity extends AbstractServiceTest {
+
+  private List<Space> tearDown         = new ArrayList<Space>();
+
+  private String      spaceDisplayName = "General Discussions";
+
+  private String      spacePrettyName = "general_discussions";
+//  private SpaceService spaceService;
+//  private IdentityManager identityManager;
+//  private ActivityManager activityManager;
+//  private JobStatusService jobStatusService;
 
   @Before
   public void setUp() throws Exception {
     super.setUp();
 
+//    spaceService = (SpaceService) getContainer().getComponentInstanceOfType(SpaceService.class);
+//    identityManager = (IdentityManager) getContainer().getComponentInstanceOfType(IdentityManager.class);
+//    activityManager = (ActivityManager) getContainer().getComponentInstanceOfType(ActivityManager.class);
+//    jobStatusService = (JobStatusService) getContainer().getComponentInstanceOfType(JobStatusService.class);
+
     // john post activity
+
     Identity johnIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "john", true);
     Identity maryIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "mary", true);
-    Identity jackIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "jack", true);
+    Identity jackIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "demo", true);
+
+
 
     ExoSocialActivity activity = new ExoSocialActivityImpl();
     activity.setTitle("My Activity");
@@ -47,6 +70,11 @@ public class TestUserActivity extends AbstractLeckoTestCase {
     commentJack.setUserId(jackIdentity.getId());
     activityManager.saveComment(activity, commentJack);
 
+
+    //add activity in
+
+
+
   }
 
   public void testBuildUserExport() throws Exception {
@@ -64,61 +92,39 @@ public class TestUserActivity extends AbstractLeckoTestCase {
     String ls = System.getProperty("line.separator");
     String[] lines = fileContent.split(ls);
 
-    // 1;DEFAULT_ACTIVITY;2017-03-30T10:37:03.110+02:00;user;;
+    // 1;DEFAULT_ACTIVITY;2017-03-30T10:12:36.743+02:00;user;;
+    // Discussions;
     String[] line1 = lines[0].split(";");
     assertTrue(isInteger(line1[0]));
     assertEquals("DEFAULT_ACTIVITY", line1[1]);
     assertEquals("user", line1[3]);
-    // 2;comment;2017-03-30T10:37:03.113+02:00;;;
+    assertTrue(line1.length==4);
+
+    // 2;comment;2017-03-30T10:12:36.753+02:00;;
     String[] line2 = lines[1].split(";");
     assertTrue(isInteger(line2[0]));
     assertEquals("comment", line2[1]);
-    // 3;comment;2017-03-30T10:37:03.126+02:00;;;7
+    assertTrue(line2.length==3);
+
+    // 3;comment;2017-03-30T10:12:36.773+02:00;;
     String[] line3 = lines[2].split(";");
     assertTrue(isInteger(line3[0]));
     assertEquals("comment", line3[1]);
-    // 2;like;2017-03-30T10:37:03.110+02:00;;;
+    assertTrue(line3.length==3);
+
+    // 4;like;2017-03-30T10:12:36.743+02:00;;
     String[] line4 = lines[3].split(";");
     assertTrue(isInteger(line4[0]));
     assertEquals("like", line4[1]);
-    // 1;DEFAULT_ACTIVITY;2017-03-30T10:37:03.110+02:00;user;;
-    String[] line5 = lines[4].split(";");
-    assertTrue(isInteger(line5[0]));
-    assertEquals("DEFAULT_ACTIVITY", line5[1]);
-    assertEquals("user", line5[3]);
-    // 2;comment;2017-03-30T10:37:03.113+02:00;;;
-    String[] line6 = lines[5].split(";");
-    assertTrue(isInteger(line6[0]));
-    assertEquals("comment", line6[1]);
-    // 3;comment;2017-03-30T10:37:03.126+02:00;;;
-    String[] line7 = lines[6].split(";");
-    assertTrue(isInteger(line7[0]));
-    assertEquals("comment", line7[1]);
-    // 2;like;2017-03-30T10:37:03.110+02:00;;;
-    String[] line8 = lines[7].split(";");
-    assertTrue(isInteger(line8[0]));
-    assertEquals("like", line8[1]);
-    // 1;DEFAULT_ACTIVITY;2017-03-30T10:37:03.110+02:00;user;;
-    String[] line9 = lines[8].split(";");
-    assertTrue(isInteger(line9[0]));
-    assertEquals("DEFAULT_ACTIVITY", line9[1]);
-    assertEquals("user", line9[3]);
-    // 2;comment;2017-03-30T10:37:03.113+02:00;;;
-    String[] line10 = lines[9].split(";");
-    assertTrue(isInteger(line10[0]));
-    assertEquals("comment", line10[1]);
-    // 3;comment;2017-03-30T10:37:03.126+02:00;;;
-    String[] line11 = lines[10].split(";");
-    assertTrue(isInteger(line11[0]));
-    assertEquals("comment", line11[1]);
-    // 2;like;2017-03-30T10:37:03.110+02:00;;;
-    String[] line12 = lines[11].split(";");
-    assertTrue(isInteger(line4[0]));
-    assertEquals("like", line12[1]);
+    assertTrue(line4.length==3);
 
   }
 
   protected void tearDown() throws Exception {
+    for (Space space : tearDown) {
+      spaceService.deleteSpace(space);
+    }
+    jobStatusService.resetStatus();
     super.tearDown();
   }
 

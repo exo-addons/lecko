@@ -1,14 +1,19 @@
-package org.exoplatform.lecko;
+package org.exoplatform.lecko.service;
 
+import org.exoplatform.addons.lecko.JobStatusService;
 import org.exoplatform.addons.lecko.LeckoServiceController;
 import org.exoplatform.addons.lecko.SimpleDataBuilder;
+import org.exoplatform.lecko.test.AbstractServiceTest;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
+import org.exoplatform.social.core.manager.ActivityManager;
+import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.space.SpaceUtils;
 import org.exoplatform.social.core.space.model.Space;
+import org.exoplatform.social.core.space.spi.SpaceService;
 import org.junit.Before;
 
 import java.io.BufferedReader;
@@ -21,44 +26,37 @@ import java.util.List;
 /**
  * Created by Romain Dénarié (romain.denarie@exoplatform.com) on 24/03/17.
  */
-public class TestSpaceActivity extends AbstractLeckoTestCase {
+public class TestSpaceActivity extends AbstractServiceTest {
 
   private List<Space> tearDown         = new ArrayList<Space>();
 
   private String      spaceDisplayName = "General Discussions";
 
+  private String      spacePrettyName = "general_discussions";
+//  private SpaceService spaceService;
+//  private IdentityManager identityManager;
+//  private ActivityManager activityManager;
+//  private JobStatusService jobStatusService;
+
   @Before
   public void setUp() throws Exception {
     super.setUp();
 
-    // A create a space
-    Space space1 = new Space();
-    space1.setApp("Members:true,Contact:true");
-    space1.setDisplayName(spaceDisplayName);
-    space1.setPrettyName(space1.getDisplayName());
-    String shortName = SpaceUtils.cleanString(spaceDisplayName);
-    space1.setGroupId("/spaces/" + shortName);
-    space1.setUrl(shortName);
-    space1.setRegistration("validation");
-    space1.setDescription("This is my first space for testing");
-    space1.setType("classic");
-    space1.setVisibility("public");
-    space1.setPriority("2");
-
-    String[] manager = new String[] { "john" };
-    String[] members = new String[] { "mary", "jack" };
-    space1.setManagers(manager);
-    space1.setMembers(members);
-    spaceService.createSpace(space1, "john");
-    tearDown.add(space1);
+//    spaceService = (SpaceService) getContainer().getComponentInstanceOfType(SpaceService.class);
+//    identityManager = (IdentityManager) getContainer().getComponentInstanceOfType(IdentityManager.class);
+//    activityManager = (ActivityManager) getContainer().getComponentInstanceOfType(ActivityManager.class);
+//    jobStatusService = (JobStatusService) getContainer().getComponentInstanceOfType(JobStatusService.class);
 
     // john post activity
 
     Identity johnIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "john", true);
     Identity maryIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "mary", true);
-    Identity jackIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "jack", true);
+    Identity jackIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "demo", true);
 
-    Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME, shortName, true);
+    Space space1 = createSpace(spacePrettyName,spaceDisplayName, "description", "john", new String[]{"mary","demo"});
+    tearDown.add(space1);
+
+    Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME, space1.getPrettyName(), true);
 
     ExoSocialActivity activity = new ExoSocialActivityImpl();
     activity.setTitle("My Activity");
@@ -79,6 +77,7 @@ public class TestSpaceActivity extends AbstractLeckoTestCase {
     commentJack.setTitle("Jack's Comment");
     commentJack.setUserId(jackIdentity.getId());
     activityManager.saveComment(activity, commentJack);
+
 
   }
 
@@ -152,6 +151,10 @@ public class TestSpaceActivity extends AbstractLeckoTestCase {
     for (Space space : tearDown) {
       spaceService.deleteSpace(space);
     }
+
+    jobStatusService.resetStatus();
+
+
 
     super.tearDown();
   }
