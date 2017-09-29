@@ -51,8 +51,8 @@ Possible actions are :
 - getJobStatus : to know where the export is. It can be Running or Stopped, and display the percentage of completion. Exmpl : "Export is stopped. Export is done at 88% for current extraction."
 - resetExtraction : remove dump file (without sending it to lecko), and reset database. This can be used to start a fresh export.
 
-# LOGS
-## Info
+# Logs
+## Info
 Info logs display percentage of completion, with a line for each 5%. The log looks like :
     
     Lecko-Addons : Begin Extraction…
@@ -71,7 +71,7 @@ Info logs display percentage of completion, with a line for each 5%. The log loo
     Extract Data from users 95%
     Lecko-Addons : End Extraction
     
-## Debug
+## Debug
 To activate debug level, you will have to add a line in conf/logback.xml, for class org.exoplatform.addons.lecko
 With DEBUG log level, log will look like :
 
