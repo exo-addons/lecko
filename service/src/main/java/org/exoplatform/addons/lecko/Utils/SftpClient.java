@@ -37,7 +37,7 @@ import java.util.Properties;
 public class SftpClient {
   private static Log          LOG                 = ExoLogger.getLogger(SftpClient.class);
 
-  private static final int    DEFAULT_PORT        = 20;
+  private static final int    DEFAULT_PORT        = 22;
 
   private static final String LECKO_HOST          = "exo.addons.lecko.SftpHost";
 
