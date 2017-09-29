@@ -52,9 +52,7 @@ Possible actions are :
 - resetExtraction : remove dump file (without sending it to lecko), and reset database. This can be used to start a fresh export.
 
 # LOGS
-
 ## Info
-
 Info logs display percentage of completion, with a line for each 5%. The log looks like :
     
     Lecko-Addons : Begin Extraction…
