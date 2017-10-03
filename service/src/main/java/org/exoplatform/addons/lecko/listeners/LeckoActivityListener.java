@@ -26,7 +26,7 @@ public class LeckoActivityListener extends ActivityListenerPlugin {
     }
 
     public enum excludedTypes {
-        SPACE_ACTIVITY,USER_ACTIVITIES_FOR_RELATIONSHIP,USER_COMMENTS_ACTIVITY_FOR_RELATIONSHIP;
+        SPACE_ACTIVITY,USER_ACTIVITIES_FOR_RELATIONSHIP,USER_COMMENTS_ACTIVITY_FOR_RELATIONSHIP, USER_PROFILE_ACTIVITY;
         public static boolean contains(String s)
         {
             for(excludedTypes type:values())

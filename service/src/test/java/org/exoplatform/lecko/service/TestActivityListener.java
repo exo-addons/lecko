@@ -51,8 +51,50 @@ public class TestActivityListener extends AbstractServiceTest {
         assertTrue(userEventService.findEventsByObjectId(comment.getId()).size() == 2);
         assertTrue(userEventService.findEventsByObjectIdAndEventType(comment.getId(), UserEvent.eventType.LIKE.name()).size() == 1);
 
+    }
+
+    public void testActivityTypes() throws Exception {
+
+        Identity johnIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "john", true);
+
+        String[] possibleActivityTypesToStore= {"sharefiles:spaces",
+                "DEFAULT_ACTIVITY",
+                "DOC_ACTIVITY",
+                "files:spaces",
+                "sharecontents:spaces",
+                "contents:spaces",
+                "cs-calendar:spaces",
+                "ks-forum:spaces",
+                "ks-answer:spaces",
+                "ks-poll:spaces",
+                "ks-wiki:spaces"
+        };
+
+        String[] possibleActivityTypesToNOTStore= {"SPACE_ACTIVITY",
+                "USER_PROFILE_ACTIVITY",
+                "USER_ACTIVITIES_FOR_RELATIONSHIP"
+        };
+
+        for (String type : possibleActivityTypesToStore) {
+            ExoSocialActivity activity = new ExoSocialActivityImpl();
+            activity.setTitle("My Activity");
+            activity.setUserId(johnIdentity.getId());
+            activity.setType(type);
+            activityManager.saveActivityNoReturn(johnIdentity, activity);
+            assertTrue(userEventService.findEventsByObjectId(activity.getId()).size() == 1);
+        }
+
+        for (String type : possibleActivityTypesToNOTStore) {
+            ExoSocialActivity activity = new ExoSocialActivityImpl();
+            activity.setTitle("My Activity");
+            activity.setUserId(johnIdentity.getId());
+            activity.setType(type);
+            activityManager.saveActivityNoReturn(johnIdentity, activity);
+            assertTrue(userEventService.findEventsByObjectId(activity.getId()).size() == 0);
+        }
+
+
 
 
     }
-
 }
