@@ -1,5 +1,7 @@
 package org.exoplatform.addons.lecko.listeners;
 
+import org.exoplatform.addons.lecko.UserEventService;
+import org.exoplatform.addons.lecko.dao.UserEvent;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
@@ -16,9 +18,11 @@ public class LeckoActivityListener extends ActivityListenerPlugin {
     private static final Log LOG = ExoLogger.getLogger(LeckoActivityListener.class.getName());
 
     private ActivityManager activityManager;
+    private UserEventService userEventService;
 
-    public LeckoActivityListener(ActivityManager activityManager) {
+    public LeckoActivityListener(ActivityManager activityManager, UserEventService userEventService) {
         this.activityManager = activityManager;
+        this.userEventService = userEventService;
     }
 
     public enum excludedTypes {
@@ -39,12 +43,10 @@ public class LeckoActivityListener extends ActivityListenerPlugin {
         activity = CommonsUtils.getService(ActivityManager.class).getActivity(activity.getId());
         if (!excludedTypes.contains(activity.getType())) {
             LOG.debug("Activity is type {}, which is not an excluded type", activity.getType());
+            userEventService.storeEvent(activity.getPosterId(), UserEvent.eventType.CREATE.name(), activity.getUpdated(), activity.getId());
         } else {
             LOG.debug("Activity is type {}, which is an excluded type", activity.getType());
         }
-
-
-
 
     }
 

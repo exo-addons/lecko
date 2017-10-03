@@ -4,6 +4,7 @@ import org.exoplatform.addons.lecko.dao.UserEvent;
 import org.exoplatform.addons.lecko.dao.UserEventHandler;
 import org.picocontainer.Startable;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,7 +32,13 @@ public class UserEventService implements Startable {
         return userEventHandler.findEventsByObjectId(objectId);
     }
 
-    public void storeEvent(String eventType) {
+    public void storeEvent(String userId, String eventType, Date updateDate, String referencedObjectId) {
+        UserEvent userEvent = new UserEvent();
+        userEvent.setUserId(userId);
+        userEvent.setEventType(eventType);
+        userEvent.setDate(updateDate);
+        userEvent.setReferenceObjectId(referencedObjectId);
+        userEventHandler.create(userEvent);
 
     }
 }

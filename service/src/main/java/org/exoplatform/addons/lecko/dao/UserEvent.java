@@ -31,7 +31,7 @@ public class UserEvent {
     private Date date;
 
     @Column(name = "USER_ID")
-    private int userId;
+    private String userId;
 
 
     @Column(name = "EVENT_TYPE")
@@ -45,11 +45,11 @@ public class UserEvent {
         this.id = id;
     }
 
-    public int getUserId() {
+    public String getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(String userId) {
         this.userId = userId;
     }
 
