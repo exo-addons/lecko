@@ -78,12 +78,34 @@ public class LeckoActivityListener extends ActivityListenerPlugin {
 
     @Override
     public void likeActivity(ActivityLifeCycleEvent activityLifeCycleEvent) {
-
+        LOG.debug("Save Activity Like Event.");
+        ExoSocialActivity activity = activityLifeCycleEvent.getSource();
+        activity = CommonsUtils.getService(ActivityManager.class).getActivity(activity.getId());
+        if (!excludedTypes.contains(activity.getType())) {
+            LOG.debug("Activity is type {}, which is not an excluded type", activity.getType());
+            userEventService.storeEvent(activity.getPosterId(), UserEvent.eventType.LIKE.name(), activity.getUpdated(), activity.getId());
+        } else {
+            LOG.debug("Activity is type {}, which is an excluded type", activity.getType());
+        }
     }
 
     @Override
     public void likeComment(ActivityLifeCycleEvent activityLifeCycleEvent) {
+        LOG.debug("Save Comment Like Event.");
+        ExoSocialActivity comment = activityLifeCycleEvent.getSource();
+        comment = CommonsUtils.getService(ActivityManager.class).getActivity(comment.getId());
+        ExoSocialActivity activity = activityManager.getParentActivity(comment);
+        while (activity.isComment()) {
+            //this is for when we will be able to comment a comment.
+            activity=activityManager.getParentActivity(activity);
+        }
 
+        if (!excludedTypes.contains(activity.getType())) {
+            LOG.debug("Activity is type {}, which is not an excluded type", activity.getType());
+            userEventService.storeEvent(comment.getPosterId(), UserEvent.eventType.LIKE.name(), comment.getUpdated(), comment.getId());
+        } else {
+            LOG.debug("Activity is type {}, which is an excluded type", activity.getType());
+        }
     }
 
 }
