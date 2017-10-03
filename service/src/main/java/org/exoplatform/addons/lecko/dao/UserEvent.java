@@ -12,7 +12,8 @@ import java.util.Date;
 @ExoEntity
 @Table(name = "USERS_EVENTS")
 @NamedQueries({
-    @NamedQuery(name = "UserEvent.findEventsByObjectId", query = "SELECT ue FROM UserEvent ue WHERE ue.referenceObjectId = :referenceObjectId")
+    @NamedQuery(name = "UserEvent.findEventsByObjectId", query = "SELECT ue FROM UserEvent ue WHERE ue.referenceObjectId = :referenceObjectId"),
+    @NamedQuery(name = "UserEvent.findEventsByObjectIdAndEventType", query = "SELECT ue FROM UserEvent ue WHERE ue.referenceObjectId = :referenceObjectId and ue.eventType = :eventType")
 
 })
 public class UserEvent {

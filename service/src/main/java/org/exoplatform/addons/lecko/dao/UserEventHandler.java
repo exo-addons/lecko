@@ -74,6 +74,33 @@ public class UserEventHandler extends GenericDAOJPAImpl<UserEvent, Long> {
   }
 
 
+  public List<UserEvent> findEventsByObjectIdAndEventType(String referenceObjectId, String eventType) {
+    if (referenceObjectId==null||referenceObjectId.isEmpty()) {
+      return null;
+    }
+
+    if (eventType==null||eventType.isEmpty()) {
+      return null;
+    }
+
+
+    EntityManager em = getEntityManager();
+    Query query = em.createNamedQuery("UserEvent.findEventsByObjectIdAndEventType",UserEvent.class);
+    query.setParameter("referenceObjectId", referenceObjectId);
+    query.setParameter("eventType", eventType);
+
+    try {
+
+      return (List<UserEvent>)(Object)query.getResultList();
+    } catch (NoResultException e) {
+      return null;
+    } catch (PersistenceException e) {
+
+      LOG.error("Exception when accessing DB : {}",e);
+      return null;
+    }
+  }
+
 
 
 }

@@ -1,5 +1,6 @@
 package org.exoplatform.lecko.service;
 
+import org.exoplatform.addons.lecko.dao.UserEvent;
 import org.exoplatform.lecko.test.AbstractServiceTest;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
@@ -38,6 +39,19 @@ public class TestActivityListener extends AbstractServiceTest {
         activityManager.saveComment(activity, comment);
 
         assertTrue(userEventService.findEventsByObjectId(comment.getId()).size() == 1);
+
+        //like the activity
+        activityManager.saveLike(activity, maryIdentity);
+        assertTrue(userEventService.findEventsByObjectId(activity.getId()).size() == 2);
+        assertTrue(userEventService.findEventsByObjectIdAndEventType(activity.getId(), UserEvent.eventType.LIKE.name()).size() == 1);
+
+
+        //like the comment
+        activityManager.saveLike(comment, johnIdentity);
+        assertTrue(userEventService.findEventsByObjectId(comment.getId()).size() == 2);
+        assertTrue(userEventService.findEventsByObjectIdAndEventType(comment.getId(), UserEvent.eventType.LIKE.name()).size() == 1);
+
+
 
     }
 

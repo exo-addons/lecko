@@ -31,6 +31,9 @@ public class UserEventService implements Startable {
     public List<UserEvent> findEventsByObjectId(String objectId) {
         return userEventHandler.findEventsByObjectId(objectId);
     }
+    public List<UserEvent> findEventsByObjectIdAndEventType(String objectId, String eventType) {
+        return userEventHandler.findEventsByObjectIdAndEventType(objectId,eventType);
+    }
 
     public void storeEvent(String userId, String eventType, Date updateDate, String referencedObjectId) {
         UserEvent userEvent = new UserEvent();
