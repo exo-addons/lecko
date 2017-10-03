@@ -41,7 +41,7 @@
             <column name="REFERENCED_OBJECT_ID" type="NVARCHAR(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="USER_ID" type="BIGINT">
+            <column name="USER_ID" type="NVARCHAR(50)">
                 <constraints nullable="false"/>
             </column>
             <column name="EVENT_TYPE" type="NVARCHAR(50)">
