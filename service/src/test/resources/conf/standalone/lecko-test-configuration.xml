@@ -33,6 +33,11 @@
     </component>
 
     <component>
+        <key>org.exoplatform.addons.lecko.UserEventService</key>
+        <type>org.exoplatform.addons.lecko.UserEventService</type>
+    </component>
+
+    <component>
         <type>org.exoplatform.commons.persistence.impl.EntityManagerService</type>
     </component>
 
@@ -360,8 +365,9 @@
             <init-params>
                 <values-param>
                     <name>changelogs</name>
-                    <description>Change logs of task management</description>
+                    <description>Change logs of lecko</description>
                     <value>db/changelog/lecko.db.changelog-1.0.0.xml</value>
+                    <value>db/changelog/lecko.db.changelog-2.0.0.xml</value>
                 </values-param>
             </init-params>
         </component-plugin>
@@ -378,6 +384,17 @@
                     <value>org.exoplatform.social.rest.filter.SocialResponseFilter</value>
                 </value-param>
             </init-params>
+        </component-plugin>
+    </external-component-plugins>
+
+
+    <!--Listener for saving event when a new activity is created-->
+    <external-component-plugins>
+        <target-component>org.exoplatform.social.core.manager.ActivityManager</target-component>
+        <component-plugin>
+            <name>LeckoActivityListener</name>
+            <set-method>addActivityEventListener</set-method>
+            <type>org.exoplatform.addons.lecko.listeners.LeckoActivityListener</type>
         </component-plugin>
     </external-component-plugins>
 

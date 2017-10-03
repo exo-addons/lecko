@@ -19,6 +19,8 @@ package org.exoplatform.lecko.test;
 import org.apache.commons.lang.ArrayUtils;
 import org.exoplatform.addons.lecko.JobStatusService;
 import org.exoplatform.addons.lecko.LeckoServiceController;
+import org.exoplatform.addons.lecko.UserEventService;
+import org.exoplatform.addons.lecko.dao.UserEvent;
 import org.exoplatform.commons.testing.BaseExoTestCase;
 import org.exoplatform.commons.utils.ListAccess;
 import org.exoplatform.component.test.ConfigurationUnit;
@@ -75,6 +77,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   protected ActivityStorage activityStorage;
   protected JobStatusService jobStatusService;
   protected LeckoServiceController leckoServiceController;
+  protected UserEventService userEventService;
 
 
   @Override
@@ -89,7 +92,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     spaceService = getService(SpaceService.class);
     jobStatusService = getService(JobStatusService.class);
     leckoServiceController = getService(LeckoServiceController.class);
-
+    userEventService = getService(UserEventService.class);
 
     identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "root", false);
 

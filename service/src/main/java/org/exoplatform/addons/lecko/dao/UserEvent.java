@@ -12,6 +12,7 @@ import java.util.Date;
 @ExoEntity
 @Table(name = "USERS_EVENTS")
 @NamedQueries({
+    @NamedQuery(name = "UserEvent.findEventsByObjectId", query = "SELECT ue FROM UserEvent ue WHERE ue.referenceObjectId = :referenceObjectId")
 
 })
 public class UserEvent {
@@ -23,7 +24,7 @@ public class UserEvent {
     private long   id;
 
     @Column(name = "REFERENCED_OBJECT_ID")
-    private int referenceObjectId;
+    private String referenceObjectId;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "DATE")
@@ -32,9 +33,9 @@ public class UserEvent {
     @Column(name = "USER_ID")
     private int userId;
 
-    @ManyToOne(optional = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "EVENT_TYPE_ID", nullable = false)
-    private EventType eventType;
+
+    @Column(name = "EVENT_TYPE")
+    private String eventType;
 
     public long getId() {
         return id;
@@ -52,11 +53,11 @@ public class UserEvent {
         this.userId = userId;
     }
 
-    public int getReferenceObjectId() {
+    public String getReferenceObjectId() {
         return referenceObjectId;
     }
 
-    public void setReferenceObjectId(int referenceObjectId) {
+    public void setReferenceObjectId(String referenceObjectId) {
         this.referenceObjectId = referenceObjectId;
     }
 
@@ -68,11 +69,15 @@ public class UserEvent {
         this.date = date;
     }
 
-    public EventType getEventType() {
+    public String getEventType() {
         return eventType;
     }
 
-    public void setEventType(EventType eventType) {
+    public void setEventType(String eventType) {
         this.eventType = eventType;
+    }
+
+    public enum eventType {
+        CREATE,LIKE;
     }
 }

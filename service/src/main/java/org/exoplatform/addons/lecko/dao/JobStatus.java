@@ -33,8 +33,9 @@ import javax.persistence.*;
 @NamedQueries({
 
     @NamedQuery(name = "JobStatus.findJobStatusByIdentityId", query = "SELECT j FROM JobStatus j WHERE j.identityId = :identityId"),
-        @NamedQuery(name = "JobStatus.findJobStatusByIdentityIdAndProviderId", query = "SELECT j FROM JobStatus j WHERE j.identityId = :identityId AND j.providerId= :providerId"),
-    @NamedQuery(name = "JobStatus.reset", query = "DELETE FROM JobStatus") })
+    @NamedQuery(name = "JobStatus.findJobStatusByIdentityIdAndProviderId", query = "SELECT j FROM JobStatus j WHERE j.identityId = :identityId AND j.providerId= :providerId"),
+    @NamedQuery(name = "JobStatus.reset", query = "DELETE FROM JobStatus")
+})
 public class JobStatus {
 
   @Id

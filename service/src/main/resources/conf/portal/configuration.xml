@@ -32,6 +32,11 @@
         <type>org.exoplatform.addons.lecko.JobStatusService</type>
     </component>
 
+    <component>
+        <key>org.exoplatform.addons.lecko.UserEventService</key>
+        <type>org.exoplatform.addons.lecko.UserEventService</type>
+    </component>
+
     <!--component>
         <type>org.exoplatform.commons.persistence.impl.EntityManagerService</type>
     </component-->
