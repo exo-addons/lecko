@@ -20,6 +20,8 @@ public class TestActivityListener extends AbstractServiceTest {
     public void testNewActivity() throws Exception {
 
         Identity johnIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "john", true);
+        Identity maryIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "mary", true);
+
 
         ExoSocialActivity activity = new ExoSocialActivityImpl();
         activity.setTitle("My Activity");
@@ -28,6 +30,15 @@ public class TestActivityListener extends AbstractServiceTest {
         activityManager.saveActivityNoReturn(johnIdentity, activity);
 
         assertTrue(userEventService.findEventsByObjectId(activity.getId()).size() == 1);
+
+        // mary comments and likes the activity
+        ExoSocialActivity comment = new ExoSocialActivityImpl();
+        comment.setTitle("Mary's Comment");
+        comment.setUserId(maryIdentity.getId());
+        activityManager.saveComment(activity, comment);
+
+        assertTrue(userEventService.findEventsByObjectId(comment.getId()).size() == 1);
+
     }
 
 }

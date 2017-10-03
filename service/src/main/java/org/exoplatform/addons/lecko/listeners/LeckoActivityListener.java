@@ -68,6 +68,7 @@ public class LeckoActivityListener extends ActivityListenerPlugin {
 
         if (!excludedTypes.contains(activity.getType())) {
             LOG.debug("Parent activity is type {}, which is not an excluded type", activity.getType());
+            userEventService.storeEvent(comment.getPosterId(), UserEvent.eventType.CREATE.name(), comment.getUpdated(), comment.getId());
         } else {
             LOG.debug("Parent activity is type {}, which is an excluded type", activity.getType());
         }
