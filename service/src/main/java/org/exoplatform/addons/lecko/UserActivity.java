@@ -68,10 +68,10 @@ public class UserActivity extends SocialActivity {
 
       while (hasNextActivity) {
 
-        List<ExoSocialActivity> activities = listAccess.loadAsList(offsetActivities, DEFAULT_LIMIT);
-        if (activities.size() != 0) {
-          for (ExoSocialActivity activity : activities) {
-
+        List<String> activitiesId = listAccess.loadIdsAsList(offsetActivities, DEFAULT_LIMIT);
+        if (activitiesId.size() != 0) {
+          for (String activityId : activitiesId) {
+            ExoSocialActivity activity=activityManager.getActivity(activityId);
             String type_space = "";
             String url_comments = "no_url";
             String url_likes = "no_url";

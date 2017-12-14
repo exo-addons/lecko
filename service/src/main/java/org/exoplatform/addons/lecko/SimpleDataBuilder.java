@@ -166,6 +166,8 @@ public class SimpleDataBuilder implements DataBuilder {
       this.initialNbUsers=userListAccess.getSize();
       this.initialNbSpaces=spaceListAccess.getSize();
 
+      LOG.debug("Space to extract : {}, users to extract : {}", this.initialNbSpaces,this.initialNbUsers);
+
 
       // verifier si on a deja tout traité. Si oui, sortir directement.
       if (getPercent() == 100) {
@@ -232,7 +234,7 @@ public class SimpleDataBuilder implements DataBuilder {
 
       /** Load User activity */
       offset = 0;
-      size = 100;
+      size = 500;
       boolean hasNextUser = true;
       int countUser = 1;
       int lastUserLog = 0;
@@ -245,6 +247,8 @@ public class SimpleDataBuilder implements DataBuilder {
         } else if (identities.length < size) {
           hasNextUser = false;
         }
+
+        LOG.debug("Identities array size : {}",identities.length);
 
         // Extract all activities by user ID
         for (Identity identity : identities) {
@@ -269,6 +273,7 @@ public class SimpleDataBuilder implements DataBuilder {
             }
 
             countUser++;
+            LOG.debug("Users treaten : {}/{}",countUser,this.initialNbUsers);
             if (userLimit != -1 && countUser > userLimit)
               break;
           } else {

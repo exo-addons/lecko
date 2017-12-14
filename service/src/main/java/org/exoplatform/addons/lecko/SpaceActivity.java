@@ -28,6 +28,8 @@ import java.util.List;
 import org.exoplatform.commons.utils.ISO8601;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.component.RequestLifeCycle;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.social.common.RealtimeListAccess;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -42,6 +44,7 @@ import org.exoplatform.social.core.space.model.Space;
 public class SpaceActivity extends SocialActivity {
 
   Space space;
+  private static Log LOG      = ExoLogger.getLogger(SpaceActivity.class);
 
   public SpaceActivity(Space space) {
     super();
@@ -56,6 +59,8 @@ public class SpaceActivity extends SocialActivity {
 
 //    RequestLifeCycle.begin(PortalContainer.getInstance());
 //    try {
+
+      LOG.debug("Start extraction for space {}", space.getDisplayName());
       boolean hasNextActivity = true;
 
       String idEvent = "";
@@ -73,11 +78,12 @@ public class SpaceActivity extends SocialActivity {
 
       while (hasNextActivity) {
         // Get All activities by space id
-        List<ExoSocialActivity> activities = listAccess.loadAsList(offsetActivities, DEFAULT_LIMIT);
+        List<String> activitiesId = listAccess.loadIdsAsList(offsetActivities, DEFAULT_LIMIT);
 
-        if (activities.size() != 0) {
+        if (activitiesId.size() != 0) {
 
-          for (ExoSocialActivity activity : activities) {
+          for (String activityId : activitiesId) {
+            ExoSocialActivity activity = activityManager.getActivity(activityId);
             String type_space = "";
             String url_comments = "no_url";
             String url_likes = "no_url";
@@ -126,6 +132,8 @@ public class SpaceActivity extends SocialActivity {
 //    } finally {
 //      RequestLifeCycle.end();
 //    }
+      LOG.debug("End extraction for space {}", space.getDisplayName());
+
   }
 
 }
