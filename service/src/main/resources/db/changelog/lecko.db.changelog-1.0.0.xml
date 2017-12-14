@@ -46,7 +46,7 @@
         </modifySql>
     </changeSet>
     <changeSet author="lecko" id="1.0.0-2" dbms="oracle,postgresql">
-        <createSequence sequenceName="SEQ_TASK_LECKO_JOB_STATUS_JOBSTATUS_ID" startValue="1"/>
+        <createSequence sequenceName="SEQ_TASK_LECKO_JOB_STATUS_ID" startValue="1"/>
     </changeSet>
 
 
