@@ -69,8 +69,8 @@
     </changeSet>
     <changeSet author="lecko" id="2.0.0-2" dbms="oracle,postgresql">
         <createSequence sequenceName="SEQ_USERS_EVENTS_EVENT_ID" startValue="1"/>
-        <createSequence sequenceName="SEQ_USERS_EVENTS_TYPE_EVENT_TYPE_ID" startValue="1"/>
-        <createSequence sequenceName="SEQ_LECKO_EVENTS_EXPORT_EVENT_EXPORT_ID" startValue="1"/>
+        <createSequence sequenceName="SEQ_USERS_EVTS_TYP_EVT_TYP_ID" startValue="1"/>
+        <createSequence sequenceName="SEQ_LECKO_EVTS_EXT_EVT_EXT_ID" startValue="1"/>
     </changeSet>
 
 </databaseChangeLog>
