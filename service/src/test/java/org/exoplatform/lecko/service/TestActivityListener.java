@@ -60,6 +60,7 @@ public class TestActivityListener extends AbstractServiceTest {
         String[] possibleActivityTypesToStore= {"sharefiles:spaces",
                 "DEFAULT_ACTIVITY",
                 "DOC_ACTIVITY",
+                "USER_PROFILE_ACTIVITY",
                 "files:spaces",
                 "sharecontents:spaces",
                 "contents:spaces",
@@ -71,7 +72,6 @@ public class TestActivityListener extends AbstractServiceTest {
         };
 
         String[] possibleActivityTypesToNOTStore= {"SPACE_ACTIVITY",
-                "USER_PROFILE_ACTIVITY",
                 "USER_ACTIVITIES_FOR_RELATIONSHIP"
         };
 
