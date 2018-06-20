@@ -19,9 +19,9 @@
 -->
 
 <configuration
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd"
-  xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd"
+        xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
 
   <component>
     <key>org.exoplatform.portal.config.UserACL</key>
@@ -75,6 +75,7 @@
       </values-param>
     </init-params>
   </component>
+
   <external-component-plugins>
     <target-component>org.exoplatform.services.organization.OrganizationService</target-component>
     <component-plugin>
@@ -115,6 +116,16 @@
                   <object type="org.exoplatform.services.organization.OrganizationConfig$MembershipType">
                     <field  name="type"><string>validator</string></field>
                     <field  name="description"><string>validator membership type</string></field>
+                  </object>
+                </value>
+                <value>
+                  <object type="org.exoplatform.services.organization.OrganizationConfig$MembershipType">
+                    <field name="type">
+                      <string>*</string>
+                    </field>
+                    <field name="description">
+                      <string>any membership type</string>
+                    </field>
                   </object>
                 </value>
               </collection>
@@ -165,7 +176,7 @@
                     <field  name="password"><string>gtn</string></field>
                     <field  name="firstName"><string>Root</string></field>
                     <field  name="lastName"><string>Root</string></field>
-                    <field  name="email"><string>root@localhost</string></field>
+                    <field  name="email"><string>root@platform.com</string></field>
                     <field  name="groups">
                       <string>manager:/platform/administrators,member:/platform/users</string>
                     </field>
@@ -177,7 +188,7 @@
                     <field  name="password"><string>gtn</string></field>
                     <field  name="firstName"><string>John</string></field>
                     <field  name="lastName"><string>Anthony</string></field>
-                    <field  name="email"><string>john@localhost</string></field>
+                    <field  name="email"><string>john@platform.com</string></field>
                     <field  name="groups">
                       <string>member:/platform/administrators,member:/platform/users</string>
                     </field>
@@ -189,7 +200,7 @@
                     <field  name="password"><string>gtn</string></field>
                     <field  name="firstName"><string>Mary</string></field>
                     <field  name="lastName"><string>Kelly</string></field>
-                    <field  name="email"><string>mary@localhost</string></field>
+                    <field  name="email"><string>mary@platform.com</string></field>
                     <field  name="groups">
                       <string>member:/platform/users</string>
                     </field>
@@ -201,7 +212,55 @@
                     <field  name="password"><string>gtn</string></field>
                     <field  name="firstName"><string>Demo</string></field>
                     <field  name="lastName"><string>gtn</string></field>
-                    <field  name="email"><string>demo@localhost</string></field>
+                    <field  name="email"><string>demo@platform.com</string></field>
+                    <field  name="groups">
+                      <string>member:/platform/users</string>
+                    </field>
+                  </object>
+                </value>
+                <value>
+                  <object type="org.exoplatform.services.organization.OrganizationConfig$User">
+                    <field  name="userName"><string>ghost</string></field>
+                    <field  name="password"><string>gtn</string></field>
+                    <field  name="firstName"><string>Ghost</string></field>
+                    <field  name="lastName"><string>gtn</string></field>
+                    <field  name="email"><string>ghost@platform.com</string></field>
+                    <field  name="groups">
+                      <string>member:/platform/users</string>
+                    </field>
+                  </object>
+                </value>
+                <value>
+                  <object type="org.exoplatform.services.organization.OrganizationConfig$User">
+                    <field  name="userName"><string>paul</string></field>
+                    <field  name="password"><string>gtn</string></field>
+                    <field  name="firstName"><string>Paul</string></field>
+                    <field  name="lastName"><string>gtn</string></field>
+                    <field  name="email"><string>paul@platform.com</string></field>
+                    <field  name="groups">
+                      <string>member:/platform/users</string>
+                    </field>
+                  </object>
+                </value>
+                <value>
+                  <object type="org.exoplatform.services.organization.OrganizationConfig$User">
+                    <field  name="userName"><string>raul</string></field>
+                    <field  name="password"><string>gtn</string></field>
+                    <field  name="firstName"><string>Raul</string></field>
+                    <field  name="lastName"><string>gtn</string></field>
+                    <field  name="email"><string>raul@platform.com</string></field>
+                    <field  name="groups">
+                      <string>member:/platform/users</string>
+                    </field>
+                  </object>
+                </value>
+                <value>
+                  <object type="org.exoplatform.services.organization.OrganizationConfig$User">
+                    <field  name="userName"><string>jame</string></field>
+                    <field  name="password"><string>gtn</string></field>
+                    <field  name="firstName"><string>Jame</string></field>
+                    <field  name="lastName"><string>gtn</string></field>
+                    <field  name="email"><string>jame@platform.com</string></field>
                     <field  name="groups">
                       <string>member:/platform/users</string>
                     </field>
@@ -215,9 +274,9 @@
     </component-plugin>
 
     <component-plugin>
-      <name>SocialGroupEventListenerImpl</name>
+      <name>social.update.membership.event.listener</name>
       <set-method>addListenerPlugin</set-method>
-      <type>org.exoplatform.social.core.space.impl.SocialGroupEventListenerImpl</type>
+      <type>org.exoplatform.social.core.listeners.SocialMembershipListenerImpl</type>
     </component-plugin>
   </external-component-plugins>
 
@@ -241,7 +300,8 @@
         </value-param>
         <value-param>
           <name>page.templates.location</name>
-          <value>classpath:/conf/standalone/templates</value>
+          <description>the path to the location that contains Page templates</description>
+          <value>classpath:/conf/standalone/portal/template/pages</value>
         </value-param>
         <object-param>
           <name>portal.configuration</name>
@@ -319,4 +379,5 @@
     </component-plugin>
   </external-component-plugins>
 
+  <remove-configuration>org.exoplatform.portal.pc.ExoKernelIntegration</remove-configuration>
 </configuration>
