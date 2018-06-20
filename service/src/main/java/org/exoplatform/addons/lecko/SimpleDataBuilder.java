@@ -159,8 +159,7 @@ public class SimpleDataBuilder implements DataBuilder {
 
       out = new PrintWriter(new FileWriter(extractOutputPath, true));
       ListAccess<Space> spaceListAccess = spaceService.getAllSpacesWithListAccess();
-      ListAccess<Identity> userListAccess = CommonsUtils.getService(IdentityManager.class)
-                                                        .getIdentitiesByProfileFilter(OrganizationIdentityProvider.NAME,
+      ListAccess<Identity> userListAccess = identityManager.getIdentitiesByProfileFilter(OrganizationIdentityProvider.NAME,
                                                                                       new ProfileFilter(),
                                                                                       false);
       this.initialNbUsers=userListAccess.getSize();
