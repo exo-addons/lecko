@@ -65,7 +65,7 @@ abstract class SocialActivity {
     int offsetComments = DEFAULT_OFFSET;
     boolean hasNextComments = true;
 
-    RealtimeListAccess<ExoSocialActivity> commentsWithListAccess = activityManager.getCommentsWithListAccess(activity);
+    RealtimeListAccess<ExoSocialActivity> commentsWithListAccess = activityManager.getCommentsWithListAccess(activity,true);
     int commentCountToTreat = commentsWithListAccess.getSize();
     int commentTreated = 0;
     while (hasNextComments) {
@@ -92,7 +92,7 @@ abstract class SocialActivity {
           out.println();
 
           getLikes(comment, date, placeName, "", identityManager, out);
-
+          getSubComments(comment,placeName,displayName,activityManager,identityManager,out);
           commentTreated++;
         }
         offsetComments += DEFAULT_LIMIT;
@@ -109,6 +109,62 @@ abstract class SocialActivity {
     LOG.debug("End Getting Comments : {} ", placeName);
 
   }
+
+
+  protected void getSubComments(ExoSocialActivity activity,
+                                String placeName,
+                                String displayName,
+                                ActivityManager activityManager,
+                                IdentityManager identityManager,
+                                PrintWriter out) throws Exception {
+
+    LOG.debug("Getting Sub Comments : {} ", placeName);
+    String result;
+    String idEvent = "";
+    String date = "";
+    String idactor = "";
+    int offsetComments = DEFAULT_OFFSET;
+    boolean hasNextComments = true;
+
+    List<ExoSocialActivity> comments = activityManager.getSubComments(activity);
+    int commentCountToTreat = comments.size();
+    int commentTreated = 0;
+    if (comments.size() != 0) {
+
+        for (ExoSocialActivity comment : comments) {
+          idactor = comment.getPosterId();
+          if (!user_map.containsKey(idactor)) {
+            user_map.put(idactor, Integer.toString(user_map.size() + 1));
+            idactor = user_map.get(idactor);
+          } else {
+            idactor = user_map.get(idactor);
+          }
+          out.print(idactor + ";");
+
+          idEvent = "comment";
+          out.print(idEvent + ";");
+          Calendar createdDate = Calendar.getInstance();
+          createdDate.setTime(new Date(comment.getPostedTime()));
+          date = ISO8601.format(createdDate);
+          out.print(date + ";");
+          out.print(placeName + ";" + displayName + ";");
+          out.println();
+
+          getLikes(comment, date, placeName, "", identityManager, out);
+          commentTreated++;
+        }
+        out.flush();
+      }
+
+
+    if (commentCountToTreat!=commentTreated) {
+      throw new ExportException("Exported Sub comments for activity "+activity.getId()+" doesn't correspond to the number of comments. An error occured during the export.");
+    }
+
+    LOG.debug("End Getting Sub Comments : {} ", placeName);
+
+  }
+
 
   protected void getLikes(ExoSocialActivity activity,
                           String date,

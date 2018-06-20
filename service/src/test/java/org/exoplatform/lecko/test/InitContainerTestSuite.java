@@ -18,8 +18,8 @@ package org.exoplatform.lecko.test;
 
 import org.exoplatform.commons.testing.BaseExoContainerTestSuite;
 import org.exoplatform.commons.testing.ConfigTestCase;
-import org.exoplatform.lecko.service.TestSpaceActivity;
-import org.exoplatform.lecko.service.TestUserActivity;
+import org.exoplatform.lecko.service.*;
+
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -30,11 +30,18 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({
         TestSpaceActivity.class,
-        TestUserActivity.class
-  })
+        TestSpaceActivityWithCommentAComment.class,
+        TestSpaceActivityWithLikeAComment.class,
+        TestUserActivity.class,
+        TestUserActivityWithCommentAComment.class,
+        TestUserActivityWithLikeAComment.class
+
+
+})
+
 @ConfigTestCase(AbstractServiceTest.class)
 public class InitContainerTestSuite extends BaseExoContainerTestSuite {
-  
+
   @BeforeClass
   public static void setUp() throws Exception {
     initConfiguration(InitContainerTestSuite.class);
@@ -46,3 +53,4 @@ public class InitContainerTestSuite extends BaseExoContainerTestSuite {
     afterTearDown();
   }
 }
+

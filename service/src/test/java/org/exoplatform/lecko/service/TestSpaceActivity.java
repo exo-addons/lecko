@@ -93,6 +93,8 @@ public class TestSpaceActivity extends AbstractServiceTest {
     dataBuilder.build();
 
     String fileContent = readFile(file);
+
+
     String ls = System.getProperty("line.separator");
     String[] lines = fileContent.split(ls);
 

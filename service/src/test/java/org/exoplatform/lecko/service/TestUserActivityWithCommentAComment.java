@@ -1,16 +1,5 @@
 package org.exoplatform.lecko.service;
 
-import org.exoplatform.addons.lecko.LeckoServiceController;
-import org.exoplatform.addons.lecko.SimpleDataBuilder;
-import org.exoplatform.lecko.test.AbstractServiceTest;
-import org.exoplatform.social.core.activity.model.ExoSocialActivity;
-import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
-import org.exoplatform.social.core.identity.model.Identity;
-import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
-import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
-import org.exoplatform.social.core.space.model.Space;
-import org.junit.Before;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -18,10 +7,21 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.Before;
+
+import org.exoplatform.addons.lecko.LeckoServiceController;
+import org.exoplatform.addons.lecko.SimpleDataBuilder;
+import org.exoplatform.lecko.test.AbstractServiceTest;
+import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
+import org.exoplatform.social.core.identity.model.Identity;
+import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
+import org.exoplatform.social.core.space.model.Space;
+
 /**
  * Created by Romain Dénarié (romain.denarie@exoplatform.com) on 24/03/17.
  */
-public class TestUserActivity extends AbstractServiceTest {
+public class TestUserActivityWithCommentAComment extends AbstractServiceTest {
 
   private List<Space> tearDown         = new ArrayList<Space>();
 
@@ -62,12 +62,11 @@ public class TestUserActivity extends AbstractServiceTest {
     comment.setUserId(maryIdentity.getId());
     activityManager.saveComment(activity, comment);
 
-    activityManager.saveLike(activity, maryIdentity);
-
     // Jack comments activity
     ExoSocialActivity commentJack = new ExoSocialActivityImpl();
     commentJack.setTitle("Jack's Comment");
     commentJack.setUserId(jackIdentity.getId());
+    commentJack.setParentCommentId(comment.getId());
     activityManager.saveComment(activity, commentJack);
 
 
@@ -75,7 +74,7 @@ public class TestUserActivity extends AbstractServiceTest {
 
   }
 
-  public void testBuildUserExport() throws Exception {
+  public void testBuildUserExportWithCommentAComment() throws Exception {
 
     String extractOutputPath = LeckoServiceController.getRootPath() + "/" + LeckoServiceController.getFileName();
     File file = new File(extractOutputPath);
@@ -112,12 +111,6 @@ public class TestUserActivity extends AbstractServiceTest {
     assertTrue(isInteger(line3[0]));
     assertEquals("comment", line3[1]);
     assertTrue(line3.length==3);
-
-    // 4;like;2017-03-30T10:12:36.743+02:00;;
-    String[] line4 = lines[3].split(";");
-    assertTrue(isInteger(line4[0]));
-    assertEquals("like", line4[1]);
-    assertTrue(line4.length==3);
 
   }
 
