@@ -35,8 +35,10 @@ import org.exoplatform.services.security.ConversationState;
 import org.exoplatform.services.security.MembershipEntry;
 import org.exoplatform.social.common.RealtimeListAccess;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
+import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
+import org.exoplatform.social.core.jpa.storage.RDBMSActivityStorageImpl;
 import org.exoplatform.social.core.manager.ActivityManager;
 import org.exoplatform.social.core.manager.IdentityManager;
 import org.exoplatform.social.core.manager.RelationshipManager;
@@ -53,11 +55,10 @@ import java.util.*;
 /**
  * AbstractServiceTest.java
  *
- * @author  <a href="http://hoatle.net">hoatle</a>
- * @since   May 27, 2010 3:26:01 PM
  */
 @ConfiguredBy({
         @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/exo.lecko.component.core.test.configuration.xml"),
+
         @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.portal-configuration.xml"),
         @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.identity-configuration.xml"),
         @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.test.jcr-configuration.xml"),
@@ -65,8 +66,9 @@ import java.util.*;
         @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/exo.lecko.test.jcr-configuration.xml"),
 //        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/exo.lecko.component.common.test.configuration.xml"),
         @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/exo.lecko.component.core.test.application.registry.configuration.xml"),
-        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/lecko-test-configuration.xml")
-//        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/exo.lecko.component.service.test.configuration.xml")
+        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/component.search.configuration.xml"),
+        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/lecko-test-configuration.xml"),
+        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/component.search.configuration.xml")
 })
 public abstract class AbstractServiceTest extends BaseExoTestCase {
   protected static Log LOG = ExoLogger.getLogger(AbstractServiceTest.class.getName());
@@ -74,7 +76,6 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   protected IdentityManager identityManager;
   protected RelationshipManager relationshipManager;
   protected ActivityManager activityManager;
-  protected ActivityStorage activityStorage;
   protected JobStatusService jobStatusService;
   protected LeckoServiceController leckoServiceController;
   protected UserEventService userEventService;
@@ -85,9 +86,9 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     begin();
 
 
+
     identityManager = getService(IdentityManager.class);
     activityManager =  getService(ActivityManager.class);
-    activityStorage = getService(ActivityStorage.class);
     relationshipManager = getService(RelationshipManager.class);
     spaceService = getService(SpaceService.class);
     jobStatusService = getService(JobStatusService.class);
@@ -95,19 +96,18 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     userEventService = getService(UserEventService.class);
 
     identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "root", false);
+    identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "john", true);
+    identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "mary", true);
+    identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "demo", true);
 
-    Space space = createSpace("new Space","new_space", "description", "root", new String[]{});
+    //Space space = createSpace("new Space","new_space", "description", "root", new String[]{});
 
-    deleteAllRelationships();
-    deleteAllSpaces();
-    deleteAllIdentitiesWithActivities();
+
   }
 
   @Override
   protected void tearDown() throws Exception {
-    deleteAllRelationships();
-    deleteAllSpaces();
-    deleteAllIdentitiesWithActivities();
+
 
     //
     end();

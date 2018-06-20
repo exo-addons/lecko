@@ -18,9 +18,9 @@
 
 -->
 <configuration
-   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd"
-   xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd http://www.exoplatform.org/xml/ns/kernel_1_2.xsd"
+        xmlns="http://www.exoplatform.org/xml/ns/kernel_1_2.xsd">
 
   <component>
     <type>org.exoplatform.social.core.jpa.mock.DummyDependantComponent</type>
@@ -209,6 +209,7 @@
   </component>
 
   <component>
+    <key>org.exoplatform.social.core.jpa.storage.RDBMSActivityStorageImpl</key>
     <type>org.exoplatform.social.core.jpa.storage.RDBMSActivityStorageImpl</type>
   </component>
 
@@ -823,7 +824,7 @@
           <name>autoCreatedInNewRepository</name>
           <description>Node types configuration file</description>
           <value>jar:/conf/portal/chromattic-nodetypes.xml</value>
-          <!--value>jar:/conf/portal/activity-updater-nodetypes.xml</value-->
+          <value>jar:/conf/portal/activity-updater-nodetypes.xml</value>
           <value>classpath:/conf/standalone/settings-nodetypes.xml</value>
           <value>classpath:/conf/portal/activity-extension-nodetypes.xml</value>
         </values-param>
@@ -878,6 +879,7 @@
           <value>org.exoplatform.social.core.chromattic.entity.SpaceEntity</value>
           <value>org.exoplatform.social.core.chromattic.entity.SpaceListEntity</value>
           <value>org.exoplatform.social.core.chromattic.entity.SpaceRef</value>
+          <value>org.exoplatform.social.core.jpa.updater.ActivityUpdaterEntity</value>
         </values-param>
         <properties-param>
           <name>options</name>
@@ -925,6 +927,6 @@
     </component-plugin>
   </external-component-plugins>
 
+  <import>jar:conf/portal/test-commons-jpa-configuration.xml</import>
   <import>jar:conf/portal/files-configuration.xml</import>
-
 </configuration>
