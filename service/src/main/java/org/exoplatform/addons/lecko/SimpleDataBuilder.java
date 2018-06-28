@@ -66,6 +66,9 @@ public class SimpleDataBuilder implements DataBuilder {
 
   private int initialNbUsers;
 
+  private int processedUserNb;
+
+
   private static boolean   runBuild = false;
 
   private final int        spaceLimit;
@@ -116,7 +119,7 @@ public class SimpleDataBuilder implements DataBuilder {
 
 
     if (this.initialNbSpaces!=-1 && this.initialNbUsers!=-1) {
-      LOG.info("Initial count status : {}, nbSpaces : {}, nb users : {}", jobStatusService.countStatus(), this.initialNbSpaces, this.initialNbUsers);
+      LOG.info("Processed User Nb : {},  Initial count status : {}, nbSpaces : {}, nb users : {}", processedUserNb, jobStatusService.countStatus(), this.initialNbSpaces, this.initialNbUsers);
       int result =  (int) (((double) jobStatusService.countStatus() / (this.initialNbUsers + this.initialNbSpaces)) * 100);
       if (result>100) result = 100;
       return result;
@@ -128,7 +131,7 @@ public class SimpleDataBuilder implements DataBuilder {
                       false);
 
       try {
-        LOG.info("count status : {}, nbSpaces : {}, nb users : {}", jobStatusService.countStatus(), spaceListAccess.getSize(), userListAccess.getSize());
+        LOG.info("Processed User Nb : {}, count status : {}, nbSpaces : {}, nb users : {}",processedUserNb, jobStatusService.countStatus(), spaceListAccess.getSize(), userListAccess.getSize());
         return (int) (((double) jobStatusService.countStatus() / (spaceListAccess.getSize() + userListAccess.getSize())) * 100);
       } catch (Exception e) {
         LOG.error("Error when counting status", e);
@@ -142,6 +145,7 @@ public class SimpleDataBuilder implements DataBuilder {
   public void resetCounter() {
     this.initialNbSpaces=-1;
     this.initialNbUsers=-1;
+    this.processedUserNb=0;
   }
 
   public void resumeBuild() {
@@ -169,7 +173,7 @@ public class SimpleDataBuilder implements DataBuilder {
       LOG.debug("Space to extract : {}, users to extract : {}", this.initialNbSpaces,this.initialNbUsers);
 
 
-      // verifier si on a deja tout traité. Si oui, sortir directement.
+      // verifier si on a deja tout traité. Si oui, sortir directement.controlCommunity!
       if (getPercent() == 100) {
         LOG.info("Extraction already finished.");
         return true;
@@ -239,6 +243,7 @@ public class SimpleDataBuilder implements DataBuilder {
       int countUser = 1;
       int lastUserLog = 0;
       LOG.info("Lecko-Addons : Begin User Extraction...");
+      processedUserNb = 0;
       while (userLimit != 0 && hasNextUser) {
         // Extract all users by limit
         Identity[] identities = userListAccess.load(offset, size);
@@ -267,6 +272,7 @@ public class SimpleDataBuilder implements DataBuilder {
               SocialActivity ua = new UserActivity(identity);
               ua.loadActivityStream(out, identityManager, activityManager);
               jobStatusService.storeStatus(userId, "organization");
+              processedUserNb++;
             } else {
               LOG.debug("Data already extracted for this user : {} in this iteration.", userId);
 

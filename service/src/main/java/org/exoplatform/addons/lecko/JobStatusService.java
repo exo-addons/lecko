@@ -22,6 +22,8 @@ package org.exoplatform.addons.lecko;
 
 import org.exoplatform.addons.lecko.dao.JobStatus;
 import org.exoplatform.addons.lecko.dao.JobStatusHandler;
+import org.exoplatform.commons.api.persistence.ExoTransactional;
+import org.exoplatform.commons.utils.CommonsUtils;
 import org.picocontainer.Startable;
 
 /**
@@ -29,14 +31,15 @@ import org.picocontainer.Startable;
  * Service used to store and check if an entity is already treaten in the
  * current dump
  */
-public class JobStatusService implements Startable {
+public class JobStatusService {
 
   private JobStatusHandler jobStatusHandler;
 
   public JobStatusService() {
-    jobStatusHandler = new JobStatusHandler();
+    jobStatusHandler = CommonsUtils.getService(JobStatusHandler.class);
   }
 
+  @ExoTransactional
   public void storeStatus(String identityId, String providerId) {
     JobStatus jobStatus = new JobStatus();
     jobStatus.setIdentityId(identityId);
@@ -44,28 +47,23 @@ public class JobStatusService implements Startable {
     jobStatusHandler.create(jobStatus);
   }
 
+  @ExoTransactional
   public JobStatus findByIdentityId(String identityId) {
     return jobStatusHandler.findJobStatusByIdentityId(identityId);
   }
 
+  @ExoTransactional
   public JobStatus findByIdentityIdAndProvider(String identityId, String providerId) {
     return jobStatusHandler.findJobStatusByIdentityIdAndProvider(identityId,providerId);
   }
 
+  @ExoTransactional
   public boolean resetStatus() {
     return jobStatusHandler.resetStatus();
   }
 
-  @Override
-  public void start() {
 
-  }
-
-  @Override
-  public void stop() {
-
-  }
-
+  @ExoTransactional
   public Long countStatus() {
     return jobStatusHandler.count();
 
