@@ -283,6 +283,17 @@
     <type>org.exoplatform.social.core.jpa.cache.RDBMSCachedRelationshipStorage</type>
   </component>
 
+
+  <component>
+    <key>org.exoplatform.commons.api.notification.service.storage.WebNotificationStorage</key>
+    <type>org.exoplatform.commons.notification.impl.jpa.web.JPAWebNotificationStorage</type>
+  </component>
+
+  <component>
+    <key>org.exoplatform.commons.api.notification.service.WebNotificationService</key>
+    <type>org.exoplatform.commons.notification.impl.service.WebNotificationServiceImpl</type>
+  </component>
+
   <!--
     Space storage components.
   -->
