@@ -104,4 +104,8 @@ public class JobStatusHandler extends GenericDAOJPAImpl<JobStatus, Long> {
       return null;
     }
   }
+
+  public void flushContext () {
+    getEntityManager().flush();
+  }
 }

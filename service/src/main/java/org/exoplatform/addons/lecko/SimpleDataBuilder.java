@@ -238,7 +238,7 @@ public class SimpleDataBuilder implements DataBuilder {
 
       /** Load User activity */
       offset = 0;
-      size = 500;
+      size = 300;
       boolean hasNextUser = true;
       int countUser = 1;
       int lastUserLog = 0;
@@ -289,6 +289,7 @@ public class SimpleDataBuilder implements DataBuilder {
         }
         offset += size;
         out.flush();
+        jobStatusService.flushContext();
         if (userLimit != -1 && countUser > userLimit)
           break;
 

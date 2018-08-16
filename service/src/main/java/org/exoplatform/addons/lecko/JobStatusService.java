@@ -68,4 +68,7 @@ public class JobStatusService {
     return jobStatusHandler.count();
 
   }
+  public void flushContext () {
+    jobStatusHandler.flushContext();
+  }
 }
