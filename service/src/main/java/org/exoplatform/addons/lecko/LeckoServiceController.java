@@ -21,6 +21,7 @@
 package org.exoplatform.addons.lecko;
 
 import org.exoplatform.addons.lecko.Utils.SftpClient;
+import org.exoplatform.commons.persistence.impl.EntityManagerService;
 import org.exoplatform.commons.utils.PrivilegedFileHelper;
 import org.exoplatform.commons.utils.PropertyManager;
 import org.exoplatform.container.ExoContainer;
@@ -226,7 +227,8 @@ public class LeckoServiceController implements Startable {
     JobStatusService jobStatusService = getService(JobStatusService.class);
     IdentityManager identityManager = getService(IdentityManager.class);
     ActivityManager activityManager = getService(ActivityManager.class);
-    dataBuilder = new SimpleDataBuilder(spaceService, identityManager, activityManager, jobStatusService);
+    EntityManagerService entityManagerService = getService(EntityManagerService.class);
+    dataBuilder = new SimpleDataBuilder(spaceService, identityManager, activityManager, jobStatusService,entityManagerService);
   }
 
   public static <T> T getService(Class<T> clazz) {

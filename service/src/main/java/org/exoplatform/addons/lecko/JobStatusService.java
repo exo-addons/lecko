@@ -24,6 +24,7 @@ import org.exoplatform.addons.lecko.dao.JobStatus;
 import org.exoplatform.addons.lecko.dao.JobStatusHandler;
 import org.picocontainer.Startable;
 
+import org.exoplatform.commons.api.persistence.ExoTransactional;
 /**
  * Created by Romain Dénarié (romain.denarie@exoplatform.com) on 22/06/16.
  * Service used to store and check if an entity is already treaten in the
@@ -37,6 +38,7 @@ public class JobStatusService implements Startable {
     jobStatusHandler = new JobStatusHandler();
   }
 
+  @ExoTransactional
   public void storeStatus(String identityId, String providerId) {
     JobStatus jobStatus = new JobStatus();
     jobStatus.setIdentityId(identityId);

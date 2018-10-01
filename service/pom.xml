@@ -62,8 +62,6 @@
             <artifactId>social-component-service</artifactId>
         </dependency>
 
-
-
         <!-- elastic searching dependencies -->
 
         <dependency>
