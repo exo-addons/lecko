@@ -26,11 +26,11 @@
     <parent>
         <artifactId>addons-parent-pom</artifactId>
         <groupId>org.exoplatform.addons</groupId>
-        <version>8</version>
+        <version>10-M01</version>
     </parent>
     <groupId>org.exoplatform.addons.lecko</groupId>
     <artifactId>lecko</artifactId>
-    <version>1.2.x-SNAPSHOT</version>
+    <version>1.3.x-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Lecko Analytics Add-on</name>
     <description>Lecko Analytics (http://analytics.lecko.fr) integration for eXo Platform</description>
@@ -49,7 +49,7 @@
         <!-- Dependencies versions -->
         <!-- **************************************** -->
         <com.jcraft.jsch.version>0.1.53</com.jcraft.jsch.version>
-        <org.exoplatform.platform.version>5.1.x-SNAPSHOT</org.exoplatform.platform.version>
+        <org.exoplatform.platform.version>5.2.x-SNAPSHOT</org.exoplatform.platform.version>
     </properties>
     <dependencyManagement>
         <dependencies>
