@@ -40,9 +40,9 @@
     </modules>
     <scm>
         <connection>scm:git:git://github.com/exo-addons/lecko.git</connection>
-        <developerConnection>scm:git:git@github.com:exo-addons/lecko.git</developerConnection>
+        <developerConnection>scm:git:git@github.com:exoplatform/lecko.git</developerConnection>
         <tag>HEAD</tag>
-        <url>https://github.com/exo-addons/lecko</url>
+        <url>https://github.com/exoplatform/lecko</url>
     </scm>
     <properties>
         <!-- **************************************** -->
