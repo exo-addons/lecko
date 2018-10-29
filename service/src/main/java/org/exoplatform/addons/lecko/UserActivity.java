@@ -112,9 +112,11 @@ public class UserActivity extends SocialActivity {
           hasNextActivity=false;
         }
       }
+/**
       if (activityCountToTreat!=activityTreated) {
         throw new ExportException("Exported activities for user "+userIdentity.getRemoteId()+" doesn't correspond to the number of activities. An error occured during the export.");
       }
+ */
 //    } finally {
 //      RequestLifeCycle.end();
 //    }

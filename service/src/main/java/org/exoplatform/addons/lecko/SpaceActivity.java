@@ -126,9 +126,11 @@ public class SpaceActivity extends SocialActivity {
           hasNextActivity = false;
         }
       }
+/**
       if (activityCountToTreat != activityTreated) {
         throw new ExportException("Exported acitvities for user " + space.getDisplayName() + " doesn't correspond to the number of activities. An error occured during the export.");
       }
+*/
 //    } finally {
 //      RequestLifeCycle.end();
 //    }
