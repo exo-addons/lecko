@@ -28,6 +28,8 @@ import java.util.List;
 import org.exoplatform.commons.utils.ISO8601;
 import org.exoplatform.container.PortalContainer;
 import org.exoplatform.container.component.RequestLifeCycle;
+import org.exoplatform.services.log.ExoLogger;
+import org.exoplatform.services.log.Log;
 import org.exoplatform.social.common.RealtimeListAccess;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -38,6 +40,7 @@ import org.exoplatform.social.core.manager.IdentityManager;
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com
  */
 public class UserActivity extends SocialActivity {
+  private static Log LOG      = ExoLogger.getLogger(UserActivity.class);
   private Identity userIdentity;
 
   public UserActivity(Identity identity) {
@@ -50,7 +53,7 @@ public class UserActivity extends SocialActivity {
                                  IdentityManager identityManager,
                                  ActivityManager activityManager) throws Exception {
 
-//    RequestLifeCycle.begin(PortalContainer.getInstance());
+    RequestLifeCycle.begin(PortalContainer.getInstance());
 //    try {
 
       int offsetActivities = DEFAULT_OFFSET;
@@ -112,13 +115,14 @@ public class UserActivity extends SocialActivity {
           hasNextActivity=false;
         }
       }
-/**
+
       if (activityCountToTreat!=activityTreated) {
         throw new ExportException("Exported activities for user "+userIdentity.getRemoteId()+" doesn't correspond to the number of activities. An error occured during the export.");
       }
+/**
+      } finally {
+      RequestLifeCycle.end();
+    }
  */
-//    } finally {
-//      RequestLifeCycle.end();
-//    }
   }
 }

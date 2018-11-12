@@ -101,15 +101,15 @@ abstract class SocialActivity {
         hasNextComments=false;
       }
     }
-/**
-    if (commentCountToTreat!=commentTreated) {
+
+    // This tast is due to product's bug
+    // Business implements within method CommentsRealtimeListAccess.getSize() is not exactly the same as we have within method CommentsRealtimeListAccess.loadAsList
+    if (commentCountToTreat > commentTreated) {
       throw new ExportException("Exported comments for activity "+activity.getId()+" doesn't correspond to the number of comments. An error occured during the export.");
     }
-*/
     LOG.debug("End Getting Comments : {} ", placeName);
 
   }
-
 
   protected void getSubComments(ExoSocialActivity activity,
                                 String placeName,
@@ -156,11 +156,11 @@ abstract class SocialActivity {
         out.flush();
       }
 
-/**
+
     if (commentCountToTreat!=commentTreated) {
       throw new ExportException("Exported Sub comments for activity "+activity.getId()+" doesn't correspond to the number of comments. An error occured during the export.");
     }
-*/
+
     LOG.debug("End Getting Sub Comments : {} ", placeName);
 
   }
@@ -204,11 +204,11 @@ abstract class SocialActivity {
       out.flush();
       likeTreated++;
     }
-/**
+
     if (likeCountToTreat!=likeTreated) {
       throw new ExportException("Exported like for activity "+activity.getId()+" doesn't correspond to the number of likes. An error occured during the export.");
     }
-*/
+
     LOG.debug("End Getting Likes : {} ", placeName);
   }
 

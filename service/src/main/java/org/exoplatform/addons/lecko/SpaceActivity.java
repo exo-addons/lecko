@@ -57,7 +57,7 @@ public class SpaceActivity extends SocialActivity {
                                  ActivityManager activityManager) throws Exception {
 
 
-//    RequestLifeCycle.begin(PortalContainer.getInstance());
+    RequestLifeCycle.begin(PortalContainer.getInstance());
 //    try {
 
       LOG.debug("Start extraction for space {}", space.getDisplayName());
@@ -126,15 +126,17 @@ public class SpaceActivity extends SocialActivity {
           hasNextActivity = false;
         }
       }
-/**
+
       if (activityCountToTreat != activityTreated) {
         throw new ExportException("Exported acitvities for user " + space.getDisplayName() + " doesn't correspond to the number of activities. An error occured during the export.");
       }
+
+/**
+    } finally {
+      RequestLifeCycle.end();
+    }
 */
-//    } finally {
-//      RequestLifeCycle.end();
-//    }
-      LOG.debug("End extraction for space {}", space.getDisplayName());
+    LOG.debug("End extraction for space {}", space.getDisplayName());
 
   }
 

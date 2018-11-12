@@ -158,6 +158,10 @@
             <artifactId>social-component-core-jpa</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.exoplatform.commons</groupId>
+            <artifactId>commons-component-common</artifactId>
+        </dependency>
 
     </dependencies>
 
