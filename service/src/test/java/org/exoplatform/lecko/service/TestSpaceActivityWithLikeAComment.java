@@ -90,7 +90,7 @@ public class TestSpaceActivityWithLikeAComment extends AbstractServiceTest {
       file.delete();
     }
 
-    SimpleDataBuilder dataBuilder = new SimpleDataBuilder(spaceService, identityManager, activityManager, jobStatusService);
+    SimpleDataBuilder dataBuilder = new SimpleDataBuilder(spaceService, identityManager, activityManager, jobStatusService, entityManagerService);
     dataBuilder.build();
 
     String fileContent = readFile(file);

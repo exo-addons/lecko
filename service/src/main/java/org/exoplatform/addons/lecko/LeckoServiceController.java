@@ -21,6 +21,7 @@
 package org.exoplatform.addons.lecko;
 
 import org.exoplatform.addons.lecko.Utils.SftpClient;
+import org.exoplatform.commons.persistence.impl.EntityManagerService;
 import org.exoplatform.commons.utils.PrivilegedFileHelper;
 import org.exoplatform.commons.utils.PropertyManager;
 import org.exoplatform.container.ExoContainer;
@@ -117,7 +118,8 @@ public class LeckoServiceController implements Startable {
   }
 
   /**
-   * get Job Status
+   * Compute Job extraction's progress
+   * @return String progress
    */
   @Managed
   @ManagedDescription("Get Lecko Job Status.")
@@ -133,7 +135,8 @@ public class LeckoServiceController implements Startable {
   }
 
   /**
-   * Stop dump data.
+   * Stop extraction's progress
+   * @return String : extraction status
    */
   @Managed
   @ManagedDescription("Stop lecko export.")
@@ -226,7 +229,8 @@ public class LeckoServiceController implements Startable {
     JobStatusService jobStatusService = getService(JobStatusService.class);
     IdentityManager identityManager = getService(IdentityManager.class);
     ActivityManager activityManager = getService(ActivityManager.class);
-    dataBuilder = new SimpleDataBuilder(spaceService, identityManager, activityManager, jobStatusService);
+    EntityManagerService entityManagerService = getService(EntityManagerService.class);
+    dataBuilder = new SimpleDataBuilder(spaceService, identityManager, activityManager, jobStatusService, entityManagerService);
   }
 
   public static <T> T getService(Class<T> clazz) {
@@ -240,7 +244,8 @@ public class LeckoServiceController implements Startable {
   }
 
   /**
-   * Upload dump to lecko server.
+   * Reset extraction's process
+   * @return String : extraction's status
    */
   @Managed
   @ManagedDescription("Reset extraction job")

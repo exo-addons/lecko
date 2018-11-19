@@ -22,6 +22,7 @@ package org.exoplatform.addons.lecko;
 
 import org.exoplatform.addons.lecko.dao.JobStatus;
 import org.exoplatform.addons.lecko.dao.JobStatusHandler;
+import org.exoplatform.commons.api.persistence.ExoTransactional;
 import org.picocontainer.Startable;
 
 /**
@@ -44,10 +45,12 @@ public class JobStatusService implements Startable {
     jobStatusHandler.create(jobStatus);
   }
 
+  @ExoTransactional
   public JobStatus findByIdentityId(String identityId) {
     return jobStatusHandler.findJobStatusByIdentityId(identityId);
   }
 
+  @ExoTransactional
   public JobStatus findByIdentityIdAndProvider(String identityId, String providerId) {
     return jobStatusHandler.findJobStatusByIdentityIdAndProvider(identityId,providerId);
   }
@@ -66,6 +69,7 @@ public class JobStatusService implements Startable {
 
   }
 
+  @ExoTransactional
   public Long countStatus() {
     return jobStatusHandler.count();
 

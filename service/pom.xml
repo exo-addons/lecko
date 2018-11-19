@@ -32,6 +32,9 @@
     <artifactId>lecko-service</artifactId>
     <name>Lecko Analytics Add-on - Service</name>
 
+    <properties>
+        <exo.test.coverage.ratio>0.60</exo.test.coverage.ratio>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>javax.servlet</groupId>
