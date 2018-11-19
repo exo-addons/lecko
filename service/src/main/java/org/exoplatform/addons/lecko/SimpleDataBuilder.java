@@ -24,15 +24,14 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 
-import org.exoplatform.container.component.RequestLifeCycle;
+import org.exoplatform.container.ExoContainer;
+import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.social.core.manager.ActivityManager;
 
 import org.exoplatform.commons.persistence.impl.EntityManagerService;
 import org.exoplatform.commons.utils.CommonsUtils;
 import org.exoplatform.commons.utils.ListAccess;
-import org.exoplatform.commons.utils.PrivilegedFileHelper;
 import org.exoplatform.commons.utils.PropertyManager;
-import org.exoplatform.container.PortalContainer;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.social.core.identity.model.Identity;
@@ -62,6 +61,8 @@ public class SimpleDataBuilder implements DataBuilder {
 
   private ActivityManager  activityManager;
 
+  private EntityManagerService entityManagerService;
+
   private int initialNbSpaces;
 
   private int initialNbUsers;
@@ -75,11 +76,13 @@ public class SimpleDataBuilder implements DataBuilder {
   public SimpleDataBuilder(SpaceService spaceService,
                            IdentityManager identityManager,
                            ActivityManager activityManager,
-                           JobStatusService jobStatusService) {
+                           JobStatusService jobStatusService,
+                           EntityManagerService entityManagerService) {
     this.spaceService = spaceService;
     this.jobStatusService = jobStatusService;
     this.activityManager = activityManager;
     this.identityManager = identityManager;
+    this.entityManagerService = entityManagerService;
 
     this.leckoTempDirectory = LeckoServiceController.getRootPath();
 
@@ -150,6 +153,8 @@ public class SimpleDataBuilder implements DataBuilder {
 
   @Override
   public boolean build() {
+    ExoContainer currentContainer = ExoContainerContext.getCurrentContainer();
+    entityManagerService.startRequest(currentContainer);
     PrintWriter out = null;
     File file = null;
     boolean state = true;
@@ -196,6 +201,8 @@ public class SimpleDataBuilder implements DataBuilder {
         // Extract all activities by space ID
         for (Space space : spaces) {
           if (runBuild) {
+            entityManagerService.endRequest(currentContainer);
+            entityManagerService.startRequest(currentContainer);
             // space ID
             String spaceId = space.getId();
             String spaceDisplayName = space.getDisplayName();
@@ -252,7 +259,8 @@ public class SimpleDataBuilder implements DataBuilder {
         // Extract all activities by user ID
         for (Identity identity : identities) {
           if (runBuild) {
-
+            entityManagerService.endRequest(currentContainer);
+            entityManagerService.startRequest(currentContainer);
             // user ID
             String userId = identity.getRemoteId();
             double userPercent = ((double) countUser / userListAccess.getSize()) * 100;
@@ -294,6 +302,7 @@ public class SimpleDataBuilder implements DataBuilder {
       LOG.error("Lecko-Addons : Extraction stopped by exception", ex);
       state = false;
     } finally {
+      entityManagerService.endRequest(currentContainer);
       if (out != null) {
         out.flush();
         out.close();
@@ -312,17 +321,10 @@ public class SimpleDataBuilder implements DataBuilder {
 
   // @Override
   public void run() {
-    // need to create enttityManager for the thread.
-    EntityManagerService service = PortalContainer.getInstance().getComponentInstanceOfType(EntityManagerService.class);
-    //service.startRequest(PortalContainer.getInstance());
-    RequestLifeCycle.begin(service);
     // the em is put in threadLocal and use in the build.
     build();
-
     // try to upload data
     // will run only if 100% finished
     LeckoServiceController.getService(LeckoServiceController.class).UploadLeckoData();
-    RequestLifeCycle.end();
-    //service.endRequest(PortalContainer.getInstance());
   }
 }

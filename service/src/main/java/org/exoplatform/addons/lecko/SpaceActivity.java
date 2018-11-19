@@ -57,7 +57,7 @@ public class SpaceActivity extends SocialActivity {
                                  ActivityManager activityManager) throws Exception {
 
 
-//    RequestLifeCycle.begin(PortalContainer.getInstance());
+    RequestLifeCycle.begin(PortalContainer.getInstance());
 //    try {
 
       LOG.debug("Start extraction for space {}", space.getDisplayName());

@@ -50,7 +50,7 @@ public class UserActivity extends SocialActivity {
                                  IdentityManager identityManager,
                                  ActivityManager activityManager) throws Exception {
 
-//    RequestLifeCycle.begin(PortalContainer.getInstance());
+    RequestLifeCycle.begin(PortalContainer.getInstance());
 //    try {
 
       int offsetActivities = DEFAULT_OFFSET;

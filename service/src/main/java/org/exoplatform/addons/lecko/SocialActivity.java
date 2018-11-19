@@ -102,7 +102,9 @@ abstract class SocialActivity {
       }
     }
 
-    if (commentCountToTreat!=commentTreated) {
+    // This tast is due to product's bug
+    // Business implements within method CommentsRealtimeListAccess.getSize() is not exactly the same as we have within method CommentsRealtimeListAccess.loadAsList
+    if (commentCountToTreat > commentTreated) {
       throw new ExportException("Exported comments for activity "+activity.getId()+" doesn't correspond to the number of comments. An error occured during the export.");
     }
 
