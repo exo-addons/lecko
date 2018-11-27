@@ -141,7 +141,6 @@ public class LeckoServiceController implements Startable {
   @Managed
   @ManagedDescription("Stop lecko export.")
   public String stopLeckoExport() {
-
     try {
       if (dataBuilder == null) {
         initDataBuilder();
@@ -149,7 +148,7 @@ public class LeckoServiceController implements Startable {
 
       dataBuilder.stopBuild();
     } catch (Exception ex) {
-      LOG.error(ex.getMessage());
+      LOG.error("Unable to stop the transfert", ex);
       return "Failed";
     }
     return "Stopping job";
@@ -177,7 +176,7 @@ public class LeckoServiceController implements Startable {
         return doUpload();
       }
     } catch (Exception ex) {
-      LOG.error("Failed send Data to lecko server", ex.getMessage());
+      LOG.error("Fail send Data to lecko server", ex);
       return "Failed";
     } finally {
       // if (file != null && file.exists() && status)
@@ -194,18 +193,17 @@ public class LeckoServiceController implements Startable {
 
     if (file.exists()) {
       SftpClient client = new SftpClient();
-      LOG.info("Start send Data to lecko server");
+      LOG.info("Start to send data to the lecko server");
       status = client.send(file.getAbsolutePath());
       if (status) {
-        LOG.info("End  send Data to lecko server");
+        LOG.info("End  send data to the lecko server");
         resetExtraction();
       } else {
-        LOG.info("Failed send Data to lecko server");
+        LOG.info("Fail to send data to the lecko server (status=false)");
       }
-
     } else {
-      LOG.info("Failed send Data to lecko server file not exist : {}", path);
-      return "Failed";
+      LOG.info("Fail to send data to the lecko server file not found path={}", path);
+      status = false;
     }
     return status ? "Success" : "Failed";
 
@@ -214,6 +212,7 @@ public class LeckoServiceController implements Startable {
   @Managed
   @ManagedDescription("Enable/Disable lecko job. ")
   public void enableLeckoJob(@ManagedName("enable") boolean enable) {
+    LOG.info("Lecko job enable value changed enable={}", enable);
     PropertyManager.setProperty(LECKO_ENABLED, Boolean.toString(enable));
   }
 
@@ -250,6 +249,7 @@ public class LeckoServiceController implements Startable {
   @Managed
   @ManagedDescription("Reset extraction job")
   public String resetExtraction() {
+    LOG.info("Extraction reset requested");
 
     if (dataBuilder == null) {
       initDataBuilder();
@@ -259,7 +259,9 @@ public class LeckoServiceController implements Startable {
     dataBuilder.resetCounter();
 
     JobStatusService jobStatusService = getService(JobStatusService.class);
-    return jobStatusService.resetStatus() ? "Success" : "Failed";
+    String status =  jobStatusService.resetStatus() ? "Success" : "Failed";
+    LOG.info("Reset extraction result status={}", status);
+    return status;
   }
 
 

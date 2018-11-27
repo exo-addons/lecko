@@ -65,7 +65,7 @@ public class SftpClient {
 
   private static boolean      active;
 
-  private static String       remotePpath;
+  private static String       remotePath;
 
   private static String       proxyAdress;
 
@@ -78,7 +78,7 @@ public class SftpClient {
     host = PropertyManager.getProperty(LECKO_HOST).trim();
     user = PropertyManager.getProperty(LECKO_USER).trim();
     pwd = PropertyManager.getProperty(LECKO_PASSWORD);
-    remotePpath = PropertyManager.getProperty(LECKO_REMOTE_PATH).trim();
+    remotePath = PropertyManager.getProperty(LECKO_REMOTE_PATH).trim();
 
     String value = PropertyManager.getProperty(LECKO_PORT);
     if (value != null) {
@@ -106,12 +106,14 @@ public class SftpClient {
 
     try {
       JSch jsch = new JSch();
+      LOG.info("Opening a session on the sftp server host={} port={} user={}", host, port, user);
       session = jsch.getSession(user, host, port);
 
       if (session != null) {
         session.setPassword(pwd);
         session.setTimeout(DEFAULT_TIMOUT);
       } else {
+        LOG.error("Unable to retrieve an sftp session");
         return false;
       }
 
@@ -119,26 +121,32 @@ public class SftpClient {
       config.put("StrictHostKeyChecking", "no");
       session.setConfig(config);
       session.connect();
+      LOG.info("Opening an sftp channel");
       channel = session.openChannel("sftp");
       if (channel != null) {
         channel.connect(DEFAULT_TIMOUT);
       } else {
+        LOG.error("Unable to connect to the sftp server");
         return false;
       }
       channelSftp = (ChannelSftp) channel;
-      if (remotePpath != null) {
-        channelSftp.cd(remotePpath);
+      if (remotePath != null) {
+        LOG.info("Changing the remote directory to {}", remotePath);
+        channelSftp.cd(remotePath);
       }
 
+      LOG.info("Transfering {}", fileName);
       File f = new File(fileName);
       channelSftp.put(new FileInputStream(f), f.getName());
+
+      LOG.info("Transfer of {} on the sftp server done", fileName);
       return true;
     } catch (Exception ex) {
-      LOG.error(ex.getMessage());
+      LOG.error("Unable to transfer " + fileName, ex);
       try {
         Thread.sleep(30000L);
       } catch (InterruptedException e) {
-        LOG.error(e.getMessage());
+        LOG.error(e);
       }
       return false;
     } finally {
