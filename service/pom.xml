@@ -33,7 +33,7 @@
     <name>Lecko Analytics Add-on - Service</name>
 
     <properties>
-        <exo.test.coverage.ratio>0.60</exo.test.coverage.ratio>
+        <exo.test.coverage.ratio>0.59</exo.test.coverage.ratio>
     </properties>
     <dependencies>
         <dependency>
