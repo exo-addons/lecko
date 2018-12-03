@@ -26,6 +26,7 @@ import java.io.PrintWriter;
 
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.container.component.RequestLifeCycle;
 import org.exoplatform.social.core.manager.ActivityManager;
 
 import org.exoplatform.commons.persistence.impl.EntityManagerService;
@@ -325,6 +326,8 @@ public class SimpleDataBuilder implements DataBuilder {
     build();
     // try to upload data
     // will run only if 100% finished
+    RequestLifeCycle.begin(entityManagerService);
     LeckoServiceController.getService(LeckoServiceController.class).UploadLeckoData();
+    RequestLifeCycle.end();
   }
 }
