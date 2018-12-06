@@ -102,32 +102,32 @@ public class TestUserActivityWithLikeAComment extends AbstractServiceTest {
     assertTrue(isInteger(line1[0]));
     assertEquals("DEFAULT_ACTIVITY", line1[1]);
     assertEquals("user", line1[3]);
-    assertTrue(line1.length==4);
+    assertEquals(4, line1.length);
 
     // 2;comment;2017-03-30T10:12:36.753+02:00;;
     String[] line2 = lines[1].split(";");
     assertTrue(isInteger(line2[0]));
     assertEquals("comment", line2[1]);
-    assertTrue(line2.length==3);
+    assertEquals(3, line2.length);
 
     // 3;like;2017-03-30T10:12:36.743+02:00;;
     String[] line3 = lines[2].split(";");
     assertTrue(isInteger(line3[0]));
-    assertEquals("like", line3[1]);
-    assertTrue(line3.length==3);
+    assertEquals("comment", line3[1]);
+    assertEquals(3, line3.length);
 
 
     // 4;comment;2017-03-30T10:12:36.773+02:00;;
     String[] line4 = lines[3].split(";");
     assertTrue(isInteger(line4[0]));
-    assertEquals("comment", line4[1]);
-    assertTrue(line4.length==3);
+    assertEquals("like", line4[1]);
+    assertEquals(3, line4.length);
 
     // 5;like;2017-03-30T10:12:36.743+02:00;;
     String[] line5 = lines[4].split(";");
     assertTrue(isInteger(line5[0]));
-    assertEquals("like", line5[1]);
-    assertTrue(line5.length==3);
+    assertEquals("DEFAULT_ACTIVITY", line5[1]);
+    assertEquals(4, line5.length);
 
   }
 

@@ -72,8 +72,10 @@ public class LeckoActivityListener extends ActivityListenerPlugin {
         } else {
             LOG.debug("Parent activity is type {}, which is an excluded type", activity.getType());
         }
+    }
 
-
+    @Override
+    public void updateComment(ActivityLifeCycleEvent event) {
     }
 
     @Override
