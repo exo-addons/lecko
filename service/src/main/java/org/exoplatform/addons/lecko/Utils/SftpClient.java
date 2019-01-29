@@ -69,34 +69,56 @@ public class SftpClient {
 
   private static String       proxyAdress;
 
-  private static String       proxyPort;
+  private static int       proxyPort;
 
   private static int          DEFAULT_TIMOUT      = 3600000;
 
   static {
+      // Manadatory properties
+      host = PropertyManager.getProperty(LECKO_HOST);
+      if (host != null) host = host.trim();
+      else LOG.error("Property " + LECKO_HOST + " undefined");
 
-    host = PropertyManager.getProperty(LECKO_HOST).trim();
-    user = PropertyManager.getProperty(LECKO_USER).trim();
-    pwd = PropertyManager.getProperty(LECKO_PASSWORD);
-    remotePath = PropertyManager.getProperty(LECKO_REMOTE_PATH).trim();
+       user = PropertyManager.getProperty(LECKO_USER);
+      if (user != null) user = user.trim();
+      else LOG.error("Property " + LECKO_USER + " undefined");
 
-    String value = PropertyManager.getProperty(LECKO_PORT);
-    if (value != null) {
-      try {
-        port = Integer.valueOf(value);
-      } catch (NumberFormatException ex) {
-        port = DEFAULT_PORT;
+      pwd = PropertyManager.getProperty(LECKO_PASSWORD);
+      if (pwd != null) pwd = pwd.trim();
+      else LOG.error("Property " + LECKO_PASSWORD + " undefined");
+
+      // Optionals properties
+      remotePath = PropertyManager.getProperty(LECKO_REMOTE_PATH);
+      if (remotePath != null) remotePath = remotePath.trim();
+
+      String value = PropertyManager.getProperty(LECKO_PORT);
+      if (value != null) {
+        try {
+                port = Integer.valueOf(value);
+            } catch (NumberFormatException ex) {
+                LOG.error("Property " + LECKO_PORT + " is invalid using default port :" + DEFAULT_PORT);
+                port = DEFAULT_PORT;
+            }
       }
-    }
 
-    value = PropertyManager.getProperty(LECKO_ACTIVE_PROXY);
-    active = Boolean.valueOf(value);
+      // Manage proxy configuration -> Not use for the moment
+      value = PropertyManager.getProperty(LECKO_ACTIVE_PROXY);
+      active = Boolean.valueOf(value);
 
-    if (active) {
-      proxyAdress = PropertyManager.getProperty(LECKO_PROXY_ADDRESS);
-      proxyPort = PropertyManager.getProperty(LECKO_PROXY_PORT);
-    }
+      if (active) {
+        proxyAdress = PropertyManager.getProperty(LECKO_PROXY_ADDRESS);
+        if (proxyAdress != null) proxyAdress = proxyAdress.trim();
+        else LOG.error("Mode proxy is enable and property " + LECKO_PROXY_ADDRESS + " undefined");
 
+        String proxyPortString = PropertyManager.getProperty(LECKO_PROXY_PORT);
+        if (proxyPortString != null) {
+            try {
+                    proxyPort = Integer.valueOf(proxyPortString);
+                } catch (NumberFormatException ex) {
+                    LOG.error("Mode proxy is enable and property " + LECKO_PROXY_PORT + " is invalid");
+                }
+        } else LOG.error("Mode proxy is enable and property " + LECKO_PROXY_PORT + " undefined");
+      }
   }
 
   public boolean send(String fileName) {
