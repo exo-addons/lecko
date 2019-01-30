@@ -20,16 +20,18 @@
  */
 package org.exoplatform.addons.lecko.Utils;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.Properties;
+
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
+
 import org.exoplatform.commons.utils.PropertyManager;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
-import java.io.File;
-import java.io.FileInputStream;
-import java.util.Properties;
 
 /**
  * Created by The eXo Platform SAS Author : eXoPlatform exo@exoplatform.com
@@ -55,48 +57,97 @@ public class SftpClient {
 
   private static final String LECKO_REMOTE_PATH   = "exo.addons.lecko.SftpRemotePath";
 
-  private static String       host;
+  private String              host;
 
-  private static String       user;
+  private String              user;
 
-  private static String       pwd;
+  private String              pwd;
 
-  private static int          port                = DEFAULT_PORT;
+  private int                 port                = DEFAULT_PORT;
 
-  private static boolean      active;
+  private boolean             active;
 
-  private static String       remotePath;
+  private String              remotePath;
 
-  private static String       proxyAdress;
+  private String              proxyAdress;
 
-  private static String       proxyPort;
+  private int                 proxyPort;
 
   private static int          DEFAULT_TIMOUT      = 3600000;
 
-  static {
+  private boolean             isConfigured        = true;
 
-    host = PropertyManager.getProperty(LECKO_HOST).trim();
-    user = PropertyManager.getProperty(LECKO_USER).trim();
+  public SftpClient() {
+
+    // Mandatory properties
+    host = PropertyManager.getProperty(LECKO_HOST);
+    if (host != null) {
+      host = host.trim();
+    } else {
+      LOG.error("Property " + LECKO_HOST + " undefined, please define it in the exo.properties file");
+      isConfigured = false;
+    }
+
+    user = PropertyManager.getProperty(LECKO_USER);
+    if (user != null) {
+      user = user.trim();
+    } else {
+      LOG.error("Property " + LECKO_USER + " undefined, please define it in the exo.properties file");
+      isConfigured = false;
+    }
+
     pwd = PropertyManager.getProperty(LECKO_PASSWORD);
-    remotePath = PropertyManager.getProperty(LECKO_REMOTE_PATH).trim();
+    if (pwd != null) {
+      pwd = pwd.trim();
+    } else {
+      LOG.error("Property " + LECKO_PASSWORD + " undefined, please define it in the exo.properties file");
+      isConfigured = false;
+    }
+
+    if (!isConfigured) {
+      LOG.error("Missing mandatory properties, SFTP Client is not configured ... so the Lecko dump file will not be send to the FTP server.");
+      return;
+    }
+
+    // Optionals properties
+    remotePath = PropertyManager.getProperty(LECKO_REMOTE_PATH);
+    if (remotePath != null) {
+      remotePath = remotePath.trim();
+    }
 
     String value = PropertyManager.getProperty(LECKO_PORT);
     if (value != null) {
       try {
         port = Integer.valueOf(value);
       } catch (NumberFormatException ex) {
+        LOG.error("Property " + LECKO_PORT + " is invalid, using default port: " + DEFAULT_PORT);
         port = DEFAULT_PORT;
       }
     }
 
+    // Manage proxy configuration -> Not use for the moment
     value = PropertyManager.getProperty(LECKO_ACTIVE_PROXY);
     active = Boolean.valueOf(value);
 
     if (active) {
       proxyAdress = PropertyManager.getProperty(LECKO_PROXY_ADDRESS);
-      proxyPort = PropertyManager.getProperty(LECKO_PROXY_PORT);
-    }
+      if (proxyAdress != null) {
+        proxyAdress = proxyAdress.trim();
+      } else {
+        LOG.error("Mode proxy is enable and property " + LECKO_PROXY_ADDRESS + " undefined");
+      }
 
+      String proxyPortString = PropertyManager.getProperty(LECKO_PROXY_PORT);
+      if (proxyPortString != null) {
+        try {
+          proxyPort = Integer.valueOf(proxyPortString);
+        } catch (NumberFormatException ex) {
+          LOG.error("Mode proxy is enable and property " + LECKO_PROXY_PORT + " is invalid");
+        }
+      } else {
+        LOG.error("Mode proxy is enable and property " + LECKO_PROXY_PORT + " undefined");
+      }
+    }
   }
 
   public boolean send(String fileName) {
@@ -104,62 +155,66 @@ public class SftpClient {
     Channel channel = null;
     ChannelSftp channelSftp = null;
 
-    try {
-      JSch jsch = new JSch();
-      LOG.info("Opening a session on the sftp server host={} port={} user={}", host, port, user);
-      session = jsch.getSession(user, host, port);
-
-      if (session != null) {
-        session.setPassword(pwd);
-        session.setTimeout(DEFAULT_TIMOUT);
-      } else {
-        LOG.error("Unable to retrieve an sftp session");
-        return false;
-      }
-
-      Properties config = new Properties();
-      config.put("StrictHostKeyChecking", "no");
-      session.setConfig(config);
-      session.connect();
-      LOG.info("Opening an sftp channel");
-      channel = session.openChannel("sftp");
-      if (channel != null) {
-        channel.connect(DEFAULT_TIMOUT);
-      } else {
-        LOG.error("Unable to connect to the sftp server");
-        return false;
-      }
-      channelSftp = (ChannelSftp) channel;
-      if (remotePath != null) {
-        LOG.info("Changing the remote directory to {}", remotePath);
-        channelSftp.cd(remotePath);
-      }
-
-      LOG.info("Transfering {}", fileName);
-      File f = new File(fileName);
-      channelSftp.put(new FileInputStream(f), f.getName());
-
-      LOG.info("Transfer of {} on the sftp server done", fileName);
-      return true;
-    } catch (Exception ex) {
-      LOG.error("Unable to transfer " + fileName, ex);
+    if (isConfigured) {
       try {
-        Thread.sleep(30000L);
-      } catch (InterruptedException e) {
-        LOG.error(e);
-      }
-      return false;
-    } finally {
-      if (channelSftp != null) {
-        channelSftp.exit();
-      }
-      if (channel != null) {
-        channel.disconnect();
-      }
-      if (session != null) {
-        session.disconnect();
-      }
-    }
+        JSch jsch = new JSch();
+        LOG.info("Opening a session on the sftp server host={} port={} user={}", host, port, user);
+        session = jsch.getSession(user, host, port);
 
+        if (session != null) {
+          session.setPassword(pwd);
+          session.setTimeout(DEFAULT_TIMOUT);
+        } else {
+          LOG.error("Unable to retrieve an sftp session");
+          return false;
+        }
+
+        Properties config = new Properties();
+        config.put("StrictHostKeyChecking", "no");
+        session.setConfig(config);
+        session.connect();
+        LOG.info("Opening an sftp channel");
+        channel = session.openChannel("sftp");
+        if (channel != null) {
+          channel.connect(DEFAULT_TIMOUT);
+        } else {
+          LOG.error("Unable to connect to the sftp server");
+          return false;
+        }
+        channelSftp = (ChannelSftp) channel;
+        if (remotePath != null) {
+          LOG.info("Changing the remote directory to {}", remotePath);
+          channelSftp.cd(remotePath);
+        }
+
+        LOG.info("Transfering {}", fileName);
+        File f = new File(fileName);
+        channelSftp.put(new FileInputStream(f), f.getName());
+
+        LOG.info("Transfer of {} on the sftp server done", fileName);
+        return true;
+      } catch (Exception ex) {
+        LOG.error("Unable to transfer " + fileName, ex);
+        try {
+          Thread.sleep(30000L);
+        } catch (InterruptedException e) {
+          LOG.error(e);
+        }
+        return false;
+      } finally {
+        if (channelSftp != null) {
+          channelSftp.exit();
+        }
+        if (channel != null) {
+          channel.disconnect();
+        }
+        if (session != null) {
+          session.disconnect();
+        }
+      }
+    } else {
+      LOG.warn(" SFTP Client is not configured, Unable to transfer Lecko dump file: " + fileName);
+      return false;
+    }
   }
 }
