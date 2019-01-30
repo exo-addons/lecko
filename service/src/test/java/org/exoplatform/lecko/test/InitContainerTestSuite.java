@@ -33,9 +33,8 @@ import org.junit.runners.Suite.SuiteClasses;
         TestSpaceActivityWithLikeAComment.class,
         TestUserActivity.class,
         TestUserActivityWithCommentAComment.class,
-        TestUserActivityWithLikeAComment.class
-
-
+        TestUserActivityWithLikeAComment.class,
+        TestSftpClient.class
 })
 @ConfigTestCase(AbstractServiceTest.class)
 public class InitContainerTestSuite extends BaseExoContainerTestSuite {
