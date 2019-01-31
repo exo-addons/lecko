@@ -33,7 +33,7 @@
     <artifactId>lecko</artifactId>
     <version>1.3.x-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>Lecko Analytics Add-on</name>
+    <name>eXo Add-on:: Lecko Analytics Add-on</name>
     <description>Lecko Analytics (http://analytics.lecko.fr) integration for eXo Platform</description>
     <modules>
         <module>packaging</module>
