@@ -27,9 +27,4 @@
     <type>org.exoplatform.social.common.xmlprocessor.XMLProcessorImpl</type>
   </component>
 
-  <component>
-    <key>org.exoplatform.social.common.xmlprocessor.model.XMLTagFilterPolicy</key>
-    <type>org.exoplatform.social.common.xmlprocessor.model.XMLTagFilterPolicy</type>
-  </component>
-
 </configuration>
