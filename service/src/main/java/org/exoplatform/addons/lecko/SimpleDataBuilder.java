@@ -317,7 +317,12 @@ public class SimpleDataBuilder implements DataBuilder {
   public void deleteDumpFile() {
     String extractOutputPath = leckoTempDirectory + "/" + leckoOutputName;
     File file = new File(extractOutputPath);
-    file.delete();
+    try {
+        file.delete();
+    }
+    catch (Exception ex){
+        LOG.info("Unable to delete the dump file: ", ex);
+    }
   }
 
   // @Override
