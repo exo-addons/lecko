@@ -23,12 +23,8 @@ package org.exoplatform.addons.lecko;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.io.FileWriter;
 import java.io.PrintWriter;
-
-import java.nio.file.Path;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.component.RequestLifeCycle;
@@ -327,9 +323,9 @@ public class SimpleDataBuilder implements DataBuilder {
       LOG.info("Dump file deleted.");
     }
     catch(NoSuchFileException e) {
-      LOG.error("no file found",e);
+      LOG.error("The dump file to delete (" + path + ") does not exist", e);
     } catch(IOException e) {
-      LOG.error("error while deleting file",e);
+      LOG.error("The dump file to delete (" + path + ") does not exist", e);
     }
   }
 
