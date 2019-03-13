@@ -21,9 +21,14 @@
 package org.exoplatform.addons.lecko;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 
+import java.nio.file.Path;
 import org.exoplatform.container.ExoContainer;
 import org.exoplatform.container.ExoContainerContext;
 import org.exoplatform.container.component.RequestLifeCycle;
@@ -316,12 +321,15 @@ public class SimpleDataBuilder implements DataBuilder {
 
   public void deleteDumpFile() {
     String extractOutputPath = leckoTempDirectory + "/" + leckoOutputName;
-    File file = new File(extractOutputPath);
-    try {
-        file.delete();
+    Path path = Paths.get(extractOutputPath);
+    try{
+      Files.delete(path);
+      LOG.info("Dump file deleted.");
     }
-    catch (Exception ex){
-        LOG.info("Unable to delete the dump file: ", ex);
+    catch(NoSuchFileException e) {
+      LOG.error("no file found",e);
+    } catch(IOException e) {
+      LOG.error("error while deleting file",e);
     }
   }
 

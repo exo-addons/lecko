@@ -191,7 +191,7 @@ public class SftpClient {
         File f = new File(fileName);
 
         try(FileInputStream fileInputStream = new FileInputStream(f)) {
-              channelSftp.put(fileInputStream, f.getName());
+          channelSftp.put(fileInputStream, f.getName());
         }
         LOG.info("Transfer of {} on the sftp server done", fileName);
         return true;
