@@ -320,7 +320,7 @@ public class SimpleDataBuilder implements DataBuilder {
     Path path = Paths.get(extractOutputPath);
     try{
       Files.delete(path);
-      LOG.info("Dump file deleted.");
+      LOG.info("Lecko dump file deleted.");
     }
     catch(NoSuchFileException e) {
       LOG.error("The Lecko dump file to delete (" + path + ") does not exist", e);
