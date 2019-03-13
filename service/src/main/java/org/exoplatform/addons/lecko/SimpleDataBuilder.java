@@ -323,7 +323,7 @@ public class SimpleDataBuilder implements DataBuilder {
       LOG.info("Dump file deleted.");
     }
     catch(NoSuchFileException e) {
-      LOG.error("The dump file to delete (" + path + ") does not exist", e);
+      LOG.error("The Lecko dump file to delete (" + path + ") does not exist", e);
     } catch(IOException e) {
       LOG.error("The dump file to delete (" + path + ") does not exist", e);
     }
