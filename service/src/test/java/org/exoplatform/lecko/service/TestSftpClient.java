@@ -89,5 +89,8 @@ public class TestSftpClient extends AbstractServiceTest {
 
     // Verify no log append
     verify(mockAppender, Mockito.times(0)).doAppend(captorLoggingEvent.capture());
+
+    // check client.send return false
+    assertFalse(client.send("toto.txt"));
   }
 }
