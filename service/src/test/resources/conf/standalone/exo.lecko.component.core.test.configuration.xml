@@ -569,6 +569,18 @@
   </component>
 
   <component>
+    <type>org.exoplatform.commons.notification.impl.PluginStatisticService</type>
+  </component>
+
+  <component>
+    <type>org.exoplatform.commons.notification.impl.StatisticsService</type>
+  </component>
+
+  <component>
+    <type>org.exoplatform.commons.notification.NotificationContextFactory</type>
+  </component>
+
+  <component>
     <key>org.exoplatform.settings.impl.SettingServiceImpl</key>
     <type>org.exoplatform.settings.impl.SettingServiceImpl</type>
   </component>
