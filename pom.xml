@@ -49,7 +49,7 @@
         <!-- Dependencies versions -->
         <!-- **************************************** -->
         <com.jcraft.jsch.version>0.1.53</com.jcraft.jsch.version>
-        <org.exoplatform.platform.version>5.1.x-acc210-SNAPSHOT</org.exoplatform.platform.version>
+        <org.exoplatform.platform.version>5.1.2-acc210-02</org.exoplatform.platform.version>
     </properties>
     <dependencyManagement>
         <dependencies>
