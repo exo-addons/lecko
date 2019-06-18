@@ -510,6 +510,10 @@
     <type>org.exoplatform.settings.cache.CacheSettingServiceImpl</type>
   </component>
 
+  <component>
+    <type>org.exoplatform.upload.UploadService</type>
+  </component>
+
   <external-component-plugins>
     <target-component>org.exoplatform.commons.file.services.NameSpaceService</target-component>
     <component-plugin>
