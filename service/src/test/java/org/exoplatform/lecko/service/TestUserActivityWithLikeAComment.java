@@ -113,21 +113,21 @@ public class TestUserActivityWithLikeAComment extends AbstractServiceTest {
     // 3;like;2017-03-30T10:12:36.743+02:00;;
     String[] line3 = lines[2].split(";");
     assertTrue(isInteger(line3[0]));
-    assertEquals("comment", line3[1]);
+    assertEquals("like", line3[1]);
     assertEquals(3, line3.length);
 
 
     // 4;comment;2017-03-30T10:12:36.773+02:00;;
     String[] line4 = lines[3].split(";");
     assertTrue(isInteger(line4[0]));
-    assertEquals("like", line4[1]);
+    assertEquals("comment", line4[1]);
     assertEquals(3, line4.length);
 
     // 5;like;2017-03-30T10:12:36.743+02:00;;
     String[] line5 = lines[4].split(";");
     assertTrue(isInteger(line5[0]));
-    assertEquals("DEFAULT_ACTIVITY", line5[1]);
-    assertEquals(4, line5.length);
+    assertEquals("like", line5[1]);
+    assertEquals(3, line5.length);
 
   }
 
