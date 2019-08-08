@@ -7,7 +7,7 @@ import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
 import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
-import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
+import org.exoplatform.social.core.relationship.model.Relationship;
 import org.exoplatform.social.core.space.model.Space;
 import org.junit.Before;
 
@@ -28,35 +28,39 @@ public class TestUserActivity extends AbstractServiceTest {
   private String      spaceDisplayName = "General Discussions";
 
   private String      spacePrettyName = "general_discussions";
-//  private SpaceService spaceService;
-//  private IdentityManager identityManager;
-//  private ActivityManager activityManager;
-//  private JobStatusService jobStatusService;
+  
+  private Relationship johnMaryConnection;
+  
+  private Relationship johnJackConnection;
+  
+  private Relationship maryJackConnection;
 
   @Before
   public void setUp() throws Exception {
     super.setUp();
 
-//    spaceService = (SpaceService) getContainer().getComponentInstanceOfType(SpaceService.class);
-//    identityManager = (IdentityManager) getContainer().getComponentInstanceOfType(IdentityManager.class);
-//    activityManager = (ActivityManager) getContainer().getComponentInstanceOfType(ActivityManager.class);
-//    jobStatusService = (JobStatusService) getContainer().getComponentInstanceOfType(JobStatusService.class);
-
-    // john post activity
-
     Identity johnIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "john", true);
     Identity maryIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "mary", true);
     Identity jackIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "demo", true);
 
+    // Add relation between users
+    johnMaryConnection = relationshipManager.inviteToConnect(johnIdentity, maryIdentity);
+    relationshipManager.confirm(johnIdentity, maryIdentity);
+    
+    johnJackConnection = relationshipManager.inviteToConnect(johnIdentity, jackIdentity);
+    relationshipManager.confirm(johnIdentity, maryIdentity);
 
+    maryJackConnection = relationshipManager.inviteToConnect(maryIdentity, jackIdentity);
+    relationshipManager.confirm(johnIdentity, maryIdentity);
 
+    // John post activity
     ExoSocialActivity activity = new ExoSocialActivityImpl();
     activity.setTitle("My Activity");
     activity.setUserId(johnIdentity.getId());
     activity.setType("DEFAULT_ACTIVITY");
     activityManager.saveActivityNoReturn(johnIdentity, activity);
 
-    // mary comments and likes the activity
+    // Mary comments and likes the activity
     ExoSocialActivity comment = new ExoSocialActivityImpl();
     comment.setTitle("Mary's Comment");
     comment.setUserId(maryIdentity.getId());
@@ -126,6 +130,9 @@ public class TestUserActivity extends AbstractServiceTest {
       spaceService.deleteSpace(space);
     }
     jobStatusService.resetStatus();
+    relationshipManager.delete(johnMaryConnection);
+    relationshipManager.delete(johnJackConnection);
+    relationshipManager.delete(maryJackConnection);
     super.tearDown();
   }
 
