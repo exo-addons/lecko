@@ -111,9 +111,17 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   @Override
   protected void tearDown() throws Exception {
 
+    resetAllActivities();
 
     //
     end();
+  }
+
+  private void resetAllActivities() throws Exception {
+    List<Identity> identities = identityManager.getIdentities(OrganizationIdentityProvider.NAME);
+    for (Identity identity: identities) {
+      activityManager.getActivities(identity).forEach(activityManager::deleteActivity);
+    }
   }
 
   @SuppressWarnings("unchecked")

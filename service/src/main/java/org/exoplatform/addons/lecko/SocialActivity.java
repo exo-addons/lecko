@@ -65,7 +65,7 @@ abstract class SocialActivity {
     int offsetComments = DEFAULT_OFFSET;
     boolean hasNextComments = true;
 
-    RealtimeListAccess<ExoSocialActivity> commentsWithListAccess = activityManager.getCommentsWithListAccess(activity,true);
+    RealtimeListAccess<ExoSocialActivity> commentsWithListAccess = activityManager.getCommentsWithListAccess(activity,false);
     int commentCountToTreat = commentsWithListAccess.getSize();
     int commentTreated = 0;
     while (hasNextComments) {
