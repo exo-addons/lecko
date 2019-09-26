@@ -52,7 +52,7 @@
         <com.jcraft.jsch.version>0.1.53</com.jcraft.jsch.version>
         <!-- Needed for junit test******************* -->
         <ch.qos.logback.version>1.1.7</ch.qos.logback.version>
-        <org.exoplatform.platform.version>5.3.x-SNAPSHOT</org.exoplatform.platform.version>
+        <org.exoplatform.platform.version>5.3.0-M25</org.exoplatform.platform.version>
     </properties>
     <dependencyManagement>
         <dependencies>
