@@ -53,6 +53,7 @@ public class TestSpaceActivityWithLikeAComment extends AbstractServiceTest {
     tearDown.add(space1);
 
     Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME, space1.getPrettyName(), true);
+    assertNotNull(spaceIdentity);
 
     ExoSocialActivity activity = new ExoSocialActivityImpl();
     activity.setTitle("My Activity");
@@ -139,15 +140,13 @@ public class TestSpaceActivityWithLikeAComment extends AbstractServiceTest {
 
   }
 
+  @Override
   protected void tearDown() throws Exception {
     for (Space space : tearDown) {
       spaceService.deleteSpace(space);
     }
 
     jobStatusService.resetStatus();
-
-
-
     super.tearDown();
   }
 

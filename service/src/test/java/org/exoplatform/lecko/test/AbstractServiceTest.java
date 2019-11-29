@@ -69,7 +69,8 @@ import java.util.*;
         @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/exo.lecko.component.core.test.application.registry.configuration.xml"),
         @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/component.search.configuration.xml"),
         @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/lecko-test-configuration.xml"),
-        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/component.search.configuration.xml")
+        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/component.search.configuration.xml"),
+        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/TO-DELETE-gatein-jcr-impl-configuration.xml"),
 })
 public abstract class AbstractServiceTest extends BaseExoTestCase {
   protected static Log LOG = ExoLogger.getLogger(AbstractServiceTest.class.getName());

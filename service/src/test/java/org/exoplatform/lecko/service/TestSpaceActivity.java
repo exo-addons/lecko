@@ -33,30 +33,22 @@ public class TestSpaceActivity extends AbstractServiceTest {
   private String      spaceDisplayName = "General Discussions";
 
   private String      spacePrettyName = "general_discussions";
-//  private SpaceService spaceService;
-//  private IdentityManager identityManager;
-//  private ActivityManager activityManager;
-//  private JobStatusService jobStatusService;
 
   @Before
   public void setUp() throws Exception {
     super.setUp();
 
-//    spaceService = (SpaceService) getContainer().getComponentInstanceOfType(SpaceService.class);
-//    identityManager = (IdentityManager) getContainer().getComponentInstanceOfType(IdentityManager.class);
-//    activityManager = (ActivityManager) getContainer().getComponentInstanceOfType(ActivityManager.class);
-//    jobStatusService = (JobStatusService) getContainer().getComponentInstanceOfType(JobStatusService.class);
-
     // john post activity
 
-    Identity johnIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "john", true);
-    Identity maryIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "mary", true);
-    Identity jackIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "demo", true);
+    Identity johnIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "john");
+    Identity maryIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "mary");
+    Identity jackIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "demo");
 
     Space space1 = createSpace(spacePrettyName,spaceDisplayName, "description", "john", new String[]{"mary","demo"});
     tearDown.add(space1);
 
-    Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME, space1.getPrettyName(), true);
+    Identity spaceIdentity = identityManager.getOrCreateIdentity(SpaceIdentityProvider.NAME, space1.getPrettyName());
+    assertNotNull(spaceIdentity);
 
     ExoSocialActivity activity = new ExoSocialActivityImpl();
     activity.setTitle("My Activity");
@@ -155,9 +147,6 @@ public class TestSpaceActivity extends AbstractServiceTest {
     }
 
     jobStatusService.resetStatus();
-
-
-
     super.tearDown();
   }
 

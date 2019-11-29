@@ -25,28 +25,15 @@ public class TestUserActivityWithLikeAComment extends AbstractServiceTest {
 
   private List<Space> tearDown         = new ArrayList<Space>();
 
-  private String      spaceDisplayName = "General Discussions";
-
-  private String      spacePrettyName = "general_discussions";
-//  private SpaceService spaceService;
-//  private IdentityManager identityManager;
-//  private ActivityManager activityManager;
-//  private JobStatusService jobStatusService;
-
   @Before
   public void setUp() throws Exception {
     super.setUp();
 
-//    spaceService = (SpaceService) getContainer().getComponentInstanceOfType(SpaceService.class);
-//    identityManager = (IdentityManager) getContainer().getComponentInstanceOfType(IdentityManager.class);
-//    activityManager = (ActivityManager) getContainer().getComponentInstanceOfType(ActivityManager.class);
-//    jobStatusService = (JobStatusService) getContainer().getComponentInstanceOfType(JobStatusService.class);
-
     // john post activity
 
-    Identity johnIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "john", true);
-    Identity maryIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "mary", true);
-    Identity jackIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "demo", true);
+    Identity johnIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "john");
+    Identity maryIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "mary");
+    Identity jackIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "demo");
 
 
 
@@ -131,6 +118,7 @@ public class TestUserActivityWithLikeAComment extends AbstractServiceTest {
 
   }
 
+  @Override
   protected void tearDown() throws Exception {
     for (Space space : tearDown) {
       spaceService.deleteSpace(space);

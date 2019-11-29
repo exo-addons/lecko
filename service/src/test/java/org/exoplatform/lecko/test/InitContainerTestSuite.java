@@ -28,12 +28,12 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
 @SuiteClasses({
-        TestSpaceActivity.class,
-        TestSpaceActivityWithCommentAComment.class,
-        TestSpaceActivityWithLikeAComment.class,
         TestUserActivity.class,
         TestUserActivityWithCommentAComment.class,
         TestUserActivityWithLikeAComment.class,
+        TestSpaceActivity.class,
+        TestSpaceActivityWithCommentAComment.class,
+        TestSpaceActivityWithLikeAComment.class,
         TestSftpClient.class
 })
 @ConfigTestCase(AbstractServiceTest.class)

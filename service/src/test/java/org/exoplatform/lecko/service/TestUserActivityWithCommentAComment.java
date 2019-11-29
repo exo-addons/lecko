@@ -25,9 +25,6 @@ public class TestUserActivityWithCommentAComment extends AbstractServiceTest {
 
   private List<Space> tearDown         = new ArrayList<Space>();
 
-  private String      spaceDisplayName = "General Discussions";
-
-  private String      spacePrettyName = "general_discussions";
 //  private SpaceService spaceService;
 //  private IdentityManager identityManager;
 //  private ActivityManager activityManager;
@@ -114,6 +111,7 @@ public class TestUserActivityWithCommentAComment extends AbstractServiceTest {
 
   }
 
+  @Override
   protected void tearDown() throws Exception {
     for (Space space : tearDown) {
       spaceService.deleteSpace(space);
