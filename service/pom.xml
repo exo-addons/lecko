@@ -158,11 +158,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.exoplatform.social</groupId>
-            <artifactId>social-component-core-jpa</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${ch.qos.logback.version}</version>
