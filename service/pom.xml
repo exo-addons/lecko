@@ -125,32 +125,50 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.exoplatform.gatein.portal</groupId>
-            <artifactId>exo.portal.component.identity</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
+          <groupId>org.exoplatform.gatein.portal</groupId>
+          <artifactId>exo.portal.component.identity</artifactId>
+          <type>test-jar</type>
+          <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.exoplatform.gatein.portal</groupId>
-            <artifactId>exo.portal.component.portal</artifactId>
-            <type>test-jar</type>
-            <scope>test</scope>
+          <groupId>org.exoplatform.gatein.portal</groupId>
+          <artifactId>exo.portal.component.portal</artifactId>
+          <type>test-jar</type>
+          <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.exoplatform.gatein.portal</groupId>
-            <artifactId>exo.portal.component.test.core</artifactId>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                </exclusion>
-            </exclusions>
+          <groupId>org.exoplatform.gatein.portal</groupId>
+          <artifactId>exo.portal.component.test.web</artifactId>
+          <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.exoplatform.gatein.portal</groupId>
-            <artifactId>exo.portal.component.test.jcr</artifactId>
-            <scope>test</scope>
+          <groupId>org.exoplatform.gatein.portal</groupId>
+          <artifactId>exo.portal.component.application-registry</artifactId>
+          <type>test-jar</type>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.commons</groupId>
+          <artifactId>commons-component-common</artifactId>
+          <type>test-jar</type>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.social</groupId>
+          <artifactId>social-component-core</artifactId>
+          <scope>test</scope>
+          <type>test-jar</type>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.social</groupId>
+          <artifactId>social-component-service</artifactId>
+          <scope>test</scope>
+          <type>test-jar</type>
+        </dependency>
+        <dependency>
+          <groupId>org.exoplatform.gatein.portal</groupId>
+          <artifactId>exo.portal.component.resources</artifactId>
+          <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hsqldb</groupId>
@@ -203,6 +221,20 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <systemProperties>
+                <property>
+                  <name>exo.files.storage.dir</name>
+                  <value>target/exo-files</value>
+                </property>
+              </systemProperties>
+            </configuration>
+          </plugin>
+        </plugins>
     </build>
 
 </project>

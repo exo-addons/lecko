@@ -58,19 +58,11 @@ import java.util.*;
  *
  */
 @ConfiguredBy({
-        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/exo.lecko.component.core.test.configuration.xml"),
-
-        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.portal-configuration.xml"),
-        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.identity-configuration.xml"),
-        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.portal.component.test.jcr-configuration.xml"),
-        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/exo.lecko.test.portal-configuration.xml"),
-        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/exo.lecko.test.jcr-configuration.xml"),
-//        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/exo.lecko.component.common.test.configuration.xml"),
-        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/exo.lecko.component.core.test.application.registry.configuration.xml"),
-        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/component.search.configuration.xml"),
-        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/lecko-test-configuration.xml"),
-        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/component.search.configuration.xml"),
-        @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/standalone/TO-DELETE-gatein-jcr-impl-configuration.xml"),
+  @ConfigurationUnit(scope = ContainerScope.ROOT, path = "conf/configuration.xml"),
+  @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/portal/configuration.xml"),
+  @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.lecko.component.service.test.configuration.xml"),
+  @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.lecko.component.service.test.dependencies-configuration.xml"),
+  @ConfigurationUnit(scope = ContainerScope.PORTAL, path = "conf/exo.lecko.component.service.test.local-configuration.xml"),
 })
 public abstract class AbstractServiceTest extends BaseExoTestCase {
   protected static Log LOG = ExoLogger.getLogger(AbstractServiceTest.class.getName());
@@ -87,8 +79,6 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   @Override
   protected void setUp() throws Exception {
     begin();
-
-
 
     identityManager = getService(IdentityManager.class);
     activityManager =  getService(ActivityManager.class);
