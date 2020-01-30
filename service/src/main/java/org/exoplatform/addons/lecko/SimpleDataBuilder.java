@@ -25,8 +25,8 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.io.FileWriter;
 import java.io.PrintWriter;
-import org.exoplatform.container.ExoContainer;
-import org.exoplatform.container.ExoContainerContext;
+
+import org.exoplatform.container.*;
 import org.exoplatform.container.component.RequestLifeCycle;
 import org.exoplatform.social.core.manager.ActivityManager;
 
@@ -331,6 +331,7 @@ public class SimpleDataBuilder implements DataBuilder {
 
   // @Override
   public void run() {
+    ExoContainerContext.setCurrentContainer(PortalContainer.getInstance());
     // the em is put in threadLocal and use in the build.
     build();
     // try to upload data
