@@ -40,12 +40,9 @@ public class TestUserActivityWithCommentAComment extends AbstractServiceTest {
 //    jobStatusService = (JobStatusService) getContainer().getComponentInstanceOfType(JobStatusService.class);
 
     // john post activity
-
     Identity johnIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "john", true);
     Identity maryIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "mary", true);
     Identity jackIdentity = identityManager.getOrCreateIdentity(OrganizationIdentityProvider.NAME, "demo", true);
-
-
 
     ExoSocialActivity activity = new ExoSocialActivityImpl();
     activity.setTitle("My Activity");
@@ -65,10 +62,6 @@ public class TestUserActivityWithCommentAComment extends AbstractServiceTest {
     commentJack.setUserId(jackIdentity.getId());
     commentJack.setParentCommentId(comment.getId());
     activityManager.saveComment(activity, commentJack);
-
-
-
-
   }
 
   public void testBuildUserExportWithCommentAComment() throws Exception {
@@ -88,6 +81,9 @@ public class TestUserActivityWithCommentAComment extends AbstractServiceTest {
 
     String ls = System.getProperty("line.separator");
     String[] lines = fileContent.split(ls);
+
+    // Assert that the file contain 9 lines.
+    assertEquals(9, lines.length);
 
     // 1;DEFAULT_ACTIVITY;2017-03-30T10:12:36.743+02:00;user;;
     // Discussions;

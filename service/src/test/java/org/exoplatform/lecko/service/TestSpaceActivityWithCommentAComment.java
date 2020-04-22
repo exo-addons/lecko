@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.exoplatform.container.component.RequestLifeCycle;
 import org.junit.Before;
 
 import org.exoplatform.addons.lecko.LeckoServiceController;
@@ -18,6 +19,7 @@ import org.exoplatform.social.core.identity.model.Identity;
 import org.exoplatform.social.core.identity.provider.OrganizationIdentityProvider;
 import org.exoplatform.social.core.identity.provider.SpaceIdentityProvider;
 import org.exoplatform.social.core.space.model.Space;
+import org.junit.runner.Request;
 
 /**
  * Created by Romain Dénarié (romain.denarie@exoplatform.com) on 24/03/17.
@@ -96,6 +98,9 @@ public class TestSpaceActivityWithCommentAComment extends AbstractServiceTest {
     String ls = System.getProperty("line.separator");
     String[] lines = fileContent.split(ls);
 
+    // Assert that the file contain 9 lines.
+    assertEquals(5, lines.length);
+
     // 1;DEFAULT_ACTIVITY;2017-03-30T10:12:36.743+02:00;space;general_discussions;General
     // Discussions;
     String[] line1 = lines[0].split(";");
@@ -125,12 +130,17 @@ public class TestSpaceActivityWithCommentAComment extends AbstractServiceTest {
 
   @Override
   protected void tearDown() throws Exception {
-    for (Space space : tearDown) {
-      spaceService.deleteSpace(space);
-    }
+    RequestLifeCycle.begin(getContainer());
+    try {
+      for (Space space : tearDown) {
+        spaceService.deleteSpace(space);
+      }
 
-    jobStatusService.resetStatus();
-    super.tearDown();
+      jobStatusService.resetStatus();
+      super.tearDown();
+    }finally {
+      RequestLifeCycle.end();
+    }
   }
 
   private String readFile(File file) throws IOException {

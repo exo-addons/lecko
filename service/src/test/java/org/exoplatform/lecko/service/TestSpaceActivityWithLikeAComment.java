@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.exoplatform.container.component.RequestLifeCycle;
 import org.junit.Before;
 
 import org.exoplatform.addons.lecko.LeckoServiceController;
@@ -142,12 +143,17 @@ public class TestSpaceActivityWithLikeAComment extends AbstractServiceTest {
 
   @Override
   protected void tearDown() throws Exception {
-    for (Space space : tearDown) {
-      spaceService.deleteSpace(space);
-    }
+    RequestLifeCycle.begin(getContainer());
+    try {
+      for (Space space : tearDown) {
+        spaceService.deleteSpace(space);
+      }
 
-    jobStatusService.resetStatus();
-    super.tearDown();
+      jobStatusService.resetStatus();
+      super.tearDown();
+    } finally {
+      RequestLifeCycle.end();
+    }
   }
 
   private String readFile(File file) throws IOException {
