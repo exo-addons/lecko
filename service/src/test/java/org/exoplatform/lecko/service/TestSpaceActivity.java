@@ -3,6 +3,7 @@ package org.exoplatform.lecko.service;
 import org.exoplatform.addons.lecko.JobStatusService;
 import org.exoplatform.addons.lecko.LeckoServiceController;
 import org.exoplatform.addons.lecko.SimpleDataBuilder;
+import org.exoplatform.container.component.RequestLifeCycle;
 import org.exoplatform.lecko.test.AbstractServiceTest;
 import org.exoplatform.social.core.activity.model.ExoSocialActivity;
 import org.exoplatform.social.core.activity.model.ExoSocialActivityImpl;
@@ -150,15 +151,17 @@ public class TestSpaceActivity extends AbstractServiceTest {
   }
 
   protected void tearDown() throws Exception {
-    for (Space space : tearDown) {
-      spaceService.deleteSpace(space);
+    RequestLifeCycle.begin(getContainer());
+    try {
+      for (Space space : tearDown) {
+        spaceService.deleteSpace(space);
+      }
+
+      jobStatusService.resetStatus();
+      super.tearDown();
+    } finally {
+      RequestLifeCycle.end();
     }
-
-    jobStatusService.resetStatus();
-
-
-
-    super.tearDown();
   }
 
   private String readFile(File file) throws IOException {

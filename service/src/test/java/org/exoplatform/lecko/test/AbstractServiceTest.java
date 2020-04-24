@@ -28,6 +28,7 @@ import org.exoplatform.component.test.ConfigurationUnit;
 import org.exoplatform.component.test.ConfiguredBy;
 import org.exoplatform.component.test.ContainerScope;
 import org.exoplatform.container.ExoContainerContext;
+import org.exoplatform.container.component.RequestLifeCycle;
 import org.exoplatform.services.log.ExoLogger;
 import org.exoplatform.services.log.Log;
 import org.exoplatform.services.organization.OrganizationService;
@@ -111,9 +112,22 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
   @Override
   protected void tearDown() throws Exception {
 
+    resetAllActivities();
 
     //
     end();
+  }
+
+  private void resetAllActivities() throws Exception {
+    RequestLifeCycle.begin(getContainer());
+    try {
+      List<Identity> identities = identityManager.getIdentities(OrganizationIdentityProvider.NAME);
+      for (Identity identity : identities) {
+        activityManager.getActivities(identity).forEach(activityManager::deleteActivity);
+      }
+    } finally {
+      RequestLifeCycle.end();
+    }
   }
 
   @SuppressWarnings("unchecked")
@@ -203,50 +217,7 @@ public abstract class AbstractServiceTest extends BaseExoTestCase {
     space.setPriority(Space.INTERMEDIATE_PRIORITY);
     space.setUrl(space.getPrettyName());
 
-    createSpaceNonInitApps(space,creator,null);
-    return space;
-  }
-
-  protected Space createSpaceNonInitApps(Space space, String creator, String invitedGroupId) {
-    // Creates new space by creating new group
-    String groupId = null;
-//    try {
-//      groupId = SpaceUtils.createGroup(space.getDisplayName(), creator);
-//    } catch (SpaceException e) {
-//      LOG.error("Error while creating group", e);
-//    }
-
-    if (invitedGroupId != null) {
-      // Invites user in group join to new created space.
-      // Gets users in group and then invites user to join into space.
-      OrganizationService org = (OrganizationService) ExoContainerContext.getCurrentContainer().getComponentInstanceOfType(OrganizationService.class);
-      try {
-        ListAccess<User> groupMembersAccess = org.getUserHandler().findUsersByGroupId(invitedGroupId);
-        List<User> users = Arrays.asList(groupMembersAccess.load(0, groupMembersAccess.getSize()));
-
-        for (User user : users) {
-          String userId = user.getUserName();
-          if (!userId.equals(creator)) {
-            String[] invitedUsers = space.getInvitedUsers();
-            if (!ArrayUtils.contains(invitedUsers, userId)) {
-              invitedUsers = (String[]) ArrayUtils.add(invitedUsers, userId);
-              space.setInvitedUsers(invitedUsers);
-            }
-          }
-        }
-      } catch (Exception e) {
-        LOG.error("Failed to invite users from group " + invitedGroupId, e);
-      }
-    }
-    String[] managers = new String[] { creator };
-    space.setManagers(managers);
-    space.setGroupId(groupId);
-    space.setUrl(space.getPrettyName());
-    try {
-      spaceService.createSpace(space, creator);
-    } catch (Exception e) {
-      LOG.warn("Error while saving space", e);
-    }
+    space = spaceService.createSpace(space,creator);
     return space;
   }
 }
