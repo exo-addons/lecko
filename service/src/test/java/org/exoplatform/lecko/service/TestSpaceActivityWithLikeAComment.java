@@ -27,22 +27,13 @@ public class TestSpaceActivityWithLikeAComment extends AbstractServiceTest {
 
   private List<Space> tearDown         = new ArrayList<Space>();
 
-  private String      spaceDisplayName = "General Discussions";
+  private String      spaceDisplayName = "General Discussions One";
 
-  private String      spacePrettyName = "general_discussions";
-//  private SpaceService spaceService;
-//  private IdentityManager identityManager;
-//  private ActivityManager activityManager;
-//  private JobStatusService jobStatusService;
+  private String      spacePrettyName = "general_discussions_one";
 
   @Before
   public void setUp() throws Exception {
     super.setUp();
-
-//    spaceService = (SpaceService) getContainer().getComponentInstanceOfType(SpaceService.class);
-//    identityManager = (IdentityManager) getContainer().getComponentInstanceOfType(IdentityManager.class);
-//    activityManager = (ActivityManager) getContainer().getComponentInstanceOfType(ActivityManager.class);
-//    jobStatusService = (JobStatusService) getContainer().getComponentInstanceOfType(JobStatusService.class);
 
     // john post activity
 
@@ -107,16 +98,16 @@ public class TestSpaceActivityWithLikeAComment extends AbstractServiceTest {
     assertTrue(isInteger(line1[0]));
     assertEquals("DEFAULT_ACTIVITY", line1[1]);
     assertEquals("space", line1[3]);
-    assertEquals("general_discussions", line1[4]);
-    assertEquals("General Discussions", line1[5]);
+    assertEquals("general_discussions_one", line1[4]);
+    assertEquals("General Discussions One", line1[5]);
 
     // 2;comment;2017-03-30T10:12:36.753+02:00;general_discussions;General
     // Discussions;
     String[] line2 = lines[1].split(";");
     assertTrue(isInteger(line2[0]));
     assertEquals("comment", line2[1]);
-    assertEquals("general_discussions", line2[3]);
-    assertEquals("General Discussions", line2[4]);
+    assertEquals("general_discussions_one", line2[3]);
+    assertEquals("General Discussions One", line2[4]);
 
     // 3;like;2017-03-30T10:12:36.743+02:00;;
     String[] line3 = lines[2].split(";");
@@ -129,8 +120,8 @@ public class TestSpaceActivityWithLikeAComment extends AbstractServiceTest {
     String[] line4 = lines[3].split(";");
     assertTrue(isInteger(line4[0]));
     assertEquals("comment", line4[1]);
-    assertEquals("general_discussions", line4[3]);
-    assertEquals("General Discussions", line4[4]);
+    assertEquals("general_discussions_one", line4[3]);
+    assertEquals("General Discussions One", line4[4]);
 
     // 5;like;2017-03-30T10:12:36.743+02:00;;
     String[] line5 = lines[4].split(";");

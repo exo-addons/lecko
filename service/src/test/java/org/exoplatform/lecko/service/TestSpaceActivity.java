@@ -34,19 +34,10 @@ public class TestSpaceActivity extends AbstractServiceTest {
   private String      spaceDisplayName = "General Discussions";
 
   private String      spacePrettyName = "general_discussions";
-//  private SpaceService spaceService;
-//  private IdentityManager identityManager;
-//  private ActivityManager activityManager;
-//  private JobStatusService jobStatusService;
 
   @Before
   public void setUp() throws Exception {
     super.setUp();
-
-//    spaceService = (SpaceService) getContainer().getComponentInstanceOfType(SpaceService.class);
-//    identityManager = (IdentityManager) getContainer().getComponentInstanceOfType(IdentityManager.class);
-//    activityManager = (ActivityManager) getContainer().getComponentInstanceOfType(ActivityManager.class);
-//    jobStatusService = (JobStatusService) getContainer().getComponentInstanceOfType(JobStatusService.class);
 
     // john post activity
 
