@@ -28,22 +28,14 @@ public class TestSpaceActivityWithCommentAComment extends AbstractServiceTest {
 
   private List<Space> tearDown         = new ArrayList<Space>();
 
-  private String      spaceDisplayName = "General Discussions";
+  private String      spaceDisplayName = "General Discussions Two";
 
-  private String      spacePrettyName = "general_discussions";
-//  private SpaceService spaceService;
-//  private IdentityManager identityManager;
-//  private ActivityManager activityManager;
-//  private JobStatusService jobStatusService;
+  private String      spacePrettyName = "general_discussions_two";
 
   @Before
   public void setUp() throws Exception {
     super.setUp();
 
-//    spaceService = (SpaceService) getContainer().getComponentInstanceOfType(SpaceService.class);
-//    identityManager = (IdentityManager) getContainer().getComponentInstanceOfType(IdentityManager.class);
-//    activityManager = (ActivityManager) getContainer().getComponentInstanceOfType(ActivityManager.class);
-//    jobStatusService = (JobStatusService) getContainer().getComponentInstanceOfType(JobStatusService.class);
 
     // john post activity
 
@@ -106,24 +98,24 @@ public class TestSpaceActivityWithCommentAComment extends AbstractServiceTest {
     assertTrue(isInteger(line1[0]));
     assertEquals("DEFAULT_ACTIVITY", line1[1]);
     assertEquals("space", line1[3]);
-    assertEquals("general_discussions", line1[4]);
-    assertEquals("General Discussions", line1[5]);
+    assertEquals("general_discussions_two", line1[4]);
+    assertEquals("General Discussions Two", line1[5]);
 
     // 2;comment;2017-03-30T10:12:36.753+02:00;general_discussions;General
     // Discussions;
     String[] line2 = lines[1].split(";");
     assertTrue(isInteger(line2[0]));
     assertEquals("comment", line2[1]);
-    assertEquals("general_discussions", line2[3]);
-    assertEquals("General Discussions", line2[4]);
+    assertEquals("general_discussions_two", line2[3]);
+    assertEquals("General Discussions Two", line2[4]);
 
     // 3;comment;2017-03-30T10:12:36.773+02:00;general_discussions;General
     // Discussions;
     String[] line3 = lines[2].split(";");
     assertTrue(isInteger(line3[0]));
     assertEquals("comment", line3[1]);
-    assertEquals("general_discussions", line3[3]);
-    assertEquals("General Discussions", line3[4]);
+    assertEquals("general_discussions_two", line3[3]);
+    assertEquals("General Discussions Two", line3[4]);
 
   }
 
