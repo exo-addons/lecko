@@ -71,6 +71,8 @@ public class LeckoServiceController implements Startable {
   private static String       path;
 
   private DataBuilder         dataBuilder;
+  
+  private boolean isEnabled;
 
   public LeckoServiceController() {
 
@@ -80,6 +82,8 @@ public class LeckoServiceController implements Startable {
       this.rootPath = PropertyManager.getProperty("java.io.tmpdir") + "/lecko";
     }
 
+    isEnabled=Boolean.parseBoolean(System.getProperty(LECKO_ENABLED,"true"));
+    
     File directory = new File(this.rootPath);
     if (!PrivilegedFileHelper.exists(directory)) {
       PrivilegedFileHelper.mkdirs(directory);
@@ -213,14 +217,13 @@ public class LeckoServiceController implements Startable {
   @ManagedDescription("Enable/Disable lecko job. ")
   public void enableLeckoJob(@ManagedName("enable") boolean enable) {
     LOG.info("Lecko job enable value changed enable={}", enable);
-    PropertyManager.setProperty(LECKO_ENABLED, Boolean.toString(enable));
+    isEnabled=enable;
   }
 
   @Managed
   @ManagedDescription("Enable/Disable lecko job. ")
   public boolean getEnableLeckoJob() {
-    return PropertyManager.getProperty(LECKO_ENABLED)== null ? null : Boolean.parseBoolean(PropertyManager.getProperty(LECKO_ENABLED).trim());
-
+    return isEnabled;
   }
 
   private void initDataBuilder() {
