@@ -39,9 +39,6 @@ import org.exoplatform.services.log.Log;
 abstract class SocialActivity {
   protected static Log                 LOG            = ExoLogger.getLogger(SimpleDataBuilder.class);
 
-  // anonymization MAP
-  protected static Map<String, String> user_map       = new ConcurrentHashMap<String, String>();
-
   protected int                        DEFAULT_OFFSET = 0;
 
   protected int                        DEFAULT_LIMIT  = 20;
@@ -74,12 +71,6 @@ abstract class SocialActivity {
 
         for (ExoSocialActivity comment : comments) {
           idactor = comment.getPosterId();
-          if (!user_map.containsKey(idactor)) {
-            user_map.put(idactor, Integer.toString(user_map.size() + 1));
-            idactor = user_map.get(idactor);
-          } else {
-            idactor = user_map.get(idactor);
-          }
           out.print(idactor + ";");
 
           idEvent = "comment";
@@ -135,12 +126,6 @@ abstract class SocialActivity {
 
         for (ExoSocialActivity comment : comments) {
           idactor = comment.getPosterId();
-          if (!user_map.containsKey(idactor)) {
-            user_map.put(idactor, Integer.toString(user_map.size() + 1));
-            idactor = user_map.get(idactor);
-          } else {
-            idactor = user_map.get(idactor);
-          }
           out.print(idactor + ";");
 
           idEvent = "comment";
@@ -185,14 +170,7 @@ abstract class SocialActivity {
     int likeCountToTreat = likerIds.size();
     int likeTreated = 0;
     for (String likerId : likerIds) {
-      idactor = identityManager.getIdentity(likerId, false).getRemoteId();
-
-      if (!user_map.containsKey(idactor)) {
-        user_map.put(idactor, Integer.toString(user_map.size() + 1));
-        idactor = user_map.get(idactor);
-      } else {
-        idactor = user_map.get(idactor);
-      }
+      idactor = likerId;
       out.print(idactor + ";");
 
       idEvent = "like";
