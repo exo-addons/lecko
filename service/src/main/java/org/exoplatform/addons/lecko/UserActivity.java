@@ -79,15 +79,6 @@ public class UserActivity extends SocialActivity {
             if ("organization".equals(type_space)) {
               type_space = "user";
               idactor = activity.getPosterId();
-
-              // constuction de la map des users au fur et mesure pour
-              // l'anonymisation
-              if (!user_map.containsKey(idactor)) {
-                user_map.put(idactor, Integer.toString(user_map.size() + 1));
-                idactor = user_map.get(idactor);
-              } else {
-                idactor = user_map.get(idactor);
-              }
               out.print(idactor + ";");
               out.print(activity.getType() + ";");
               Calendar createdDate = Calendar.getInstance();

@@ -89,14 +89,6 @@ public class SpaceActivity extends SocialActivity {
             String url_likes = "no_url";
 
             idactor = activity.getPosterId();
-
-            // constuction de la map des users au fur et mesure pour l'anonymisation
-            if (!user_map.containsKey(idactor)) {
-              user_map.put(idactor, Integer.toString(user_map.size() + 1));
-              idactor = user_map.get(idactor);
-            } else {
-              idactor = user_map.get(idactor);
-            }
             out.print(idactor + ";");
 
             idEvent = activity.getType();
