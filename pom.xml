@@ -52,10 +52,10 @@
         <com.jcraft.jsch.version>0.1.53</com.jcraft.jsch.version>
         <!-- Needed for junit test******************* -->
         <ch.qos.logback.version>1.1.7</ch.qos.logback.version>
-        <org.exoplatform.social.version>6.1.x-SNAPSHOT</org.exoplatform.social.version>
-        <addon.exo.ecms.version>6.1.x-SNAPSHOT</addon.exo.ecms.version>
-        <addon.exo.calendar.version>6.1.x-SNAPSHOT</addon.exo.calendar.version>
-        <addon.exo.forum.version>6.1.x-SNAPSHOT</addon.exo.forum.version>
+        <org.exoplatform.social.version>6.1.0-21082020</org.exoplatform.social.version>
+        <addon.exo.ecms.version>6.1.0-21082020</addon.exo.ecms.version>
+        <addon.exo.calendar.version>6.1.0-21082020</addon.exo.calendar.version>
+        <addon.exo.forum.version>6.1.0-21082020</addon.exo.forum.version>
     </properties>
     <dependencyManagement>
         <dependencies>
